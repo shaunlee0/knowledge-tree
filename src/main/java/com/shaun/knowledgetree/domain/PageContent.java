@@ -178,18 +178,9 @@ public class PageContent {
                         }
                 );
 
-
                 System.out.println("See also set for " + title);
                 seeAlsoSet.stream().forEach(str -> System.out.println(str));
-
             }
-//            if(title.contains("History")){
-//                String seeAlsoSection = split[1].substring(indexOfStar + 1, indexOfEnd).replace("*","");
-//                seeAlsoSet = new HashSet<String>(Arrays.asList(seeAlsoSection.split("\n")));
-//                System.out.println("See also set for " + title);
-//                seeAlsoSet.stream().forEach(str -> System.out.println(str));
-//            }
-
         }
     }
 }

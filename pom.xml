@@ -14,7 +14,7 @@
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <start-class>com.shaun.knowledgetree.SampleMovieApplication</start-class>
+        <start-class>com.shaun.knowledgetree.Application</start-class>
         <neo4j.version>3.0.1</neo4j.version>
         <spring-data-neo4j.version>4.1.1.RELEASE</spring-data-neo4j.version>
         <spring-data-releasetrain.version>Hopper-SR1</spring-data-releasetrain.version>

@@ -1,6 +1,6 @@
 package com.shaun.knowledgetree;
 
-import com.shaun.knowledgetree.domain.*;
+import com.shaun.knowledgetree.domain.SingularWikiEntity;
 import com.shaun.knowledgetree.services.MovieService;
 import com.shaun.knowledgetree.services.Neo4jServices;
 import com.shaun.knowledgetree.services.entities.WikiEntitiesServicesImpl;
@@ -19,17 +19,13 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * @author mh
- * @since 06.10.14
- */
 @Configuration
 @Import(MyNeo4jConfiguration.class)
 @RestController("/")
-public class SampleMovieApplication extends WebMvcConfigurerAdapter implements CommandLineRunner {
+public class Application extends WebMvcConfigurerAdapter implements CommandLineRunner {
 
     public static void main(String[] args) throws IOException {
-        SpringApplication.run(SampleMovieApplication.class, args);
+        SpringApplication.run(Application.class, args);
     }
 
     @Autowired
@@ -56,23 +52,6 @@ public class SampleMovieApplication extends WebMvcConfigurerAdapter implements C
         SingularWikiEntity rootEntity = lookupServiceImpl.findRoot("Papal States");
         rootEntity.setDepthFromRoot(0);
 
-        //Trying to work out what the repository does not like... we cant just upload the root entity.
-        SingularWikiEntity blankEntity = new SingularWikiEntity();
-        SingularWikiEntity blankEntity2 = new SingularWikiEntity();
-        blankEntity.setTitle("Blanko wanko");
-        blankEntity.setDepthFromRoot(1);
-        blankEntity.setRootEntity(blankEntity2);
-        blankEntity.setPageContent(new PageContent());
-        blankEntity.getPageContent().setEvents(rootEntity.getPageContent().getEvents());
-        blankEntity.getPageContent().setCategories(rootEntity.getPageContent().getCategories());
-        blankEntity.getPageContent().setHtml(rootEntity.getPageContent().getHtml());
-//        blankEntity.getPageContent().setKeyValuesPairs(rootEntity.getPageContent().getKeyValuesPairs());
-//        blankEntity.setLinks(rootEntity.getLinks());
-//        blankEntity.setPageContent(rootEntity.getPageContent());
-
-        //session.save(rootEntity);
-
-        neo4jServices.saveSingularWikiEntity(blankEntity);
         neo4jServices.saveSingularWikiEntity(rootEntity);
 
         //SingularWikiEntity rootEntity = lookupServiceImpl.findRoot("Theocracy");

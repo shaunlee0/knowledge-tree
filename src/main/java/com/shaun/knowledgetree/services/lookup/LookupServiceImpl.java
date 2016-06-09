@@ -56,7 +56,6 @@ public class LookupServiceImpl implements LookupService {
             singularWikiEntity.getPageContent().extractSeeAlsoSet();
             singularWikiEntity.getPageContent().setHtml(html);
             singularWikiEntity.setExternalLinks(extractExternalLinksFromHtml(html));
-            singularWikiEntity.setRootEntity(singularWikiEntity);
             singularWikiEntity.setLinks(relevanceServiceImpl.assignScoreToEntity(singularWikiEntity,singularWikiEntity,wikiModel.getLinks()));
         });
         return singularWikiEntity;

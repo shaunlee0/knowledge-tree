@@ -1,13 +1,11 @@
 package com.shaun.knowledgetree.domain;
 
-import com.shaun.knowledgetree.domain.SingularWikiEntity;
 import org.neo4j.ogm.annotation.GraphId;
 import org.neo4j.ogm.annotation.NodeEntity;
 
 /**
  * Created by Shaun Lee on 14/05/2016.
- *
- * This class is designed to signify the relevance of a specific shaun.knowledgetree.shaun.knowledgetree.shaun.knowledgetree.shaun.knowledgetree.wiki entity.
+ * This class is designed to signify the relevance of a specific SingularWikiEntity
  */
 @NodeEntity
 public class Relevance {

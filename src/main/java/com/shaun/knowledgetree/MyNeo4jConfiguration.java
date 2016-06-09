@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Import(RepositoryRestMvcConfiguration.class)
 @EnableScheduling
 @EnableAutoConfiguration
-@ComponentScan(basePackages = {"com.shaun.knowledgetree.services", "com.knowledgetree"})
+@ComponentScan(basePackages = {"com.shaun.knowledgetree"})
 @Configuration
 @EnableNeo4jRepositories(basePackages = "com.shaun.knowledgetree.repositories")
 public class MyNeo4jConfiguration extends Neo4jConfiguration {
