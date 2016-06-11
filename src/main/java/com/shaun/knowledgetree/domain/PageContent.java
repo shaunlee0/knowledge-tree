@@ -2,6 +2,7 @@ package com.shaun.knowledgetree.domain;
 
 import org.neo4j.ogm.annotation.GraphId;
 import org.neo4j.ogm.annotation.NodeEntity;
+import org.neo4j.ogm.annotation.Relationship;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -19,112 +20,101 @@ public class PageContent {
     private String title;
     String html;
     String lifeSpan; //  life_span = 754–1870
+
+    @Relationship(type = "HAPPENED_IN", direction = "INCOMING")
     Set<Event> events;// within Infobox : event2 = [[Treaty of Venice]] (Independence from the Holy Roman Empire)
     Set<String> seeAlsoSet;// ==See also== section
-    Set<String> categories; // [[Category:Religion and government]]
+
+    @Relationship(type = "IN_CATEGORY")
+    Set<Category> categories; // [[Category:Religion and government]]
+
     Map<String, String> keyValuesPairs;
     Event startEvent;
     Event endEvent;
 
     @GraphId
     private Long id;
-
     public Long getId() {
         return id;
     }
-
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public Map<String, String> getKeyValuesPairs() {
-        return keyValuesPairs;
-    }
-
-    public void setKeyValuesPairs(Map<String, String> keyValuesPairs) {
-        this.keyValuesPairs = keyValuesPairs;
     }
 
     public PageContent() {
 
     }
 
+    //Page content
     public String getPageText() {
         return pageText;
     }
-
     public void setPageText(String pageText) {
         this.pageText = pageText;
     }
-
     public String getHtml() {
         return html;
     }
-
     public void setHtml(String html) {
         this.html = html;
     }
+    public String getTitle() {
+        return title;
+    }
+    public void setTitle(String title) {
+        this.title = title;
+    }
+    public Map<String, String> getKeyValuesPairs() {
+        return keyValuesPairs;
+    }
+    public void setKeyValuesPairs(Map<String, String> keyValuesPairs) {
+        this.keyValuesPairs = keyValuesPairs;
+    }
 
+    //Timeline/Events
     public String getLifeSpan() {
         return lifeSpan;
     }
-
     public void setLifeSpan(String lifeSpan) {
         this.lifeSpan = lifeSpan;
     }
-
     public Event getStartEvent() {
         return startEvent;
     }
-
     public void setStartEvent(Event startEvent) {
         this.startEvent = startEvent;
     }
-
     public Event getEndEvent() {
         return endEvent;
     }
-
     public void setEndEvent(Event endEvent) {
         this.endEvent = endEvent;
     }
-
     public Set<Event> getEvents() {
         return events;
     }
-
     public void setEvents(Set<Event> events) {
         this.events = events;
     }
 
+    //See also set
     public Set<String> getSeeAlsoSet() {
         return seeAlsoSet;
     }
-
     public void setSeeAlsoSet(Set<String> seeAlsoSet) {
         this.seeAlsoSet = seeAlsoSet;
     }
 
-    public Set<String> getCategories() {
+    //Categories
+    public Set<Category> getCategories() {
         return categories;
     }
-
-    public void setCategories(Set<String> categories) {
+    public void setCategories(Set<Category> categories) {
         this.categories = categories;
     }
 
     public void extractKeyValuePairsToContent() {
-
         events = new HashSet<>();
-
         lifeSpan = keyValuesPairs.get("life_span");
         if (lifeSpan != null) {
             int indexOfSpace = lifeSpan.indexOf(" ");
@@ -143,15 +133,14 @@ public class PageContent {
             events.parallelStream().forEach(Event::checkIfTitleIsALink);
             startEvent = new Event(keyValuesPairs.get("event_start"), keyValuesPairs.get("year_start"));
 
-            if (startEvent.hasTitle() == true) {
+            if (startEvent.hasTitle()) {
                 startEvent.checkIfTitleIsALink();
             }
             endEvent = new Event(keyValuesPairs.get("event_end"), keyValuesPairs.get("year_end"));
-            if (endEvent.hasTitle() == true) {
+            if (endEvent.hasTitle()) {
                 endEvent.checkIfTitleIsALink();
             }
         }
-
     }
 
     public void extractSeeAlsoSet() {
@@ -179,7 +168,7 @@ public class PageContent {
                 );
 
                 System.out.println("See also set for " + title);
-                seeAlsoSet.stream().forEach(str -> System.out.println(str));
+                seeAlsoSet.stream().forEach(System.out::println);
             }
         }
     }
