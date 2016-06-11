@@ -1,5 +1,6 @@
 package com.shaun.knowledgetree.services.pageContent;
 
+import com.shaun.knowledgetree.domain.Category;
 import org.jsoup.Jsoup;
 
 import java.util.HashMap;
@@ -11,9 +12,10 @@ import java.util.Set;
  * Created by Shaun on 29/05/2016.
  */
 public class PageContentServiceImpl implements PageContentService {
+
     @Override
-    public Set<String> getCategories(String pageText) {
-        Set<String> toReturn = new HashSet<>();
+    public Set<Category> extractCategories(String pageText) {
+        Set<Category> toReturn = new HashSet<>();
         String[] categories = pageText.split("Category:");
         for (int i = 1; i < categories.length; i++) {
             categories[i] = categories[i].replace("]]\n[[", "");
@@ -21,13 +23,13 @@ public class PageContentServiceImpl implements PageContentService {
             if (indexOfEndOfCategory != -1) {
                 categories[i] = categories[i].substring(0, indexOfEndOfCategory);
             }
-            toReturn.add(categories[i]);
+            toReturn.add(new Category(categories[i]));
         }
         return toReturn;
     }
 
     @Override
-    public Map<String, String> getKeyValuePairs(String content) {
+    public Map<String, String> extractKeyValuePairs(String content) {
         Map<String,String> map = new HashMap<>();
         String[] lines = content.split("\n");
         for (int i = 0; i < lines.length; i++) {

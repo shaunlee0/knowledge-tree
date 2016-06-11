@@ -1,5 +1,7 @@
 package com.shaun.knowledgetree.services.pageContent;
 
+import com.shaun.knowledgetree.domain.Category;
+
 import java.util.Map;
 import java.util.Set;
 
@@ -8,7 +10,7 @@ import java.util.Set;
  */
 public interface PageContentService {
 
-    Set<String> getCategories(String pageText);
+    Set<Category> extractCategories(String pageText);
 
-    Map<String,String> getKeyValuePairs(String content);
+    Map<String,String> extractKeyValuePairs(String content);
 }
