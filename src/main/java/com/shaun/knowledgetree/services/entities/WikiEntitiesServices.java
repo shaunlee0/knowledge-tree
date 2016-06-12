@@ -1,6 +1,6 @@
 package com.shaun.knowledgetree.services.entities;
 
-import com.shaun.knowledgetree.domain.SingularWikiEntity;
+import com.shaun.knowledgetree.model.SingularWikiEntity;
 
 import java.util.Set;
 

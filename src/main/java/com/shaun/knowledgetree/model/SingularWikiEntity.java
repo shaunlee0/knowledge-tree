@@ -1,9 +1,7 @@
-package com.shaun.knowledgetree.domain;
+package com.shaun.knowledgetree.model;
 
-import com.shaun.knowledgetree.util.WikiEntityUtil;
 import info.bliki.api.Page;
 
-import java.util.List;
 import java.util.Set;
 
 

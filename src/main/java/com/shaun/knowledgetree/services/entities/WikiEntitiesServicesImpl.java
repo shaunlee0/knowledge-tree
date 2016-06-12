@@ -1,6 +1,6 @@
 package com.shaun.knowledgetree.services.entities;
 
-import com.shaun.knowledgetree.domain.SingularWikiEntity;
+import com.shaun.knowledgetree.model.SingularWikiEntity;
 import com.shaun.knowledgetree.services.lookup.LookupServiceImpl;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StopWatch;
@@ -33,6 +33,10 @@ public class WikiEntitiesServicesImpl implements WikiEntitiesServices {
                 stopWatch.stop();
                 System.out.println(stopWatch.getLastTaskName() + " : " + stopWatch.getLastTaskTimeMillis() + "ms\t|" + "\tProgress = " + count + "/" + toDo);
                 count++;
+            }
+
+            if (count == 5) {
+                System.out.println("stop");
             }
 
             System.out.println("Finished");

@@ -1,7 +1,7 @@
 package com.shaun.knowledgetree.services.relevance;
 
 import com.shaun.knowledgetree.domain.Link;
-import com.shaun.knowledgetree.domain.SingularWikiEntity;
+import com.shaun.knowledgetree.model.SingularWikiEntity;
 
 import java.util.*;
 

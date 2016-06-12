@@ -1,5 +1,8 @@
-package com.shaun.knowledgetree.domain;
+package com.shaun.knowledgetree.model;
 
+import com.shaun.knowledgetree.domain.Category;
+import com.shaun.knowledgetree.domain.Event;
+import com.shaun.knowledgetree.domain.Link;
 import com.shaun.knowledgetree.util.WikiEntityUtil;
 
 import java.util.*;
@@ -95,19 +98,15 @@ public class PageContent {
 
     //Links
     private List<Link> links;
-
     public List<Link> getLinks() {
         return links;
     }
-
     public void setLinks(List<Link> links) {
         this.links = links;
     }
-
     public void sortLinksByScore() {
         this.links = WikiEntityUtil.sortByComparator(links);
     }
-
     public void extractKeyValuePairsToContent() {
         events = new HashSet<>();
         lifeSpan = keyValuesPairs.get("life_span");
@@ -139,32 +138,40 @@ public class PageContent {
     }
 
     public void extractSeeAlsoSet() {
-        String[] split = pageText.split("==See also==");
-        //if there is a see also section
-        if (split.length > 1) {
-            int indexOfStar = split[1].indexOf("*");
-            int indexOfEnd = split[1].indexOf("==");
-            if (indexOfStar > indexOfEnd) {
-                indexOfEnd = split[1].indexOf("==References==");
+        try {
+            int indexOfStar;
+            int indexOfEnd;
+            String[] split = pageText.split("==See also==");
+            //if there is a see also section
+            if (split.length > 1) {
+                indexOfStar = split[1].indexOf("*");
+                indexOfEnd = split[1].indexOf("==");
+                if (indexOfStar > indexOfEnd) {
+                    return;
+                }
+                if (indexOfStar > 0 && indexOfEnd > 0) {
+                    String seeAlsoSection = split[1].substring(indexOfStar + 1, indexOfEnd).replace("*", "");
+                    seeAlsoSet = new HashSet<String>(Arrays.asList(seeAlsoSection.split("\n")));
+                    //only accept those that are link elements
+
+                    seeAlsoSet = seeAlsoSet.stream()
+                            .filter(seeAlso -> seeAlso.contains("[[") && seeAlso.length() < 70 && !seeAlso.contains("<!--"))
+                            .collect(Collectors.toSet());
+
+                    seeAlsoSet.stream().forEach(str -> {
+                                str.trim();
+                                str.replace("''", "");
+                            }
+                    );
+
+                    System.out.println("See also set for " + title);
+                    seeAlsoSet.stream().forEach(System.out::println);
+                }
             }
-            if (indexOfStar > 0 && indexOfEnd > 0) {
-                String seeAlsoSection = split[1].substring(indexOfStar + 1, indexOfEnd).replace("*", "");
-                seeAlsoSet = new HashSet<String>(Arrays.asList(seeAlsoSection.split("\n")));
-                //only accept those that are link elements
-
-                seeAlsoSet = seeAlsoSet.stream()
-                        .filter(seeAlso -> seeAlso.contains("[[") && seeAlso.length() < 70 && !seeAlso.contains("<!--"))
-                        .collect(Collectors.toSet());
-
-                seeAlsoSet.stream().forEach(str -> {
-                            str.trim();
-                            str.replace("''", "");
-                        }
-                );
-
-                System.out.println("See also set for " + title);
-                seeAlsoSet.stream().forEach(System.out::println);
-            }
+        } catch (Exception e) {
+            System.out.println("Something fucked up");
+            e.printStackTrace();
         }
+
     }
 }

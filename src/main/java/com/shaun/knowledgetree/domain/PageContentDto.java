@@ -7,6 +7,7 @@ import org.neo4j.ogm.annotation.GraphId;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -31,6 +32,9 @@ public class PageContentDto {
 
     @GraphId
     private Long id;
+
+    @Relationship(type = "LINKED_PAGES", direction = Relationship.INCOMING)
+    private List<Link> links;
 
     public Long getId() {
         return id;
@@ -128,5 +132,13 @@ public class PageContentDto {
         this.categories = categories;
     }
 
+    //Links
+    public List<Link> getLinks() {
+        return links;
+    }
+
+    public void setLinks(List<Link> links) {
+        this.links = links;
+    }
 
 }

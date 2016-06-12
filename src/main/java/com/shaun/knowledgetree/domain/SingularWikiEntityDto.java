@@ -27,11 +27,7 @@ public class SingularWikiEntityDto {
     @GraphId
     private Long id;
 
-    private Page page;
     private String title;
-
-    @Relationship(type = "LINKED_PAGES", direction = Relationship.INCOMING)
-    private List<Link> links;
 
     private Set<String> externalLinks;
     private int depthFromRoot;
@@ -39,7 +35,7 @@ public class SingularWikiEntityDto {
     @Relationship(type = "ROOT_ENTITY", direction = Relationship.OUTGOING)
     private SingularWikiEntityDto rootEntity;
 
-    //    @Relationship(type = "PARENT_ENTITY")
+    @Relationship(type = "PARENT_ENTITY")
     private SingularWikiEntityDto parent;
 
     private PageContentDto pageContent;
@@ -48,10 +44,8 @@ public class SingularWikiEntityDto {
         this.pageContent = new PageContentDto();
     }
 
-    public SingularWikiEntityDto(SingularWikiEntityDto rootEntity, Page page, String title, List<Link> links, Set<String> externalLinks) {
-        this.page = page;
+    public SingularWikiEntityDto(SingularWikiEntityDto rootEntity, String title, Set<String> externalLinks) {
         this.title = title;
-        this.links = links;
         this.externalLinks = externalLinks;
     }
 
@@ -59,7 +53,6 @@ public class SingularWikiEntityDto {
     public SingularWikiEntityDto getParent() {
         return parent;
     }
-
     public void setParent(SingularWikiEntityDto parent) {
         this.parent = parent;
     }
@@ -68,15 +61,12 @@ public class SingularWikiEntityDto {
     public SingularWikiEntityDto getRootEntity() {
         return rootEntity;
     }
-
     public void setRootEntity(SingularWikiEntityDto rootEntity) {
         this.rootEntity = rootEntity;
     }
-
     public Integer getDepthFromRoot() {
         return depthFromRoot;
     }
-
     public void setDepthFromRoot(int depthFromRoot) {
         this.depthFromRoot = depthFromRoot;
     }
@@ -85,7 +75,6 @@ public class SingularWikiEntityDto {
     public PageContentDto getPageContent() {
         return pageContent;
     }
-
     public void setPageContentDto(PageContentDto pageContent) {
         this.pageContent = pageContent;
     }
@@ -94,39 +83,16 @@ public class SingularWikiEntityDto {
     public String getTitle() {
         return title;
     }
-
     public void setTitle(String title) {
         this.title = title;
     }
 
-    //Links
-    public List<Link> getLinks() {
-        return links;
-    }
-
-    public void setLinks(List<Link> links) {
-        this.links = links;
-    }
-
-    public void sortLinksByScore() {
-        this.links = WikiEntityUtil.sortByComparator(links);
-    }
-
+    //External Links
     public Set<String> getExternalLinks() {
         return externalLinks;
     }
-
     public void setExternalLinks(Set<String> exterenalLinks) {
         this.externalLinks = exterenalLinks;
-    }
-
-    //Page
-    public Page getPage() {
-        return page;
-    }
-
-    public void setPage(Page page) {
-        this.page = page;
     }
 
 }

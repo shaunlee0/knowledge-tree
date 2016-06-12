@@ -1,5 +1,6 @@
-package com.shaun.knowledgetree.domain;
+package com.shaun.knowledgetree.model;
 
+import com.shaun.knowledgetree.model.SingularWikiEntity;
 import org.neo4j.ogm.annotation.GraphId;
 import org.neo4j.ogm.annotation.NodeEntity;
 
@@ -7,21 +8,10 @@ import org.neo4j.ogm.annotation.NodeEntity;
  * Created by Shaun Lee on 14/05/2016.
  * This class is designed to signify the relevance of a specific SingularWikiEntity
  */
-@NodeEntity
+
 public class Relevance {
 
     private double score;
-
-    @GraphId Long id;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     private SingularWikiEntity wikiBeingEvaluated;
 
 

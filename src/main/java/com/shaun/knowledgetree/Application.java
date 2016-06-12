@@ -1,6 +1,6 @@
 package com.shaun.knowledgetree;
 
-import com.shaun.knowledgetree.domain.SingularWikiEntity;
+import com.shaun.knowledgetree.model.SingularWikiEntity;
 import com.shaun.knowledgetree.domain.SingularWikiEntityDto;
 import com.shaun.knowledgetree.services.MovieService;
 import com.shaun.knowledgetree.services.Neo4jServices;

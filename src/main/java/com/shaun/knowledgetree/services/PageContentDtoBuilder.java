@@ -1,6 +1,6 @@
 package com.shaun.knowledgetree.services;
 
-import com.shaun.knowledgetree.domain.PageContent;
+import com.shaun.knowledgetree.model.PageContent;
 import com.shaun.knowledgetree.domain.PageContentDto;
 import org.springframework.stereotype.Component;
 
@@ -26,6 +26,7 @@ public class PageContentDtoBuilder {
         pageContentDto.setLifeSpan(pageContent.getLifeSpan());
         pageContentDto.setSeeAlsoSet(pageContent.getSeeAlsoSet());
         pageContentDto.setPageText(pageContent.getPageText());
+        pageContentDto.setLinks(pageContent.getLinks());
         pageContentDto.setKeyValuesPairs(convertKeyValuePairsToNeo4jFormat(pageContent.getKeyValuesPairs()));
         return pageContentDto;
     }

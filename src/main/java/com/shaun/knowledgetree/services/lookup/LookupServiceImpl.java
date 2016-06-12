@@ -1,6 +1,6 @@
 package com.shaun.knowledgetree.services.lookup;
 
-import com.shaun.knowledgetree.domain.SingularWikiEntity;
+import com.shaun.knowledgetree.model.SingularWikiEntity;
 import com.shaun.knowledgetree.services.pageContent.PageContentServiceImpl;
 import com.shaun.knowledgetree.services.relevance.RelevanceServiceImpl;
 import info.bliki.api.Page;
