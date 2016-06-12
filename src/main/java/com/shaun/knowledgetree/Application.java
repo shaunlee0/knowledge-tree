@@ -1,8 +1,10 @@
 package com.shaun.knowledgetree;
 
 import com.shaun.knowledgetree.domain.SingularWikiEntity;
+import com.shaun.knowledgetree.domain.SingularWikiEntityDto;
 import com.shaun.knowledgetree.services.MovieService;
 import com.shaun.knowledgetree.services.Neo4jServices;
+import com.shaun.knowledgetree.services.SingularWikiEntityDtoBuilder;
 import com.shaun.knowledgetree.services.entities.WikiEntitiesServicesImpl;
 import com.shaun.knowledgetree.services.lookup.LookupServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +42,9 @@ public class Application extends WebMvcConfigurerAdapter implements CommandLineR
     @Autowired
     LookupServiceImpl lookupServiceImpl;
 
+    @Autowired
+    SingularWikiEntityDtoBuilder singularWikiEntityDtoBuilder;
+
     @RequestMapping("/graph")
     public Map<String, Object> graph(@RequestParam(value = "limit", required = false) Integer limit) {
         return movieService.graph(limit == null ? 100 : limit);
@@ -52,7 +57,9 @@ public class Application extends WebMvcConfigurerAdapter implements CommandLineR
         SingularWikiEntity rootEntity = lookupServiceImpl.findRoot("Papal States");
         rootEntity.setDepthFromRoot(0);
 
-        neo4jServices.saveSingularWikiEntity(rootEntity);
+        SingularWikiEntityDto testEntity = singularWikiEntityDtoBuilder.convertRoot(rootEntity);
+        testEntity.setTitle("Test");
+        neo4jServices.saveSingularWikiEntity(testEntity);
 
         //SingularWikiEntity rootEntity = lookupServiceImpl.findRoot("Theocracy");
 
@@ -60,7 +67,7 @@ public class Application extends WebMvcConfigurerAdapter implements CommandLineR
         Set<SingularWikiEntity> firstEntities = lookupServiceImpl.findEntities(rootEntity, rootEntity);
 
         firstEntities.forEach(singularWikiEntity -> {
-            neo4jServices.saveSingularWikiEntity(singularWikiEntity);
+            neo4jServices.saveSingularWikiEntity(singularWikiEntityDtoBuilder.convert(singularWikiEntity));
         });
 
         //Second layer is a set size 100

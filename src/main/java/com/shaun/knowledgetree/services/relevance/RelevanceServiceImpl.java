@@ -1,9 +1,9 @@
 package com.shaun.knowledgetree.services.relevance;
 
+import com.shaun.knowledgetree.domain.Link;
 import com.shaun.knowledgetree.domain.SingularWikiEntity;
 
-import java.util.HashMap;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by Shaun on 29/05/2016.
@@ -16,15 +16,15 @@ public class RelevanceServiceImpl implements RelevanceService {
     }
 
 
-    public HashMap<String,Integer> assignScoreToEntity(SingularWikiEntity toAssignTo,SingularWikiEntity rootToCompareTo, Set<String> pageLinks){
-        HashMap<String,Integer> linksWithScore = new HashMap<>();
+    public List<Link> assignScoreToEntity(SingularWikiEntity toAssignTo, SingularWikiEntity rootToCompareTo, Set<String> pageLinks) {
+        List<Link> links = new ArrayList<>();
         String pageText = toAssignTo.getPageContent().getPageText();
         for (String str:pageLinks) {
-            linksWithScore.put(str,scoreForLink(toAssignTo,rootToCompareTo,str));
+            links.add(new Link(str, scoreForLink(toAssignTo, rootToCompareTo, str)));
         }
-        toAssignTo.setLinks(linksWithScore);
+        toAssignTo.getPageContent().setLinks(links);
 
-        return linksWithScore;
+        return links;
     }
 
     /**

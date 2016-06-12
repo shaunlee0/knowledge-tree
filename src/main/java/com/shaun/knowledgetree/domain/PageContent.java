@@ -1,45 +1,25 @@
 package com.shaun.knowledgetree.domain;
 
-import org.neo4j.ogm.annotation.GraphId;
-import org.neo4j.ogm.annotation.NodeEntity;
-import org.neo4j.ogm.annotation.Relationship;
+import com.shaun.knowledgetree.util.WikiEntityUtil;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
  * Class to encapsulate all page content on a wikipedia article, including events, categories and html.
  */
-@NodeEntity
 public class PageContent {
 
     String pageText;
     private String title;
     String html;
     String lifeSpan; //  life_span = 754–1870
-
-    @Relationship(type = "HAPPENED_IN", direction = "INCOMING")
     Set<Event> events;// within Infobox : event2 = [[Treaty of Venice]] (Independence from the Holy Roman Empire)
     Set<String> seeAlsoSet;// ==See also== section
-
-    @Relationship(type = "IN_CATEGORY")
     Set<Category> categories; // [[Category:Religion and government]]
-
     Map<String, String> keyValuesPairs;
     Event startEvent;
     Event endEvent;
-
-    @GraphId
-    private Long id;
-    public Long getId() {
-        return id;
-    }
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public PageContent() {
 
@@ -111,6 +91,21 @@ public class PageContent {
     }
     public void setCategories(Set<Category> categories) {
         this.categories = categories;
+    }
+
+    //Links
+    private List<Link> links;
+
+    public List<Link> getLinks() {
+        return links;
+    }
+
+    public void setLinks(List<Link> links) {
+        this.links = links;
+    }
+
+    public void sortLinksByScore() {
+        this.links = WikiEntityUtil.sortByComparator(links);
     }
 
     public void extractKeyValuePairsToContent() {

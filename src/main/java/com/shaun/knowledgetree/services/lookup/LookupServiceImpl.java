@@ -45,7 +45,6 @@ public class LookupServiceImpl implements LookupService {
             String html = null;
             html = wikiModel.render(page.toString());
             String content = page.getCurrentContent();
-            singularWikiEntity.setPage(page);
             String title = page.getTitle();
             singularWikiEntity.setTitle(title);
             singularWikiEntity.getPageContent().setTitle(title);
@@ -56,7 +55,7 @@ public class LookupServiceImpl implements LookupService {
             singularWikiEntity.getPageContent().extractSeeAlsoSet();
             singularWikiEntity.getPageContent().setHtml(html);
             singularWikiEntity.setExternalLinks(extractExternalLinksFromHtml(html));
-            singularWikiEntity.setLinks(relevanceServiceImpl.assignScoreToEntity(singularWikiEntity,singularWikiEntity,wikiModel.getLinks()));
+            singularWikiEntity.getPageContent().setLinks(relevanceServiceImpl.assignScoreToEntity(singularWikiEntity, singularWikiEntity, wikiModel.getLinks()));
         });
         return singularWikiEntity;
     }
@@ -87,7 +86,6 @@ public class LookupServiceImpl implements LookupService {
             String title = page.getTitle();
             singularWikiEntity.setTitle(title);
             singularWikiEntity.getPageContent().setTitle(title);
-            singularWikiEntity.setPage(page);
             singularWikiEntity.getPageContent().setPageText(content);
             singularWikiEntity.getPageContent().setHtml(html);
             singularWikiEntity.setExternalLinks(extractExternalLinksFromHtml(html));
@@ -95,10 +93,9 @@ public class LookupServiceImpl implements LookupService {
             singularWikiEntity.getPageContent().setKeyValuesPairs(pageContentServiceImpl.extractKeyValuePairs(content));
             singularWikiEntity.getPageContent().extractKeyValuePairsToContent();
             singularWikiEntity.getPageContent().extractSeeAlsoSet();
-            singularWikiEntity.setLinks(relevanceServiceImpl.assignScoreToEntity(singularWikiEntity,rootEntity,wikiModel.getLinks()));
+            singularWikiEntity.getPageContent().setLinks(relevanceServiceImpl.assignScoreToEntity(singularWikiEntity, rootEntity, wikiModel.getLinks()));
             toReturn.add(singularWikiEntity);
         }
-
         return toReturn;
     }
 
@@ -108,9 +105,9 @@ public class LookupServiceImpl implements LookupService {
         List<String> titles = new ArrayList<>();
 
         //We sort the hash map by score before passing to find pages to get the top ten
-        parent.sortLinksByScore();
+        parent.getPageContent().sortLinksByScore();
 
-        titles.addAll(parent.getLinks().keySet());
+        parent.getPageContent().getLinks().stream().forEach(link -> titles.add(link.getLinkText()));
 
         //Find the set of entities from this object, then set its parent,root and depth
         Set<SingularWikiEntity> wikiEntitySet = findPages(titles,rootEntity);
