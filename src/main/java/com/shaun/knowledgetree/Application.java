@@ -1,5 +1,6 @@
 package com.shaun.knowledgetree;
 
+import com.shaun.knowledgetree.domain.Graph;
 import com.shaun.knowledgetree.model.SingularWikiEntity;
 import com.shaun.knowledgetree.domain.SingularWikiEntityDto;
 import com.shaun.knowledgetree.services.MovieService;
@@ -7,6 +8,7 @@ import com.shaun.knowledgetree.services.Neo4jServices;
 import com.shaun.knowledgetree.services.SingularWikiEntityDtoBuilder;
 import com.shaun.knowledgetree.services.entities.WikiEntitiesServicesImpl;
 import com.shaun.knowledgetree.services.lookup.LookupServiceImpl;
+import com.shaun.knowledgetree.util.Common;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -53,13 +55,17 @@ public class Application extends WebMvcConfigurerAdapter implements CommandLineR
     @Override
     public void run(String... strings) throws Exception {
 
+
+        Graph graph = new Graph();
+
         //Find root
         SingularWikiEntity rootEntity = lookupServiceImpl.findRoot("Papal States");
         rootEntity.setDepthFromRoot(0);
 
-        SingularWikiEntityDto testEntity = singularWikiEntityDtoBuilder.convertRoot(rootEntity);
-        testEntity.setTitle("Test");
-        neo4jServices.saveSingularWikiEntity(testEntity);
+        SingularWikiEntityDto rootEntityDto = singularWikiEntityDtoBuilder.convertRoot(rootEntity);
+        graph.getEntities().add(rootEntityDto);
+
+//        neo4jServices.saveSingularWikiEntity(rootEntityDto);
 
         //SingularWikiEntity rootEntity = lookupServiceImpl.findRoot("Theocracy");
 
@@ -67,11 +73,15 @@ public class Application extends WebMvcConfigurerAdapter implements CommandLineR
         Set<SingularWikiEntity> firstEntities = lookupServiceImpl.findEntities(rootEntity, rootEntity);
 
         firstEntities.forEach(singularWikiEntity -> {
-            neo4jServices.saveSingularWikiEntity(singularWikiEntityDtoBuilder.convert(singularWikiEntity));
+            graph.getEntities().add(singularWikiEntityDtoBuilder.convert(singularWikiEntity));
+//            neo4jServices.saveSingularWikiEntity(singularWikiEntityDtoBuilder.convert(singularWikiEntity));
         });
 
+        neo4jServices.saveGraph(graph);
+        System.out.println("Graph saved.");
+
         //Second layer is a set size 100
-        Set<SingularWikiEntity> allSecondLayerEntities = wikiEntitiesServicesImpl.getSetOfEntitiesFromWikiEntities(firstEntities, rootEntity);
+//        Set<SingularWikiEntity> allSecondLayerEntities = wikiEntitiesServicesImpl.getSetOfEntitiesFromWikiEntities(firstEntities, rootEntity);
 
     }
 }

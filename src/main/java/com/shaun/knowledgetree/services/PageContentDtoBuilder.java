@@ -26,7 +26,7 @@ public class PageContentDtoBuilder {
         pageContentDto.setLifeSpan(pageContent.getLifeSpan());
         pageContentDto.setSeeAlsoSet(pageContent.getSeeAlsoSet());
         pageContentDto.setPageText(pageContent.getPageText());
-        pageContentDto.setLinks(pageContent.getLinks());
+//        pageContentDto.setLinks(pageContent.getLinks());
         pageContentDto.setKeyValuesPairs(convertKeyValuePairsToNeo4jFormat(pageContent.getKeyValuesPairs()));
         return pageContentDto;
     }

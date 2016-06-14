@@ -4,6 +4,7 @@ public enum CypherQueries {
 
 
     DELETE_ALL_NODES_AND_RELATIONSHIPS("MATCH (n) DETACH DELETE n"),
+    MATCH_ALL_NODES_NOT_WITH_LABEL("MATCH (n) WHERE NOT n:%s RETURN n"),
     GET_ALL_NODES("MATCH (n) RETURN n");
     private String query;
 
