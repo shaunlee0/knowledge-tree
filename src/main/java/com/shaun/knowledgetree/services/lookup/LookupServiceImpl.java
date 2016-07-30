@@ -15,9 +15,6 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * Created by Shaun on 23/04/2016.
- */
 @Component
 public class LookupServiceImpl implements LookupService {
 

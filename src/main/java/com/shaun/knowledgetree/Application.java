@@ -80,6 +80,8 @@ public class Application extends WebMvcConfigurerAdapter implements CommandLineR
         neo4jServices.saveGraph(graph);
         System.out.println("Graph saved.");
 
+        Common.findLinksAndOccurences();
+
         //Second layer is a set size 100
 //        Set<SingularWikiEntity> allSecondLayerEntities = wikiEntitiesServicesImpl.getSetOfEntitiesFromWikiEntities(firstEntities, rootEntity);
 
