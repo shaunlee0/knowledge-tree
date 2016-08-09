@@ -3,11 +3,14 @@ package com.shaun.knowledgetree.services.lookup;
 import com.shaun.knowledgetree.model.SingularWikiEntity;
 import com.shaun.knowledgetree.services.pageContent.PageContentServiceImpl;
 import com.shaun.knowledgetree.services.relevance.RelevanceServiceImpl;
+import info.bliki.api.Connector;
 import info.bliki.api.Page;
+import info.bliki.api.PageInfo;
 import info.bliki.api.User;
 import info.bliki.wiki.model.WikiModel;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -24,7 +27,7 @@ public class LookupServiceImpl implements LookupService {
     private User user;
 
     public LookupServiceImpl() {
-        this.user = new User("", "", "http://en.wikipedia.org/w/api.php");
+        this.user = new User("", "", "https://en.wikipedia.org/w/api.php");
         user.login();
         this.pageContentServiceImpl = new PageContentServiceImpl();
         this.relevanceServiceImpl = new RelevanceServiceImpl();
@@ -36,11 +39,14 @@ public class LookupServiceImpl implements LookupService {
         String[] listOfTitleStrings = {searchPhrase};
 
         List<Page> listOfPages = user.queryContent(listOfTitleStrings);
-
         listOfPages.parallelStream().forEach(page -> {
             WikiModel wikiModel = new WikiModel("${image}", "${title}");
             String html = null;
-            html = wikiModel.render(page.toString());
+            try {
+                html = wikiModel.render(page.toString());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             String content = page.getCurrentContent();
             String title = page.getTitle();
             singularWikiEntity.setTitle(title);
@@ -56,9 +62,6 @@ public class LookupServiceImpl implements LookupService {
         });
         return singularWikiEntity;
     }
-
-
-
 
     @Override
     public Set<SingularWikiEntity> findPages(List<String> titles, SingularWikiEntity rootEntity) throws InterruptedException {
@@ -78,7 +81,11 @@ public class LookupServiceImpl implements LookupService {
             singularWikiEntity.setRootEntity(rootEntity);
             WikiModel wikiModel = new WikiModel("${image}", "${title}");
             String html = null;
-            html = wikiModel.render(page.toString());
+            try {
+                html = wikiModel.render(page.toString());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             String content = page.getCurrentContent();
             String title = page.getTitle();
             singularWikiEntity.setTitle(title);
