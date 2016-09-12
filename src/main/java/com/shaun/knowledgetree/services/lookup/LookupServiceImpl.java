@@ -42,11 +42,7 @@ public class LookupServiceImpl implements LookupService {
         listOfPages.parallelStream().forEach(page -> {
             WikiModel wikiModel = new WikiModel("${image}", "${title}");
             String html = null;
-            try {
-                html = wikiModel.render(page.toString());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            html = wikiModel.render(page.toString());
             String content = page.getCurrentContent();
             String title = page.getTitle();
             singularWikiEntity.setTitle(title);
@@ -81,11 +77,7 @@ public class LookupServiceImpl implements LookupService {
             singularWikiEntity.setRootEntity(rootEntity);
             WikiModel wikiModel = new WikiModel("${image}", "${title}");
             String html = null;
-            try {
-                html = wikiModel.render(page.toString());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            html = wikiModel.render(page.toString());
             String content = page.getCurrentContent();
             String title = page.getTitle();
             singularWikiEntity.setTitle(title);

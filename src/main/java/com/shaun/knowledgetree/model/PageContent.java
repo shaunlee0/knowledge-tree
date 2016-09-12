@@ -158,18 +158,16 @@ public class PageContent {
                             .filter(seeAlso -> seeAlso.contains("[[") && seeAlso.length() < 70 && !seeAlso.contains("<!--"))
                             .collect(Collectors.toSet());
 
-                    seeAlsoSet.stream().forEach(str -> {
+                    seeAlsoSet.forEach(str -> {
                                 str.trim();
                                 str.replace("''", "");
                             }
                     );
 
-                    System.out.println("See also set for " + title);
-                    seeAlsoSet.stream().forEach(System.out::println);
+                    seeAlsoSet.forEach(System.out::println);
                 }
             }
         } catch (Exception e) {
-            System.out.println("Something fucked up");
             e.printStackTrace();
         }
 

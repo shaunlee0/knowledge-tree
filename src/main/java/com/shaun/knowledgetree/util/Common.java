@@ -3,8 +3,7 @@ package com.shaun.knowledgetree.util;
 import com.shaun.knowledgetree.domain.Link;
 import com.shaun.knowledgetree.domain.SingularWikiEntityDto;
 
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class Common {
 
@@ -27,13 +26,32 @@ public class Common {
         Common.allEntities = allEntities;
     }
 
-    private static HashMap<String, Integer> allLinksAndOccurences = new HashMap<>();
+    private static HashMap<String, Integer> allLinksAndOccurences = new LinkedHashMap<>();
 
     public static void findLinksAndOccurences() {
-        allEntities.keySet().stream().forEach(key -> {
+        //for all entities
+        allEntities.keySet().forEach(key -> {
+            //for each one, get links
             List<Link> entityLinks = allEntities.get(key).getPageContent().getLinks();
-            entityLinks.forEach(link -> allLinksAndOccurences.put(link.getLinkText(), occurrenceOfLink(link.getLinkText())));
+
+            entityLinks.forEach(link ->
+                    allLinksAndOccurences.put(link.getLinkText(), occurrenceOfLink(link.getLinkText())));
         });
+
+//        Set<String> linksKeySet = allLinksAndOccurences.keySet();
+//        for (String link : linksKeySet) {
+//            int linkOccurrences = allLinksAndOccurences.get(link);
+//            if (linkOccurrences > 1){
+//                System.out.println(link + " has showed up " + linkOccurrences + " times");
+//            }
+//        }
+
+        allLinksAndOccurences.entrySet().stream()
+                .sorted(Map.Entry.comparingByValue())
+                .forEach(stringIntegerEntry -> System.out.println(stringIntegerEntry.getKey() + " = " + stringIntegerEntry.getValue()));
+
+        System.out.println(allLinksAndOccurences);
+
     }
 
     private static Integer occurrenceOfLink(String linkText) {

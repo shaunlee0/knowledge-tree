@@ -59,7 +59,8 @@ public class Application extends WebMvcConfigurerAdapter implements CommandLineR
         Graph graph = new Graph();
 
         //Find root
-        SingularWikiEntity rootEntity = lookupServiceImpl.findRoot("Papal States");
+//        SingularWikiEntity rootEntity = lookupServiceImpl.findRoot("Papal States");
+        SingularWikiEntity rootEntity = lookupServiceImpl.findRoot("World War II");
         rootEntity.setDepthFromRoot(0);
 
         SingularWikiEntityDto rootEntityDto = singularWikiEntityDtoBuilder.convertRoot(rootEntity);
