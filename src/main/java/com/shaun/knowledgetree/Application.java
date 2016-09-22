@@ -56,15 +56,14 @@ public class Application extends WebMvcConfigurerAdapter implements CommandLineR
     public void run(String... strings) throws Exception {
 
 
-        Graph graph = new Graph();
+        Common.setGraph(new Graph());
 
         //Find root
-//        SingularWikiEntity rootEntity = lookupServiceImpl.findRoot("Papal States");
-        SingularWikiEntity rootEntity = lookupServiceImpl.findRoot("World War II");
+        SingularWikiEntity rootEntity = lookupServiceImpl.findRoot("Papal States");
         rootEntity.setDepthFromRoot(0);
 
         SingularWikiEntityDto rootEntityDto = singularWikiEntityDtoBuilder.convertRoot(rootEntity);
-        graph.getEntities().add(rootEntityDto);
+        Common.getGraph().getEntities().add(rootEntityDto);
 
 //        neo4jServices.saveSingularWikiEntity(rootEntityDto);
 
@@ -74,11 +73,11 @@ public class Application extends WebMvcConfigurerAdapter implements CommandLineR
         Set<SingularWikiEntity> firstEntities = lookupServiceImpl.findEntities(rootEntity, rootEntity);
 
         firstEntities.forEach(singularWikiEntity -> {
-            graph.getEntities().add(singularWikiEntityDtoBuilder.convert(singularWikiEntity));
+            Common.getGraph().getEntities().add(singularWikiEntityDtoBuilder.convert(singularWikiEntity));
 //            neo4jServices.saveSingularWikiEntity(singularWikiEntityDtoBuilder.convert(singularWikiEntity));
         });
 
-        neo4jServices.saveGraph(graph);
+        neo4jServices.saveGraph(Common.getGraph());
         System.out.println("Graph saved.");
 
         Common.findLinksAndOccurences();

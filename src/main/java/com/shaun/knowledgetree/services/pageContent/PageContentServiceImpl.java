@@ -1,18 +1,27 @@
 package com.shaun.knowledgetree.services.pageContent;
 
 import com.shaun.knowledgetree.domain.Category;
+import com.shaun.knowledgetree.domain.Graph;
+import com.shaun.knowledgetree.util.Common;
 import org.jsoup.Jsoup;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by Shaun on 29/05/2016.
  */
 public class PageContentServiceImpl implements PageContentService {
 
+    /**
+     * Method to extract the categories from the page content.
+     * This is done by grepping the categories from the content,
+     * checking these categories do not already exist within the global
+     * categories, if they do retrieve that category and return it
+     * if not add it then return it.
+     *
+     * @param pageText : Page text being parsed for categories.
+     * @return : The set of categories to be returned and added to the page content
+     */
     @Override
     public Set<Category> extractCategories(String pageText) {
         Set<Category> toReturn = new HashSet<>();
@@ -23,7 +32,22 @@ public class PageContentServiceImpl implements PageContentService {
             if (indexOfEndOfCategory != -1) {
                 categories[i] = categories[i].substring(0, indexOfEndOfCategory);
             }
-            toReturn.add(new Category(categories[i]));
+
+            boolean categoryFoundInAllCategories = false;
+
+            for (Category category : Common.getGraph().getAllCategories()) {
+                if (category.getName().equals(categories[i])) {
+                    toReturn.add(category);
+                    categoryFoundInAllCategories = true;
+                }
+            }
+
+            if (!categoryFoundInAllCategories) {
+                Category newCategoryFound = new Category(categories[i]);
+                Common.getGraph().getAllCategories().add(newCategoryFound);
+                toReturn.add(newCategoryFound);
+            }
+
         }
         return toReturn;
     }

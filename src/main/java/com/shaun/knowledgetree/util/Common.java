@@ -1,5 +1,6 @@
 package com.shaun.knowledgetree.util;
 
+import com.shaun.knowledgetree.domain.Graph;
 import com.shaun.knowledgetree.domain.Link;
 import com.shaun.knowledgetree.domain.SingularWikiEntityDto;
 
@@ -7,6 +8,7 @@ import java.util.*;
 
 public class Common {
 
+    private static Graph graph;
     private static SingularWikiEntityDto rootEntity;
     public static HashMap<String, SingularWikiEntityDto> allEntities = new HashMap<>();
 
@@ -16,6 +18,14 @@ public class Common {
 
     public static void setRootEntity(SingularWikiEntityDto rootEntity) {
         Common.rootEntity = rootEntity;
+    }
+
+    public static Graph getGraph() {
+        return graph;
+    }
+
+    public static void setGraph(Graph graph) {
+        Common.graph = graph;
     }
 
     public static HashMap<String, SingularWikiEntityDto> getAllEntities() {

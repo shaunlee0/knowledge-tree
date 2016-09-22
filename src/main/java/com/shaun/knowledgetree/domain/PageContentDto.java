@@ -85,31 +85,24 @@ public class PageContentDto {
     public String getLifeSpan() {
         return lifeSpan;
     }
-
     public void setLifeSpan(String lifeSpan) {
         this.lifeSpan = lifeSpan;
     }
-
     public Event getStartEvent() {
         return startEvent;
     }
-
     public void setStartEvent(Event startEvent) {
         this.startEvent = startEvent;
     }
-
     public Event getEndEvent() {
         return endEvent;
     }
-
     public void setEndEvent(Event endEvent) {
         this.endEvent = endEvent;
     }
-
     public Set<Event> getEvents() {
         return events;
     }
-
     public void setEvents(Set<Event> events) {
         this.events = events;
     }
@@ -118,7 +111,6 @@ public class PageContentDto {
     public Set<String> getSeeAlsoSet() {
         return seeAlsoSet;
     }
-
     public void setSeeAlsoSet(Set<String> seeAlsoSet) {
         this.seeAlsoSet = seeAlsoSet;
     }
@@ -127,7 +119,6 @@ public class PageContentDto {
     public Set<Category> getCategories() {
         return categories;
     }
-
     public void setCategories(Set<Category> categories) {
         this.categories = categories;
     }
@@ -136,7 +127,6 @@ public class PageContentDto {
     public List<Link> getLinks() {
         return links;
     }
-
     public void setLinks(List<Link> links) {
         this.links = links;
     }

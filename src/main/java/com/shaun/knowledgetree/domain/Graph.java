@@ -23,8 +23,9 @@ public class Graph {
         this.id = id;
     }
 
-    private Set<SingularWikiEntityDto> entities = new HashSet<>();
+    private Set<Category> allCategories = new HashSet<>();
 
+    private Set<SingularWikiEntityDto> entities = new HashSet<>();
     public Set<SingularWikiEntityDto> getEntities() {
         System.out.println(entities.size());
         return entities;
@@ -32,5 +33,13 @@ public class Graph {
 
     public void setEntities(Set<SingularWikiEntityDto> entities) {
         this.entities = entities;
+    }
+
+    public Set<Category> getAllCategories() {
+        return allCategories;
+    }
+
+    public void setAllCategories(Set<Category> allCategories) {
+        this.allCategories = allCategories;
     }
 }
