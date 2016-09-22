@@ -23,6 +23,12 @@ public class Graph {
         this.id = id;
     }
 
+    public String searchTerm;
+
+    public Graph(String searchTerm) {
+        this.searchTerm = searchTerm;
+    }
+
     private Set<Category> allCategories = new HashSet<>();
 
     private Set<SingularWikiEntityDto> entities = new HashSet<>();
@@ -41,5 +47,13 @@ public class Graph {
 
     public void setAllCategories(Set<Category> allCategories) {
         this.allCategories = allCategories;
+    }
+
+    public String getSearchTerm() {
+        return searchTerm;
+    }
+
+    public void setSearchTerm(String searchTerm) {
+        this.searchTerm = searchTerm;
     }
 }

@@ -54,7 +54,11 @@ public class SingularWikiEntityDto {
         return parent;
     }
     public void setParent(SingularWikiEntityDto parent) {
-        this.parent = parent;
+
+        //Only add parent if it is not root otherwise we get redundant nodes in graph
+        if (!parent.getTitle().equals(rootEntity.getTitle())) {
+            this.parent = parent;
+        }
     }
 
     //Root

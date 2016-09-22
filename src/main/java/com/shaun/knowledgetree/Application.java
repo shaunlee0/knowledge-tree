@@ -55,11 +55,12 @@ public class Application extends WebMvcConfigurerAdapter implements CommandLineR
     @Override
     public void run(String... strings) throws Exception {
 
+        String searchTerm = "Papal States";
 
-        Common.setGraph(new Graph());
+        Common.setGraph(new Graph(searchTerm));
 
         //Find root
-        SingularWikiEntity rootEntity = lookupServiceImpl.findRoot("Papal States");
+        SingularWikiEntity rootEntity = lookupServiceImpl.findRoot(searchTerm);
         rootEntity.setDepthFromRoot(0);
 
         SingularWikiEntityDto rootEntityDto = singularWikiEntityDtoBuilder.convertRoot(rootEntity);
