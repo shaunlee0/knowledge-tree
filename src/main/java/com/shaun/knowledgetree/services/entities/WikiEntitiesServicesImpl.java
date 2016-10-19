@@ -16,17 +16,24 @@ public class WikiEntitiesServicesImpl implements WikiEntitiesServices {
 
     private LookupServiceImpl lookupServiceImpl = new LookupServiceImpl();
 
+    /**
+     * For each entity in the set passed in we aggregate all the children we find and then return them.
+     *
+     * @param inputEntities : Set of entities to find children for
+     * @param rootEntity    : used to set root entity.
+     * @return : Set of child entities combined for every element in the input set.
+     */
     @Override
-    public Set<SingularWikiEntity> getSetOfEntitiesFromWikiEntities(Set<SingularWikiEntity> firstEntities, SingularWikiEntity rootEntity) {
+    public Set<SingularWikiEntity> aggregateAndReturnChildrenFromSetOfEntities(Set<SingularWikiEntity> inputEntities, SingularWikiEntity rootEntity) {
         Set<SingularWikiEntity> toReturn = new HashSet<>();
 
         try {
             int count = 1;
-            int toDo = firstEntities.size();
+            int toDo = inputEntities.size();
 
             StopWatch stopWatch = new StopWatch();
 
-            for (SingularWikiEntity firstLayerEntity : firstEntities) {
+            for (SingularWikiEntity firstLayerEntity : inputEntities) {
                 stopWatch.start(firstLayerEntity.getTitle());
                 Set<SingularWikiEntity> childEntities = lookupServiceImpl.findEntities(firstLayerEntity,rootEntity);
                 toReturn.addAll(childEntities);

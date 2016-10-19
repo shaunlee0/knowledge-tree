@@ -16,5 +16,5 @@ public interface WikiEntitiesServices {
      * @param rootEntity : used to set root entity.
      * @return : Set comprising of all entities related to the set passed in.
      */
-    Set<SingularWikiEntity> getSetOfEntitiesFromWikiEntities(Set<SingularWikiEntity> firstEntities, SingularWikiEntity rootEntity);
+    Set<SingularWikiEntity> aggregateAndReturnChildrenFromSetOfEntities(Set<SingularWikiEntity> firstEntities, SingularWikiEntity rootEntity);
 }

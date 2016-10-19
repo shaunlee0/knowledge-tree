@@ -1,8 +1,7 @@
-package com.shaun.knowledgetree.services;
+package com.shaun.knowledgetree.util;
 
 import com.shaun.knowledgetree.model.SingularWikiEntity;
 import com.shaun.knowledgetree.domain.SingularWikiEntityDto;
-import com.shaun.knowledgetree.util.Common;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

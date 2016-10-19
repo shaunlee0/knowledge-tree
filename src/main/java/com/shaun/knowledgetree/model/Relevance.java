@@ -1,6 +1,7 @@
 package com.shaun.knowledgetree.model;
 
 import com.shaun.knowledgetree.model.SingularWikiEntity;
+import com.shaun.knowledgetree.util.Common;
 import org.neo4j.ogm.annotation.GraphId;
 import org.neo4j.ogm.annotation.NodeEntity;
 
@@ -8,16 +9,19 @@ import org.neo4j.ogm.annotation.NodeEntity;
  * Created by Shaun Lee on 14/05/2016.
  * This class is designed to signify the relevance of a specific SingularWikiEntity
  */
-
 public class Relevance {
 
-    private double score;
+    private float score;
     private SingularWikiEntity wikiBeingEvaluated;
 
 
     public Relevance(SingularWikiEntity wikiBeingEvaluated){
-        this.score = 0.0;
+        this.score = 0.0f;
         this.wikiBeingEvaluated = wikiBeingEvaluated;
+    }
+
+    public void evaluateRelevance() {
+
     }
 
 
@@ -31,11 +35,11 @@ public class Relevance {
                 break;
             case 2:
                 //Retain three quarters of the score
-                score = score * 0.75;
+                score = score * 0.75f;
                 break;
             case 3:
                 //Retain one half of the score
-                score = score * 0.5;
+                score = score * 0.5f;
         }
     }
 
@@ -47,11 +51,11 @@ public class Relevance {
         this.wikiBeingEvaluated = wikiBeingEvaluated;
     }
 
-    public double getScore() {
+    public float getScore() {
         return score;
     }
 
-    public void setScore(double score) {
+    public void setScore(float score) {
         this.score = score;
     }
 }

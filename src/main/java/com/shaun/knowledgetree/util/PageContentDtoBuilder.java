@@ -1,4 +1,4 @@
-package com.shaun.knowledgetree.services;
+package com.shaun.knowledgetree.util;
 
 import com.shaun.knowledgetree.model.PageContent;
 import com.shaun.knowledgetree.domain.PageContentDto;

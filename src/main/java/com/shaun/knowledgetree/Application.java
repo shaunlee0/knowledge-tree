@@ -5,7 +5,7 @@ import com.shaun.knowledgetree.model.SingularWikiEntity;
 import com.shaun.knowledgetree.domain.SingularWikiEntityDto;
 import com.shaun.knowledgetree.services.MovieService;
 import com.shaun.knowledgetree.services.Neo4jServices;
-import com.shaun.knowledgetree.services.SingularWikiEntityDtoBuilder;
+import com.shaun.knowledgetree.util.SingularWikiEntityDtoBuilder;
 import com.shaun.knowledgetree.services.entities.WikiEntitiesServicesImpl;
 import com.shaun.knowledgetree.services.lookup.LookupServiceImpl;
 import com.shaun.knowledgetree.util.Common;
@@ -66,16 +66,12 @@ public class Application extends WebMvcConfigurerAdapter implements CommandLineR
         SingularWikiEntityDto rootEntityDto = singularWikiEntityDtoBuilder.convertRoot(rootEntity);
         Common.getGraph().getEntities().add(rootEntityDto);
 
-//        neo4jServices.saveSingularWikiEntity(rootEntityDto);
-
-        //SingularWikiEntity rootEntity = lookupServiceImpl.findRoot("Theocracy");
-
         //Our first layer is only a set of size 10
         Set<SingularWikiEntity> firstEntities = lookupServiceImpl.findEntities(rootEntity, rootEntity);
 
+        //For each wiki entity hanging off the route convert and add it to the graph
         firstEntities.forEach(singularWikiEntity -> {
             Common.getGraph().getEntities().add(singularWikiEntityDtoBuilder.convert(singularWikiEntity));
-//            neo4jServices.saveSingularWikiEntity(singularWikiEntityDtoBuilder.convert(singularWikiEntity));
         });
 
         neo4jServices.saveGraph(Common.getGraph());
@@ -84,7 +80,7 @@ public class Application extends WebMvcConfigurerAdapter implements CommandLineR
         Common.findLinksAndOccurences();
 
         //Second layer is a set size 100
-//        Set<SingularWikiEntity> allSecondLayerEntities = wikiEntitiesServicesImpl.getSetOfEntitiesFromWikiEntities(firstEntities, rootEntity);
+        Set<SingularWikiEntity> allSecondLayerEntities = wikiEntitiesServicesImpl.aggregateAndReturnChildrenFromSetOfEntities(firstEntities, rootEntity);
 
     }
 }

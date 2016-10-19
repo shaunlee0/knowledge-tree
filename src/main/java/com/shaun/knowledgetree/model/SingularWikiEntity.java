@@ -69,7 +69,7 @@ public class SingularWikiEntity  {
         this.title = title;
     }
 
-
+    //External Links
     public Set<String> getExternalLinks() {
         return externalLinks;
     }
