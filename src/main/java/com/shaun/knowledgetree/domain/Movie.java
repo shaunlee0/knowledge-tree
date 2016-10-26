@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.voodoodyne.jackson.jsog.JSOGGenerator;
+import org.neo4j.ogm.annotation.Relationship;
 
 //@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="id")
 @JsonIdentityInfo(generator=JSOGGenerator.class)
@@ -20,7 +21,8 @@ public class Movie {
     private int released;
     private String tagline;
 
-    @Relationship(type="ACTED_IN", direction = Relationship.INCOMING) private List<Role> roles;
+    @org.neo4j.ogm.annotation.Relationship(type = "ACTED_IN", direction = Relationship.INCOMING)
+    private List<Role> roles;
 
 // end::movie[]
 

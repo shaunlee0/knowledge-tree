@@ -1,9 +1,4 @@
-package com.shaun.knowledgetree.model;
-
-import com.shaun.knowledgetree.model.SingularWikiEntity;
-import com.shaun.knowledgetree.util.Common;
-import org.neo4j.ogm.annotation.GraphId;
-import org.neo4j.ogm.annotation.NodeEntity;
+package com.shaun.knowledgetree.article;
 
 /**
  * Created by Shaun Lee on 14/05/2016.

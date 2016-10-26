@@ -1,11 +1,11 @@
 package com.shaun.knowledgetree.domain;
 
-import com.shaun.knowledgetree.util.WikiEntityUtil;
-import info.bliki.api.Page;
+import com.shaun.knowledgetree.util.Common;
 import org.neo4j.ogm.annotation.GraphId;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -14,7 +14,6 @@ import java.util.Set;
  */
 @NodeEntity
 public class SingularWikiEntityDto {
-
 
     public Long getId() {
         return id;
@@ -35,13 +34,16 @@ public class SingularWikiEntityDto {
     @Relationship(type = "ROOT_ENTITY", direction = Relationship.OUTGOING)
     private SingularWikiEntityDto rootEntity;
 
-    @Relationship(type = "PARENT_ENTITY")
+    //    @Relationship(type = "PARENT_ENTITY")
     private SingularWikiEntityDto parent;
 
     private PageContentDto pageContent;
 
+    private List<com.shaun.knowledgetree.domain.Relationship> relatedEntities;
+
     public SingularWikiEntityDto() {
         this.pageContent = new PageContentDto();
+        this.relatedEntities = new ArrayList<>();
     }
 
     public SingularWikiEntityDto(SingularWikiEntityDto rootEntity, String title, Set<String> externalLinks) {
@@ -56,8 +58,10 @@ public class SingularWikiEntityDto {
     public void setParent(SingularWikiEntityDto parent) {
 
         //Only add parent if it is not root otherwise we get redundant nodes in graph
-        if (!parent.getTitle().equals(rootEntity.getTitle())) {
+        if (!parent.getTitle().equals(Common.getRootEntity().getTitle())) {
             this.parent = parent;
+        } else {
+            this.parent = Common.getRootEntity();
         }
     }
 
@@ -99,4 +103,12 @@ public class SingularWikiEntityDto {
         this.externalLinks = exterenalLinks;
     }
 
+    //Related Entities
+    public List<com.shaun.knowledgetree.domain.Relationship> getRelatedEntities() {
+        return relatedEntities;
+    }
+
+    public void setRelatedEntities(List<com.shaun.knowledgetree.domain.Relationship> relatedEntities) {
+        this.relatedEntities = relatedEntities;
+    }
 }

@@ -5,6 +5,7 @@ import com.shaun.knowledgetree.domain.Link;
 import com.shaun.knowledgetree.domain.SingularWikiEntityDto;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Common {
 
@@ -42,10 +43,10 @@ public class Common {
         //for all entities
         allEntities.keySet().forEach(key -> {
             //for each one, get links
-            List<Link> entityLinks = allEntities.get(key).getPageContent().getLinks();
+            Set<String> entityLinks = allEntities.get(key).getPageContent().getLinks();
 
             entityLinks.forEach(link ->
-                    allLinksAndOccurences.put(link.getLinkText(), occurrenceOfLink(link.getLinkText())));
+                    allLinksAndOccurences.put(link, occurrenceOfLink(link)));
         });
 
 //        Set<String> linksKeySet = allLinksAndOccurences.keySet();
@@ -56,9 +57,17 @@ public class Common {
 //            }
 //        }
 
-        allLinksAndOccurences.entrySet().stream()
-                .sorted(Map.Entry.comparingByValue())
-                .forEach(stringIntegerEntry -> System.out.println(stringIntegerEntry.getKey() + " = " + stringIntegerEntry.getValue()));
+        //Sort all links and occurences by descending order
+        allLinksAndOccurences = allLinksAndOccurences.entrySet().stream()
+                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (x, y) -> {
+                            throw new AssertionError();
+                        },
+                        LinkedHashMap::new
+                ));
 
         System.out.println(allLinksAndOccurences);
 

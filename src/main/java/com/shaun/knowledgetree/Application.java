@@ -1,7 +1,8 @@
 package com.shaun.knowledgetree;
 
 import com.shaun.knowledgetree.domain.Graph;
-import com.shaun.knowledgetree.model.SingularWikiEntity;
+import com.shaun.knowledgetree.domain.Relationship;
+import com.shaun.knowledgetree.article.SingularWikiEntity;
 import com.shaun.knowledgetree.domain.SingularWikiEntityDto;
 import com.shaun.knowledgetree.services.MovieService;
 import com.shaun.knowledgetree.services.Neo4jServices;
@@ -55,8 +56,8 @@ public class Application extends WebMvcConfigurerAdapter implements CommandLineR
     @Override
     public void run(String... strings) throws Exception {
 
+        neo4jServices.clearGraph();
         String searchTerm = "Papal States";
-
         Common.setGraph(new Graph(searchTerm));
 
         //Find root
@@ -64,23 +65,33 @@ public class Application extends WebMvcConfigurerAdapter implements CommandLineR
         rootEntity.setDepthFromRoot(0);
 
         SingularWikiEntityDto rootEntityDto = singularWikiEntityDtoBuilder.convertRoot(rootEntity);
+        Common.setRootEntity(rootEntityDto);
         Common.getGraph().getEntities().add(rootEntityDto);
 
         //Our first layer is only a set of size 10
         Set<SingularWikiEntity> firstEntities = lookupServiceImpl.findEntities(rootEntity, rootEntity);
 
-        //For each wiki entity hanging off the route convert and add it to the graph
+        //For each wiki entity hanging off the root(first entities) convert it and add it to the graph
         firstEntities.forEach(singularWikiEntity -> {
             Common.getGraph().getEntities().add(singularWikiEntityDtoBuilder.convert(singularWikiEntity));
         });
 
-        neo4jServices.saveGraph(Common.getGraph());
-        System.out.println("Graph saved.");
-
-        Common.findLinksAndOccurences();
-
-        //Second layer is a set size 100
+        //Second layer is a set size 100, converting all these and adding to graph
         Set<SingularWikiEntity> allSecondLayerEntities = wikiEntitiesServicesImpl.aggregateAndReturnChildrenFromSetOfEntities(firstEntities, rootEntity);
+        allSecondLayerEntities.forEach(singularWikiEntity -> {
+            Common.getGraph().getEntities().add(singularWikiEntityDtoBuilder.convert(singularWikiEntity));
+        });
 
+        Common.getGraph().getEntities().forEach(singularWikiEntityDto -> {
+            if (singularWikiEntityDto.getParent() != null) {
+                Relationship relationship = new Relationship(singularWikiEntityDto.getParent(), singularWikiEntityDto);
+                singularWikiEntityDto.getParent().getRelatedEntities().add(relationship);
+            }
+        });
+
+        neo4jServices.saveGraph(Common.getGraph());
+        neo4jServices.removeVerboseRelationships();
+        System.out.println("Graph saved.");
+        Common.findLinksAndOccurences();
     }
 }

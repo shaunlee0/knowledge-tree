@@ -1,7 +1,10 @@
-package com.shaun.knowledgetree.model;
+package com.shaun.knowledgetree.article;
 
+import com.shaun.knowledgetree.domain.Relationship;
 import info.bliki.api.Page;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 
@@ -20,15 +23,25 @@ public class SingularWikiEntity  {
 
     private PageContent pageContent;
 
+    private List<Relationship> relatedEntities;
+
     public SingularWikiEntity() {
         this.pageContent = new PageContent();
+        this.relatedEntities = new ArrayList<>();
     }
 
-    public SingularWikiEntity(SingularWikiEntity rootEntity, Page page, String title, Set<String> externalLinks) {
+    public SingularWikiEntity(Page page, String title, Set<String> externalLinks) {
         this.page = page;
         this.title = title;
         this.externalLinks = externalLinks;
+    }
 
+    public List<Relationship> getRelatedEntities() {
+        return relatedEntities;
+    }
+
+    public void setRelatedEntities(List<Relationship> relatedEntities) {
+        this.relatedEntities = relatedEntities;
     }
 
     //Parent

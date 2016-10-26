@@ -1,9 +1,7 @@
-package com.shaun.knowledgetree.model;
+package com.shaun.knowledgetree.article;
 
 import com.shaun.knowledgetree.domain.Category;
 import com.shaun.knowledgetree.domain.Event;
-import com.shaun.knowledgetree.domain.Link;
-import com.shaun.knowledgetree.util.WikiEntityUtil;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -97,16 +95,16 @@ public class PageContent {
     }
 
     //Links
-    private List<Link> links;
-    public List<Link> getLinks() {
+    private Set<String> links;
+
+    public Set<String> getLinks() {
         return links;
     }
-    public void setLinks(List<Link> links) {
+
+    public void setLinks(Set<String> links) {
         this.links = links;
     }
-    public void sortLinksByScore() {
-        this.links = WikiEntityUtil.sortByComparator(links);
-    }
+
     public void extractKeyValuePairsToContent() {
         events = new HashSet<>();
         lifeSpan = keyValuesPairs.get("life_span");

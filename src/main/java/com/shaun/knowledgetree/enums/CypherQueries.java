@@ -6,6 +6,10 @@ public enum CypherQueries {
     DELETE_ALL_NODES_AND_RELATIONSHIPS("MATCH (n) DETACH DELETE n"),
     MATCH_ALL_NODES_NOT_WITH_LABEL("MATCH (n) WHERE NOT n:%s RETURN n"),
     MATCH_ALL_CATEGORIES_WITH_ELEMENTS_IN_IT("MATCH (n:Category)<-[:IN_CATEGORY]-() RETURN n"),
+    MATCH_AN_ENTITY_WITH_A_GIVEN_TITLE("Match (n:SingularWikiEntityDto) where n.title = '%s' return n"),
+    FIND_ROOT_ENTITY("Match (n:SingularWikiEntityDto),(g:Graph) " +
+            " where n.title = g.searchTerm " +
+            " return n"),
     RETURN_PAGE_CONTENTS_THAT_ARE_IN_CATEGORIES("MATCH (n:Category)<-[:IN_CATEGORY]-(o:PageContentDto) RETURN o limit 5"),
     MATCH_ALL_ELEMENTS_WITH_SAME_NAME_THAT_SHOWED_UP_MORE_THAN_ONCE("start n=node(*) " +
             "where exists(n.name) " +

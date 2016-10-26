@@ -1,6 +1,6 @@
 package com.shaun.knowledgetree.services.lookup;
 
-import com.shaun.knowledgetree.model.SingularWikiEntity;
+import com.shaun.knowledgetree.article.SingularWikiEntity;
 
 import java.util.List;
 import java.util.Set;

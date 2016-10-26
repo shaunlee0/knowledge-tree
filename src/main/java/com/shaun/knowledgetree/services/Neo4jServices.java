@@ -27,4 +27,14 @@ public class Neo4jServices {
     public void saveGraph(Graph graph) {
         graphMapRepository.save(graph);
     }
+
+    public void clearGraph() {
+        graphMapRepository.deleteAllNodesAndRelationShips();
+    }
+
+    public void removeVerboseRelationships() {
+        graphMapRepository.removeRootEntityRelationships();
+        graphMapRepository.removeGraphEntitiesRelationships();
+        graphMapRepository.removeParentRelationships();
+    }
 }

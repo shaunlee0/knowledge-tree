@@ -1,16 +1,13 @@
 package com.shaun.knowledgetree.services.lookup;
 
-import com.shaun.knowledgetree.model.SingularWikiEntity;
+import com.shaun.knowledgetree.article.SingularWikiEntity;
 import com.shaun.knowledgetree.services.pageContent.PageContentServiceImpl;
 import com.shaun.knowledgetree.services.relevance.RelevanceServiceImpl;
-import info.bliki.api.Connector;
 import info.bliki.api.Page;
-import info.bliki.api.PageInfo;
 import info.bliki.api.User;
 import info.bliki.wiki.model.WikiModel;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -54,7 +51,7 @@ public class LookupServiceImpl implements LookupService {
             singularWikiEntity.getPageContent().extractSeeAlsoSet();
             singularWikiEntity.getPageContent().setHtml(html);
             singularWikiEntity.setExternalLinks(extractExternalLinksFromHtml(html));
-            singularWikiEntity.getPageContent().setLinks(relevanceServiceImpl.assignScoreToEntity(singularWikiEntity, singularWikiEntity, wikiModel.getLinks()));
+            singularWikiEntity.getPageContent().setLinks(wikiModel.getLinks());
         });
         return singularWikiEntity;
     }
@@ -89,25 +86,31 @@ public class LookupServiceImpl implements LookupService {
             singularWikiEntity.getPageContent().setKeyValuesPairs(pageContentServiceImpl.extractKeyValuePairs(content));
             singularWikiEntity.getPageContent().extractKeyValuePairsToContent();
             singularWikiEntity.getPageContent().extractSeeAlsoSet();
-            singularWikiEntity.getPageContent().setLinks(relevanceServiceImpl.assignScoreToEntity(singularWikiEntity, rootEntity, wikiModel.getLinks()));
+            singularWikiEntity.getPageContent().setLinks(wikiModel.getLinks());
             toReturn.add(singularWikiEntity);
         }
         return toReturn;
     }
 
+    /**
+     * Pass in parent and root, get links from parent add them to titles to search.
+     * Carry out search on these titles, setting depth from root, aggregate and return found entities.
+     *
+     * @param parent     - Parent, we use this as starting point.
+     * @param rootEntity - root to set root to new entities.
+     * @return - Aggregated group of entities we find.
+     */
     @Override
     public Set<SingularWikiEntity> findEntities(SingularWikiEntity parent, SingularWikiEntity rootEntity) throws InterruptedException {
 
         List<String> titles = new ArrayList<>();
 
-        //We sort the hash map by score before passing to find pages to get the top ten
-        parent.getPageContent().sortLinksByScore();
-
-        parent.getPageContent().getLinks().stream().forEach(link -> titles.add(link.getLinkText()));
+        parent.getPageContent().getLinks().forEach(titles::add);
 
         //Find the set of entities from this object, then set its parent,root and depth
         Set<SingularWikiEntity> wikiEntitySet = findPages(titles,rootEntity);
-        wikiEntitySet.stream().forEach(wikiEntity ->{
+
+        wikiEntitySet.forEach(wikiEntity -> {
             wikiEntity.setParent(parent);
             wikiEntity.setRootEntity(rootEntity);
             wikiEntity.setDepthFromRoot(wikiEntity.getParent().getDepthFromRoot() + 1);

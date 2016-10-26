@@ -1,6 +1,6 @@
 package com.shaun.knowledgetree.util;
 
-import com.shaun.knowledgetree.model.SingularWikiEntity;
+import com.shaun.knowledgetree.article.SingularWikiEntity;
 import com.shaun.knowledgetree.domain.SingularWikiEntityDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -24,6 +24,7 @@ public class SingularWikiEntityDtoBuilder {
             singularWikiEntityDto.setPageContentDto(pageContentDtoBuilder.convert(singularWikiEntity.getPageContent()));
             singularWikiEntityDto.setRootEntity(Common.getRootEntity());
             singularWikiEntityDto.setParent(retrieveParent(singularWikiEntity.getParent()));
+            singularWikiEntityDto.setRelatedEntities(singularWikiEntity.getRelatedEntities());
             Common.allEntities.put(singularWikiEntityDto.getTitle(), singularWikiEntityDto);
         }
         //Otherwise just grab it.

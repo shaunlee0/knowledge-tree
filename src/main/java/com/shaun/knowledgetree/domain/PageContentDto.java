@@ -33,8 +33,7 @@ public class PageContentDto {
     @GraphId
     private Long id;
 
-    @Relationship(type = "LINKED_PAGES", direction = Relationship.INCOMING)
-    private List<Link> links;
+    private Set<String> links;
 
     public Long getId() {
         return id;
@@ -124,10 +123,11 @@ public class PageContentDto {
     }
 
     //Links
-    public List<Link> getLinks() {
+    public Set<String> getLinks() {
         return links;
     }
-    public void setLinks(List<Link> links) {
+
+    public void setLinks(Set<String> links) {
         this.links = links;
     }
 
