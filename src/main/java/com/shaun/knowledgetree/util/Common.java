@@ -69,7 +69,16 @@ public class Common {
                         LinkedHashMap::new
                 ));
 
-        System.out.println(allLinksAndOccurences);
+        System.out.println("Top ten occurring links over the search domain");
+        int count = 1;
+        for (Map.Entry<String, Integer> entry : allLinksAndOccurences.entrySet()) {
+            if (count > 10) {
+                break;
+            } else {
+                System.out.println(count + ". " + entry.getKey() + " : " + entry.getValue());
+            }
+            count++;
+        }
 
     }
 

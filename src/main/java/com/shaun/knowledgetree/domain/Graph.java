@@ -33,7 +33,6 @@ public class Graph {
 
     private Set<SingularWikiEntityDto> entities = new HashSet<>();
     public Set<SingularWikiEntityDto> getEntities() {
-        System.out.println(entities.size());
         return entities;
     }
 

@@ -161,8 +161,6 @@ public class PageContent {
                                 str.replace("''", "");
                             }
                     );
-
-                    seeAlsoSet.forEach(System.out::println);
                 }
             }
         } catch (Exception e) {
