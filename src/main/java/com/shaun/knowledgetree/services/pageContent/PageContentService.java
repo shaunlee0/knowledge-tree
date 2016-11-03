@@ -112,16 +112,8 @@ public class PageContentService {
             if (articleSplitOnStartNodeTitle.length > 1) {
                 String firstOccurenceChunk = articleSplitOnStartNodeTitle[0];
 
-                List<Character> escapeCharacters = new ArrayList<>();
-                escapeCharacters.add('n');
-                escapeCharacters.add('/');
+                //Find connection if string is valid.
 
-                int startOfSentenceIndex = 0;
-                char previousCharacter = firstOccurenceChunk.charAt(firstOccurenceChunk.length() - 1);
-                for (int i = firstOccurenceChunk.length() - 2; i <= 0; i--) {
-                    Character ch = firstOccurenceChunk.charAt(i);
-//                    if(Character.isUpperCase(ch) && firstOccurenceChunk.charAt())
-                }
             } else {
                 relationshipContent = "";
             }
