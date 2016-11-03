@@ -150,6 +150,14 @@ public class PageContent {
         this.links = links;
     }
 
+    public String getSummarySentance() {
+        return summarySentance;
+    }
+
+    public void setSummarySentance(String summarySentance) {
+        this.summarySentance = summarySentance;
+    }
+
     public void extractKeyValuePairsToContent() {
         events = new HashSet<>();
         lifeSpan = keyValuesPairs.get("life_span");

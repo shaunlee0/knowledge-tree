@@ -27,6 +27,7 @@ public class PageContentDtoBuilder {
         pageContentDto.setSeeAlsoSet(pageContent.getSeeAlsoSet());
         pageContentDto.setPageWikiText(pageContent.getPageWikiText());
         pageContentDto.setPagePlainText(pageContent.getPagePlainText());
+        pageContentDto.setSummarySentence(pageContent.getSummarySentance());
         pageContentDto.setLinks(pageContent.getLinks());
         pageContentDto.setKeyValuesPairs(convertKeyValuePairsToNeo4jFormat(pageContent.getKeyValuesPairs()));
         return pageContentDto;

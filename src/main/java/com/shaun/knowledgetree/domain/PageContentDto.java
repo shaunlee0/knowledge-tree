@@ -12,7 +12,7 @@ public class PageContentDto {
 
     String pageWikiText;
     String pagePlainText;
-
+    String summarySentence;
 
 
     private String title;
@@ -138,4 +138,11 @@ public class PageContentDto {
         this.pagePlainText = pagePlainText;
     }
 
+    public String getSummarySentence() {
+        return summarySentence;
+    }
+
+    public void setSummarySentence(String summarySentence) {
+        this.summarySentence = summarySentence;
+    }
 }
