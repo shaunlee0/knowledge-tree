@@ -6,6 +6,7 @@ import com.shaun.knowledgetree.article.SingularWikiEntity;
 import com.shaun.knowledgetree.domain.SingularWikiEntityDto;
 import com.shaun.knowledgetree.services.MovieService;
 import com.shaun.knowledgetree.services.Neo4jServices;
+import com.shaun.knowledgetree.services.pageContent.PageContentService;
 import com.shaun.knowledgetree.util.SingularWikiEntityDtoBuilder;
 import com.shaun.knowledgetree.services.entities.WikiEntitiesServicesImpl;
 import com.shaun.knowledgetree.services.lookup.LookupServiceImpl;
@@ -48,6 +49,9 @@ public class Application extends WebMvcConfigurerAdapter implements CommandLineR
     @Autowired
     SingularWikiEntityDtoBuilder singularWikiEntityDtoBuilder;
 
+    @Autowired
+    PageContentService pageContentService;
+
     @RequestMapping("/graph")
     public Map<String, Object> graph(@RequestParam(value = "limit", required = false) Integer limit) {
         return movieService.graph(limit == null ? 100 : limit);
@@ -84,8 +88,16 @@ public class Application extends WebMvcConfigurerAdapter implements CommandLineR
 
         Common.getGraph().getEntities().forEach(singularWikiEntityDto -> {
             if (singularWikiEntityDto.getParent() != null) {
-                Relationship relationship = new Relationship(singularWikiEntityDto.getParent(), singularWikiEntityDto);
-                singularWikiEntityDto.getParent().getRelatedEntities().add(relationship);
+
+                //Establish parent to child relationship
+                Relationship parentToChildRelationship = new Relationship(singularWikiEntityDto.getParent(), singularWikiEntityDto);
+                pageContentService.extractRelationshipContentFromPageContent(parentToChildRelationship);
+                singularWikiEntityDto.getParent().getRelatedEntities().add(parentToChildRelationship);
+
+                //Establish child to parent relationship
+                Relationship childToParentRelationship = new Relationship(singularWikiEntityDto, singularWikiEntityDto.getParent());
+                pageContentService.extractRelationshipContentFromPageContent(childToParentRelationship);
+                singularWikiEntityDto.getRelatedEntities().add(childToParentRelationship);
             }
         });
 

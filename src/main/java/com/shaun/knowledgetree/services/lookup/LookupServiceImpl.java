@@ -1,10 +1,11 @@
 package com.shaun.knowledgetree.services.lookup;
 
 import com.shaun.knowledgetree.article.SingularWikiEntity;
-import com.shaun.knowledgetree.services.pageContent.PageContentServiceImpl;
+import com.shaun.knowledgetree.services.pageContent.PageContentService;
 import com.shaun.knowledgetree.services.relevance.RelevanceServiceImpl;
 import info.bliki.api.Page;
 import info.bliki.api.User;
+import info.bliki.wiki.filter.PlainTextConverter;
 import info.bliki.wiki.model.WikiModel;
 import org.springframework.stereotype.Component;
 
@@ -19,14 +20,14 @@ import java.util.regex.Pattern;
 public class LookupServiceImpl implements LookupService {
 
 
-    private final PageContentServiceImpl pageContentServiceImpl;
+    private final PageContentService pageContentService;
     private final RelevanceServiceImpl relevanceServiceImpl;
     private User user;
 
     public LookupServiceImpl() {
         this.user = new User("", "", "https://en.wikipedia.org/w/api.php");
         user.login();
-        this.pageContentServiceImpl = new PageContentServiceImpl();
+        this.pageContentService = new PageContentService();
         this.relevanceServiceImpl = new RelevanceServiceImpl();
     }
 
@@ -40,13 +41,15 @@ public class LookupServiceImpl implements LookupService {
             WikiModel wikiModel = new WikiModel("${image}", "${title}");
             String html = null;
             html = wikiModel.render(page.toString());
-            String content = page.getCurrentContent();
+            String wikiPageText = page.getCurrentContent();
             String title = page.getTitle();
+            String pagePlainText = wikiModel.render(new PlainTextConverter(), wikiPageText);
             singularWikiEntity.setTitle(title);
             singularWikiEntity.getPageContent().setTitle(title);
-            singularWikiEntity.getPageContent().setPageText(content);
-            singularWikiEntity.getPageContent().setCategories(pageContentServiceImpl.extractCategories(content));
-            singularWikiEntity.getPageContent().setKeyValuesPairs(pageContentServiceImpl.extractKeyValuePairs(content));
+            singularWikiEntity.getPageContent().setPageWikiText(wikiPageText);
+            singularWikiEntity.getPageContent().setPagePlainText(pagePlainText);
+            singularWikiEntity.getPageContent().setCategories(pageContentService.extractCategories(wikiPageText));
+            singularWikiEntity.getPageContent().setKeyValuesPairs(pageContentService.extractKeyValuePairs(wikiPageText));
             singularWikiEntity.getPageContent().extractKeyValuePairsToContent();
             singularWikiEntity.getPageContent().extractSeeAlsoSet();
             singularWikiEntity.getPageContent().setHtml(html);
@@ -73,17 +76,18 @@ public class LookupServiceImpl implements LookupService {
             SingularWikiEntity singularWikiEntity = new SingularWikiEntity();
             singularWikiEntity.setRootEntity(rootEntity);
             WikiModel wikiModel = new WikiModel("${image}", "${title}");
-            String html = null;
-            html = wikiModel.render(page.toString());
-            String content = page.getCurrentContent();
+            String html = wikiModel.render(page.toString());
+            String wikiPageText = page.getCurrentContent();
+            String pagePlainText = wikiModel.render(new PlainTextConverter(), wikiPageText);
             String title = page.getTitle();
             singularWikiEntity.setTitle(title);
             singularWikiEntity.getPageContent().setTitle(title);
-            singularWikiEntity.getPageContent().setPageText(content);
+            singularWikiEntity.getPageContent().setPageWikiText(wikiPageText);
+            singularWikiEntity.getPageContent().setPagePlainText(pagePlainText);
             singularWikiEntity.getPageContent().setHtml(html);
             singularWikiEntity.setExternalLinks(extractExternalLinksFromHtml(html));
-            singularWikiEntity.getPageContent().setCategories(pageContentServiceImpl.extractCategories(content));
-            singularWikiEntity.getPageContent().setKeyValuesPairs(pageContentServiceImpl.extractKeyValuePairs(content));
+            singularWikiEntity.getPageContent().setCategories(pageContentService.extractCategories(wikiPageText));
+            singularWikiEntity.getPageContent().setKeyValuesPairs(pageContentService.extractKeyValuePairs(wikiPageText));
             singularWikiEntity.getPageContent().extractKeyValuePairsToContent();
             singularWikiEntity.getPageContent().extractSeeAlsoSet();
             singularWikiEntity.getPageContent().setLinks(wikiModel.getLinks());

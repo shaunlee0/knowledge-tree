@@ -1,20 +1,20 @@
 package com.shaun.knowledgetree.domain;
 
 
-import com.shaun.knowledgetree.domain.Category;
-import com.shaun.knowledgetree.domain.Event;
 import org.neo4j.ogm.annotation.GraphId;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
 
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 @NodeEntity
 public class PageContentDto {
 
-    String pageText;
+    String pageWikiText;
+    String pagePlainText;
+
+
+
     private String title;
     String html;
     String lifeSpan; //  life_span = 754–1870
@@ -48,12 +48,12 @@ public class PageContentDto {
     }
 
     //Page content
-    public String getPageText() {
-        return pageText;
+    public String getPageWikiText() {
+        return pageWikiText;
     }
 
-    public void setPageText(String pageText) {
-        this.pageText = pageText;
+    public void setPageWikiText(String pageWikiText) {
+        this.pageWikiText = pageWikiText;
     }
 
     public String getHtml() {
@@ -126,9 +126,16 @@ public class PageContentDto {
     public Set<String> getLinks() {
         return links;
     }
-
     public void setLinks(Set<String> links) {
         this.links = links;
+    }
+
+    public String getPagePlainText() {
+        return pagePlainText;
+    }
+
+    public void setPagePlainText(String pagePlainText) {
+        this.pagePlainText = pagePlainText;
     }
 
 }

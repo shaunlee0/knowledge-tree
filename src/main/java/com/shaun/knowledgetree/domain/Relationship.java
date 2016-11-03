@@ -3,6 +3,11 @@ package com.shaun.knowledgetree.domain;
 import com.shaun.knowledgetree.domain.SingularWikiEntityDto;
 import org.neo4j.ogm.annotation.*;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 @RelationshipEntity(type = "RELATIONSHIP")
 public class Relationship {
     @GraphId
@@ -21,14 +26,8 @@ public class Relationship {
 
         this.startNode = startNode;
         this.endNode = endNode;
-
-        //Find end node in page content of start node.
-
-        //Extract that sentence
-
-        //Map that to content
-        this.content = "test_string";
     }
+
 
     //ID
     public Long getRelationshipId() {

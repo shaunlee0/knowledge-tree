@@ -4,6 +4,8 @@ import com.shaun.knowledgetree.domain.Category;
 import com.shaun.knowledgetree.domain.Event;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -11,7 +13,9 @@ import java.util.stream.Collectors;
  */
 public class PageContent {
 
-    String pageText;
+    String pageWikiText;
+    String summarySentance;
+    String pagePlainText;
     private String title;
     String html;
     String lifeSpan; //  life_span = 754–1870
@@ -27,27 +31,59 @@ public class PageContent {
     }
 
     //Page content
-    public String getPageText() {
-        return pageText;
+    public String getPageWikiText() {
+        return pageWikiText;
     }
-    public void setPageText(String pageText) {
-        this.pageText = pageText;
+
+    public void setPageWikiText(String pageWikiText) {
+        this.pageWikiText = pageWikiText;
     }
+
+    public String getPagePlainText() {
+        return pagePlainText;
+    }
+
+    public void setPagePlainText(String pagePlainText) {
+        Pattern p = Pattern.compile("\\{\\{(.*?)}}");
+        Matcher m = p.matcher(pagePlainText);
+        while (m.find()) {
+            String found = m.group();
+            pagePlainText = pagePlainText.replace(found, "");
+        }
+
+        this.pagePlainText = pagePlainText;
+
+        extractSummarySentence();
+    }
+
+    private void extractSummarySentence() {
+        String pageContent = pagePlainText;
+        pageContent = pageContent.replace("\n", "");
+        int endOfSentance = pageContent.indexOf('.') + 1;
+
+        this.summarySentance = pageContent.substring(0, endOfSentance);
+    }
+
     public String getHtml() {
         return html;
     }
+
     public void setHtml(String html) {
         this.html = html;
     }
+
     public String getTitle() {
         return title;
     }
+
     public void setTitle(String title) {
         this.title = title;
     }
+
     public Map<String, String> getKeyValuesPairs() {
         return keyValuesPairs;
     }
+
     public void setKeyValuesPairs(Map<String, String> keyValuesPairs) {
         this.keyValuesPairs = keyValuesPairs;
     }
@@ -56,24 +92,31 @@ public class PageContent {
     public String getLifeSpan() {
         return lifeSpan;
     }
+
     public void setLifeSpan(String lifeSpan) {
         this.lifeSpan = lifeSpan;
     }
+
     public Event getStartEvent() {
         return startEvent;
     }
+
     public void setStartEvent(Event startEvent) {
         this.startEvent = startEvent;
     }
+
     public Event getEndEvent() {
         return endEvent;
     }
+
     public void setEndEvent(Event endEvent) {
         this.endEvent = endEvent;
     }
+
     public Set<Event> getEvents() {
         return events;
     }
+
     public void setEvents(Set<Event> events) {
         this.events = events;
     }
@@ -82,6 +125,7 @@ public class PageContent {
     public Set<String> getSeeAlsoSet() {
         return seeAlsoSet;
     }
+
     public void setSeeAlsoSet(Set<String> seeAlsoSet) {
         this.seeAlsoSet = seeAlsoSet;
     }
@@ -90,6 +134,7 @@ public class PageContent {
     public Set<Category> getCategories() {
         return categories;
     }
+
     public void setCategories(Set<Category> categories) {
         this.categories = categories;
     }
@@ -139,7 +184,7 @@ public class PageContent {
         try {
             int indexOfStar;
             int indexOfEnd;
-            String[] split = pageText.split("==See also==");
+            String[] split = pageWikiText.split("==See also==");
             //if there is a see also section
             if (split.length > 1) {
                 indexOfStar = split[1].indexOf("*");
