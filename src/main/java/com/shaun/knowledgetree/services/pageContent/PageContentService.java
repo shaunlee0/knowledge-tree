@@ -159,9 +159,9 @@ public class PageContentService {
 
             Relationship relationship = new Relationship(startNode,endNode);
             String relationshipContent = extractSemanticContentOfRelationshipInSentence(sentenceContainingMatch,startNode.getTitle(),endNode.getTitle());
+            toReturn.add(relationship);
             if(relationshipContent!=null){
                 relationship.setContent(relationshipContent);
-                toReturn.add(relationship);
             }
         }
         return toReturn;
