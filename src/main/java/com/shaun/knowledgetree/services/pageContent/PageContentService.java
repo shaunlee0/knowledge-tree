@@ -89,7 +89,9 @@ public class PageContentService {
     public void extractRelationshipContentFromPageContent(Relationship relationship) {
 
         String startToEndRelationship = findRelationshipContentOfStartToEndNode(relationship.getStartNode(), relationship.getEndNode());
-        relationship.setContent(startToEndRelationship);
+        if (startToEndRelationship!=null){
+            relationship.setContent(startToEndRelationship);
+        }
 
     }
 
@@ -101,26 +103,43 @@ public class PageContentService {
      * @return relationship content between start node and end node.
      */
     private String findRelationshipContentOfStartToEndNode(SingularWikiEntityDto startNode, SingularWikiEntityDto endNode) {
-        String articleContent = startNode.getPageContent().getPageWikiText();
+        String articleContent = startNode.getPageContent().getPagePlainText();
         String titleToFind = endNode.getTitle();
         String relationshipContent = null;
+        String sentenceContainingMatch = "";
 
         //Certain pages are just redirects this will ignore such articles.
-        if (articleContent.contains("==")) {
-            String[] articleSplitOnStartNodeTitle = articleContent.split(titleToFind);
-            //If there is a match
-            if (articleSplitOnStartNodeTitle.length > 1) {
-                String firstOccurenceChunk = articleSplitOnStartNodeTitle[0];
 
-                //Find connection if string is valid.
-
-            } else {
-                relationshipContent = "";
-            }
-
-
-            System.out.println(articleContent);
+        int indexOfMatch = articleContent.indexOf(titleToFind);
+        if(indexOfMatch==-1){
+            indexOfMatch = articleContent.indexOf(titleToFind.toLowerCase());
         }
-        return relationshipContent;
+
+        //No match found.
+        if (indexOfMatch==-1){
+            return null;
+        }
+
+        int indexOfEndOfMatchedSentence = articleContent.indexOf(".", indexOfMatch);
+        int indexOfStartOfMatchedSentence = -1;
+
+        for (int i = indexOfMatch; i > 0; i++) {
+            if (articleContent.charAt(i) == '.') {
+                indexOfStartOfMatchedSentence = i + 1;
+            }
+        }
+        if (indexOfStartOfMatchedSentence != -1) {
+            sentenceContainingMatch = articleContent.substring(indexOfStartOfMatchedSentence, indexOfEndOfMatchedSentence);
+        } else {
+            System.out.println("Unable to find matching sentence stipulated by relationship");
+            return null;
+        }
+
+        return extractSemanticContentOfRelationshipInSentence(sentenceContainingMatch, startNode.getTitle(), endNode.getTitle());
+    }
+
+    private String extractSemanticContentOfRelationshipInSentence(String sentenceContainingMatch, String startNodeTitle, String endNodeTitle) {
+
+        return null;
     }
 }
