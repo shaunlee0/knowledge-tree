@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -90,15 +91,18 @@ public class Application extends WebMvcConfigurerAdapter implements CommandLineR
             if (singularWikiEntityDto.getParent() != null) {
 
                 //Establish parent to child relationship
-                Relationship parentToChildRelationship = new Relationship(singularWikiEntityDto.getParent(), singularWikiEntityDto);
-                pageContentService.extractRelationshipContentFromPageContent(parentToChildRelationship);
-                singularWikiEntityDto.getParent().getRelatedEntities().add(parentToChildRelationship);
+                List<Relationship> parentToChildRelationships = pageContentService.extractRelationshipContentFromPageContent(singularWikiEntityDto.getParent(), singularWikiEntityDto);
+                if (parentToChildRelationships.size()>0){
+                    singularWikiEntityDto.getParent().getRelatedEntities().addAll(parentToChildRelationships);
+                }
 
                 //Establish child to parent relationship
-                Relationship childToParentRelationship = new Relationship(singularWikiEntityDto, singularWikiEntityDto.getParent());
-                pageContentService.extractRelationshipContentFromPageContent(childToParentRelationship);
-                singularWikiEntityDto.getRelatedEntities().add(childToParentRelationship);
+                List<Relationship> childToParentRelationships = pageContentService.extractRelationshipContentFromPageContent(singularWikiEntityDto, singularWikiEntityDto.getParent());
+                if (childToParentRelationships.size()>0){
+                    singularWikiEntityDto.getRelatedEntities().addAll(childToParentRelationships);
+                }
             }
+
         });
 
         neo4jServices.saveGraph(Common.getGraph());

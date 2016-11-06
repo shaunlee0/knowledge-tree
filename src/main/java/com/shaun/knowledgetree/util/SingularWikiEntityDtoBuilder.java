@@ -48,7 +48,6 @@ public class SingularWikiEntityDtoBuilder {
     private SingularWikiEntityDto retrieveParent(SingularWikiEntity singularWikiEntity) {
         SingularWikiEntityDto singularWikiEntityDto;
         if (!Common.allEntities.containsKey(singularWikiEntity.getTitle())) {
-            System.out.println("We created a parent wtf is going on here?");
             singularWikiEntityDto = new SingularWikiEntityDto();
             singularWikiEntityDto.setTitle(singularWikiEntity.getTitle());
             singularWikiEntityDto.getPageContent().setLinks(singularWikiEntity.getPageContent().getLinks());

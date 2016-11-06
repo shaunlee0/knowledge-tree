@@ -82,17 +82,10 @@ public class PageContentService {
     }
 
     /**
-     * Method to extract relationship content and saving to the relationship instance itself.
-     *
-     * @param relationship : Relationship in reference in which we are gathering information on.
+     * Method to extract relationship(s) and content, returning the aggregated relationships.
      */
-    public void extractRelationshipContentFromPageContent(Relationship relationship) {
-
-        String startToEndRelationship = findRelationshipContentOfStartToEndNode(relationship.getStartNode(), relationship.getEndNode());
-        if (startToEndRelationship!=null){
-            relationship.setContent(startToEndRelationship);
-        }
-
+    public List<Relationship> extractRelationshipContentFromPageContent(SingularWikiEntityDto startNode, SingularWikiEntityDto endNode) {
+        return findRelationshipContentOfStartToEndNode(startNode, endNode);
     }
 
     /**
@@ -100,46 +93,93 @@ public class PageContentService {
      *
      * @param startNode : The content we are searching through
      * @param endNode   :  Title we are searching for the terminal of the relationship
-     * @return relationship content between start node and end node.
+     * @return relationship(s) and content between start node and end node.
      */
-    private String findRelationshipContentOfStartToEndNode(SingularWikiEntityDto startNode, SingularWikiEntityDto endNode) {
+    private List<Relationship> findRelationshipContentOfStartToEndNode(SingularWikiEntityDto startNode, SingularWikiEntityDto endNode) {
         String articleContent = startNode.getPageContent().getPagePlainText();
+        String tempContent = startNode.getPageContent().getPagePlainText();
         String titleToFind = endNode.getTitle();
-        String relationshipContent = null;
         String sentenceContainingMatch = "";
+        List<Relationship> toReturn = new ArrayList<>();
 
-        //Certain pages are just redirects this will ignore such articles.
+        int titleOccurrences = 0;
 
-        int indexOfMatch = articleContent.indexOf(titleToFind);
-        if(indexOfMatch==-1){
-            indexOfMatch = articleContent.indexOf(titleToFind.toLowerCase());
+        //Count occurrences to work out how many relationships to create if more than one.
+        while(tempContent.contains(titleToFind) || tempContent.contains(titleToFind.toLowerCase())){
+            titleOccurrences ++;
+            System.out.println(titleOccurrences + " : " + titleToFind);
+            tempContent = tempContent.replaceFirst(titleToFind,"");
+            tempContent = tempContent.replaceFirst(titleToFind.toLowerCase(),"");
         }
 
-        //No match found.
-        if (indexOfMatch==-1){
-            return null;
+        if(titleOccurrences>1){
+            System.out.println("Break");
         }
 
-        int indexOfEndOfMatchedSentence = articleContent.indexOf(".", indexOfMatch);
-        int indexOfStartOfMatchedSentence = -1;
+        if(titleOccurrences>4){
+            //To generic a term, relationship of little value get the first occurrence only
+            titleOccurrences = 1;
+        }
 
-        for (int i = indexOfMatch; i > 0; i++) {
-            if (articleContent.charAt(i) == '.') {
-                indexOfStartOfMatchedSentence = i + 1;
+        int progressThroughArticle = 0;
+
+        for (int i = 0; i < titleOccurrences; i++) {
+
+            int indexOfMatch = articleContent.indexOf(titleToFind,progressThroughArticle);
+            if(indexOfMatch==-1){
+                indexOfMatch = articleContent.indexOf(titleToFind.toLowerCase(),progressThroughArticle);
+            }
+
+            //No match found.
+            if (indexOfMatch==-1){
+                return toReturn;
+            }
+
+            int indexOfEndOfMatchedSentence = articleContent.indexOf(".", indexOfMatch) + 1;
+            progressThroughArticle = indexOfEndOfMatchedSentence;
+            int indexOfStartOfMatchedSentence = -1;
+
+            for (int j = indexOfMatch; j > 0; j--) {
+                char current = articleContent.charAt(j);
+                if (current == '.') {
+                    indexOfStartOfMatchedSentence = j + 1;
+                    break;
+                }
+            }
+            try{
+                if (((indexOfStartOfMatchedSentence > 0) && (indexOfEndOfMatchedSentence > 0)) && (indexOfStartOfMatchedSentence < indexOfEndOfMatchedSentence)) {
+                    sentenceContainingMatch = articleContent.substring(indexOfStartOfMatchedSentence, indexOfEndOfMatchedSentence);
+                } else {
+                    System.out.println("Unable to find matching sentence stipulated by relationship");
+                    return toReturn;
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
+            Relationship relationship = new Relationship(startNode,endNode);
+            String relationshipContent = extractSemanticContentOfRelationshipInSentence(sentenceContainingMatch,startNode.getTitle(),endNode.getTitle());
+            if(relationshipContent!=null){
+                relationship.setContent(relationshipContent);
+                toReturn.add(relationship);
             }
         }
-        if (indexOfStartOfMatchedSentence != -1) {
-            sentenceContainingMatch = articleContent.substring(indexOfStartOfMatchedSentence, indexOfEndOfMatchedSentence);
-        } else {
-            System.out.println("Unable to find matching sentence stipulated by relationship");
-            return null;
-        }
-
-        return extractSemanticContentOfRelationshipInSentence(sentenceContainingMatch, startNode.getTitle(), endNode.getTitle());
+        return toReturn;
     }
 
+    /**
+     * For now this is only returning relationships that contain the start node title and end node title, this feels more complete.
+     * @param sentenceContainingMatch :
+     * @param startNodeTitle :
+     * @param endNodeTitle :
+     * @return String relationship content.
+     */
     private String extractSemanticContentOfRelationshipInSentence(String sentenceContainingMatch, String startNodeTitle, String endNodeTitle) {
-
-        return null;
+        //If sentence directly references the start node return it. No more details need adding just now.
+        if(sentenceContainingMatch.contains(startNodeTitle)){
+            return sentenceContainingMatch;
+        }else{
+            return null;
+        }
     }
 }
