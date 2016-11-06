@@ -37,6 +37,13 @@ public class LookupServiceImpl implements LookupService {
         String[] listOfTitleStrings = {searchPhrase};
 
         List<Page> listOfPages = user.queryContent(listOfTitleStrings);
+        String pageWikiText = listOfPages.get(0).getCurrentContent();
+        if(pageWikiText.contains("#REDIRECT")){
+            pageWikiText = pageWikiText.replace("#REDIRECT","");
+            String correctedSpelling = pageWikiText.substring(pageWikiText.indexOf("[[") + 2,pageWikiText.indexOf("]]"));
+            listOfTitleStrings[0] = correctedSpelling;
+            listOfPages = user.queryContent(listOfTitleStrings);
+        }
         listOfPages.parallelStream().forEach(page -> {
             WikiModel wikiModel = new WikiModel("${image}", "${title}");
             String html = null;

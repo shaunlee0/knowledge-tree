@@ -110,10 +110,9 @@ public class PageContentService {
             System.out.println(titleOccurrences + " : " + titleToFind);
             tempContent = tempContent.replaceFirst(titleToFind,"");
             tempContent = tempContent.replaceFirst(titleToFind.toLowerCase(),"");
-        }
-
-        if(titleOccurrences>1){
-            System.out.println("Break");
+            if(titleOccurrences > 50){
+                break;
+            }
         }
 
         if(titleOccurrences>4){
@@ -159,6 +158,7 @@ public class PageContentService {
 
             Relationship relationship = new Relationship(startNode,endNode);
             String relationshipContent = extractSemanticContentOfRelationshipInSentence(sentenceContainingMatch,startNode.getTitle(),endNode.getTitle());
+            //TODO consider whether the relationship is added regardless of how good the content is.
             toReturn.add(relationship);
             if(relationshipContent!=null){
                 relationship.setContent(relationshipContent);
@@ -175,6 +175,9 @@ public class PageContentService {
      * @return String relationship content.
      */
     private String extractSemanticContentOfRelationshipInSentence(String sentenceContainingMatch, String startNodeTitle, String endNodeTitle) {
+
+
+
         //If sentence directly references the start node return it. No more details need adding just now.
         if(sentenceContainingMatch.contains(startNodeTitle)){
             return sentenceContainingMatch;
