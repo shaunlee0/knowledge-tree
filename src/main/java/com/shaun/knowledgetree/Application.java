@@ -14,6 +14,7 @@ import com.shaun.knowledgetree.util.Common;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,7 +30,8 @@ import java.util.Set;
 @Configuration
 @Import(MyNeo4jConfiguration.class)
 @RestController("/")
-public class Application extends WebMvcConfigurerAdapter implements CommandLineRunner {
+@SpringBootApplication
+public class Application extends WebMvcConfigurerAdapter {
 
     public static void main(String[] args) throws IOException {
         SpringApplication.run(Application.class, args);
@@ -58,56 +60,56 @@ public class Application extends WebMvcConfigurerAdapter implements CommandLineR
         return movieService.graph(limit == null ? 100 : limit);
     }
 
-    @Override
-    public void run(String... strings) throws Exception {
-
-        neo4jServices.clearGraph();
-        String searchTerm = "Papal States";
-        Common.setGraph(new Graph(searchTerm));
-
-        //Find root
-        SingularWikiEntity rootEntity = lookupServiceImpl.findRoot(searchTerm);
-        rootEntity.setDepthFromRoot(0);
-
-        SingularWikiEntityDto rootEntityDto = singularWikiEntityDtoBuilder.convertRoot(rootEntity);
-        Common.setRootEntity(rootEntityDto);
-        Common.getGraph().getEntities().add(rootEntityDto);
-
-        //Our first layer is only a set of size 10
-        Set<SingularWikiEntity> firstEntities = lookupServiceImpl.findEntities(rootEntity, rootEntity);
-
-        //For each wiki entity hanging off the root(first entities) convert it and add it to the graph
-        firstEntities.forEach(singularWikiEntity -> {
-            Common.getGraph().getEntities().add(singularWikiEntityDtoBuilder.convert(singularWikiEntity));
-        });
-
-        //Second layer is a set size 100, converting all these and adding to graph
-        Set<SingularWikiEntity> allSecondLayerEntities = wikiEntitiesServicesImpl.aggregateAndReturnChildrenFromSetOfEntities(firstEntities, rootEntity);
-        allSecondLayerEntities.forEach(singularWikiEntity -> {
-            Common.getGraph().getEntities().add(singularWikiEntityDtoBuilder.convert(singularWikiEntity));
-        });
-
-        Common.getGraph().getEntities().forEach(singularWikiEntityDto -> {
-            if (singularWikiEntityDto.getParent() != null) {
-
-                //Establish parent to child relationship
-                List<Relationship> parentToChildRelationships = pageContentService.extractRelationshipContentFromPageContent(singularWikiEntityDto.getParent(), singularWikiEntityDto);
-                if (parentToChildRelationships.size()>0){
-                    singularWikiEntityDto.getParent().getRelatedEntities().addAll(parentToChildRelationships);
-                }
-
-                //Establish child to parent relationship
-                List<Relationship> childToParentRelationships = pageContentService.extractRelationshipContentFromPageContent(singularWikiEntityDto, singularWikiEntityDto.getParent());
-                if (childToParentRelationships.size()>0){
-                    singularWikiEntityDto.getRelatedEntities().addAll(childToParentRelationships);
-                }
-            }
-
-        });
-
-        neo4jServices.saveGraph(Common.getGraph());
-        neo4jServices.removeVerboseRelationships();
-        System.out.println("Graph saved.");
-        Common.findLinksAndOccurences();
-    }
+//    @Override
+//    public void run(String... strings) throws Exception {
+//
+//        neo4jServices.clearGraph();
+//        String searchTerm = "Papal States";
+//        Common.setGraph(new Graph(searchTerm));
+//
+//        //Find root
+//        SingularWikiEntity rootEntity = lookupServiceImpl.findRoot(searchTerm);
+//        rootEntity.setDepthFromRoot(0);
+//
+//        SingularWikiEntityDto rootEntityDto = singularWikiEntityDtoBuilder.convertRoot(rootEntity);
+//        Common.setRootEntity(rootEntityDto);
+//        Common.getGraph().getEntities().add(rootEntityDto);
+//
+//        //Our first layer is only a set of size 10
+//        Set<SingularWikiEntity> firstEntities = lookupServiceImpl.findEntities(rootEntity, rootEntity);
+//
+//        //For each wiki entity hanging off the root(first entities) convert it and add it to the graph
+//        firstEntities.forEach(singularWikiEntity -> {
+//            Common.getGraph().getEntities().add(singularWikiEntityDtoBuilder.convert(singularWikiEntity));
+//        });
+//
+//        //Second layer is a set size 100, converting all these and adding to graph
+//        Set<SingularWikiEntity> allSecondLayerEntities = wikiEntitiesServicesImpl.aggregateAndReturnChildrenFromSetOfEntities(firstEntities, rootEntity);
+//        allSecondLayerEntities.forEach(singularWikiEntity -> {
+//            Common.getGraph().getEntities().add(singularWikiEntityDtoBuilder.convert(singularWikiEntity));
+//        });
+//
+//        Common.getGraph().getEntities().forEach(singularWikiEntityDto -> {
+//            if (singularWikiEntityDto.getParent() != null) {
+//
+//                //Establish parent to child relationship
+//                List<Relationship> parentToChildRelationships = pageContentService.extractRelationshipContentFromPageContent(singularWikiEntityDto.getParent(), singularWikiEntityDto);
+//                if (parentToChildRelationships.size()>0){
+//                    singularWikiEntityDto.getParent().getRelatedEntities().addAll(parentToChildRelationships);
+//                }
+//
+//                //Establish child to parent relationship
+//                List<Relationship> childToParentRelationships = pageContentService.extractRelationshipContentFromPageContent(singularWikiEntityDto, singularWikiEntityDto.getParent());
+//                if (childToParentRelationships.size()>0){
+//                    singularWikiEntityDto.getRelatedEntities().addAll(childToParentRelationships);
+//                }
+//            }
+//
+//        });
+//
+//        neo4jServices.saveGraph(Common.getGraph());
+//        neo4jServices.removeVerboseRelationships();
+//        System.out.println("Graph saved.");
+//        Common.findLinksAndOccurences();
+//    }
 }
