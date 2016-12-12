@@ -41,6 +41,8 @@ public class SingularWikiEntityDto {
 
     private List<com.shaun.knowledgetree.domain.Relationship> relatedEntities;
 
+    private boolean isRoot;
+
     public SingularWikiEntityDto() {
         this.pageContent = new PageContentDto();
         this.relatedEntities = new ArrayList<>();
@@ -111,4 +113,13 @@ public class SingularWikiEntityDto {
     public void setRelatedEntities(List<com.shaun.knowledgetree.domain.Relationship> relatedEntities) {
         this.relatedEntities = relatedEntities;
     }
+
+    public boolean isRoot() {
+        return isRoot;
+    }
+
+    public void setIsRoot(boolean root) {
+        isRoot = root;
+    }
+
 }

@@ -63,6 +63,7 @@ public class LookupService {
             singularWikiEntity.getPageContent().setHtml(html);
             singularWikiEntity.setExternalLinks(extractExternalLinksFromHtml(html));
             singularWikiEntity.getPageContent().setLinks(wikiModel.getLinks());
+            singularWikiEntity.setIsRoot(true);
         });
         return singularWikiEntity;
     }
@@ -113,6 +114,7 @@ public class LookupService {
             singularWikiEntity.getPageContent().extractKeyValuePairsToContent();
             singularWikiEntity.getPageContent().extractSeeAlsoSet();
             singularWikiEntity.getPageContent().setLinks(wikiModel.getLinks());
+            singularWikiEntity.setIsRoot(false);
             toReturn.add(singularWikiEntity);
         }
         return toReturn;

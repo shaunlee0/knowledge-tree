@@ -1,4 +1,4 @@
-package com.shaun.knowledgetree.services;
+package com.shaun.knowledgetree.services.neo4j;
 
 import com.shaun.knowledgetree.domain.Movie;
 import com.shaun.knowledgetree.repositories.MovieRepository;

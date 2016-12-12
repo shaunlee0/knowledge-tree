@@ -25,6 +25,8 @@ public class SingularWikiEntity  {
 
     private List<Relationship> relatedEntities;
 
+    private boolean isRoot;
+
     public SingularWikiEntity() {
         this.pageContent = new PageContent();
         this.relatedEntities = new ArrayList<>();
@@ -98,4 +100,11 @@ public class SingularWikiEntity  {
         this.page = page;
     }
 
+    //isRoot
+    public boolean isRoot() {
+        return isRoot;
+    }
+    public void setIsRoot(boolean bool) {
+        isRoot = bool;
+    }
 }

@@ -40,6 +40,7 @@ public class SingularWikiEntityDtoBuilder {
         rootEntityDto.getPageContent().setLinks(singularWikiEntity.getPageContent().getLinks());
         rootEntityDto.setExternalLinks(singularWikiEntity.getExternalLinks());
         rootEntityDto.setDepthFromRoot(singularWikiEntity.getDepthFromRoot());
+        rootEntityDto.setIsRoot(singularWikiEntity.isRoot());
         rootEntityDto.setPageContentDto(pageContentDtoBuilder.convert(singularWikiEntity.getPageContent()));
         Common.setRootEntity(rootEntityDto);
         return rootEntityDto;

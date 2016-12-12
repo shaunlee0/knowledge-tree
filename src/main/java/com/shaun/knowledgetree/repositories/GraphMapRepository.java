@@ -1,8 +1,11 @@
 package com.shaun.knowledgetree.repositories;
 
 import com.shaun.knowledgetree.domain.Graph;
+import com.shaun.knowledgetree.domain.SingularWikiEntityDto;
+import com.sun.tools.javac.util.List;
 import org.springframework.data.neo4j.annotation.Query;
 import org.springframework.data.neo4j.repository.GraphRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -22,5 +25,8 @@ public interface GraphMapRepository extends GraphRepository<Graph> {
 
     @Query("match ()-[r:ENTITIES]->() delete r")
     void removeGraphEntitiesRelationships();
+
+    @Query("MATCH (n:SingularWikiEntityDto) where n.isRoot = true RETURN n")
+    SingularWikiEntityDto findRootEntity();
 
 }

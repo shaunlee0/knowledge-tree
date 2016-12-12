@@ -1,6 +1,6 @@
 package com.shaun.knowledgetree;
 
-import com.shaun.knowledgetree.services.MovieService;
+import com.shaun.knowledgetree.services.neo4j.MovieService;
 import com.shaun.knowledgetree.services.Neo4jServices;
 import com.shaun.knowledgetree.services.entities.WikiEntitiesServicesImpl;
 import com.shaun.knowledgetree.services.lookup.LookupService;
@@ -47,7 +47,7 @@ public class Application extends WebMvcConfigurerAdapter {
     @Autowired
     PageContentService pageContentService;
 
-    @RequestMapping("/graph")
+    @RequestMapping("/graph-to-d3")
     public Map<String, Object> graph(@RequestParam(value = "limit", required = false) Integer limit) {
         return movieService.graph(limit == null ? 100 : limit);
     }
