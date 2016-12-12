@@ -14,24 +14,28 @@
 
 <!-- page content start (customise) -->
 <div class="col-lg-6">
-    <form action="validate" method="post" id="search-form">
+    <form action="<%=request.getContextPath()%>/validate" method="post" id="search-form">
         <label for="searchTerm">Make a Search</label>
         <div class="input-group">
             <input type="text" id="searchTerm" name="searchTerm" class="form-control" placeholder="Search for...">
-      <span class="input-group-btn">
+
+            <span class="input-group-btn">
         <button id="submitSearch" for="searchTerm" class="btn btn-default" type="submit">Go!</button>
       </span>
         </div><!-- /input-group -->
+        <br>
+        <div style="text-align: center">Please enter a valid wikipedia article as a search term</div>
     </form>
     <%--<div class="form-group has-error has-feedback">--%>
-        <%--<label class="col-sm-2 control-label" for="inputError">Input with error and glyphicon</label>--%>
-        <%--<div class="col-sm-10">--%>
-            <%--<input type="text" class="form-control" id="inputError">--%>
-            <%--<span class="glyphicon glyphicon-remove form-control-feedback"></span>--%>
-        <%--</div>--%>
+    <%--<label class="col-sm-2 control-label" for="inputError">Input with error and glyphicon</label>--%>
+    <%--<div class="col-sm-10">--%>
+    <%--<input type="text" class="form-control" id="inputError">--%>
+    <%--<span class="glyphicon glyphicon-remove form-control-feedback"></span>--%>
+    <%--</div>--%>
     <%--</div>--%>
 </div><!-- /.col-lg-6 -->
 
+<% out.println(request.getAttribute("foo"));%>
 <!-- page content end -->
 
 <!-- include footer start (leave me alone) -->
