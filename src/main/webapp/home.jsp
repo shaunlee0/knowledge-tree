@@ -25,7 +25,7 @@
         </div><!-- /input-group -->
         <br>
         <div id="validationErrorMsg" class="alert alert-danger" role="alert" style="display: none">
-            <strong>Oh snap!</strong> Please enter an existing wikipedia article as a search term.
+            <strong>Search failed!</strong> Please enter an existing wikipedia article as a search term.
         </div>
         <%--<div style="text-align: center; display: none; color:red" id="validationErrorMsg">Please enter an existing valid wikipedia article as a search term</div>--%>
     </form>
@@ -38,7 +38,6 @@
     <%--</div>--%>
 </div><!-- /.col-lg-6 -->
 
-<% out.println(request.getAttribute("foo"));%>
 <!-- page content end -->
 
 <!-- include footer start (leave me alone) -->

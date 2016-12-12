@@ -80,7 +80,7 @@ public class LookupService {
             listOfPages = user.queryContent(listOfTitleStrings);
         }
 
-        return listOfPages.size() > 0;
+        return listOfPages.get(0).getPageid()!=null;
     }
 
     public Set<SingularWikiEntity> findPages(List<String> titles, SingularWikiEntity rootEntity) throws InterruptedException {
