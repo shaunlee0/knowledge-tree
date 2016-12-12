@@ -15,6 +15,10 @@ import java.util.*;
 @Component
 public class PageContentService {
 
+    public PageContentService(){
+
+    }
+
     /**
      * Method to extract the categories from the page content.
      * This is done by grepping the categories from the content,

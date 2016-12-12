@@ -1,7 +1,8 @@
 package com.shaun.knowledgetree.services.entities;
 
 import com.shaun.knowledgetree.article.SingularWikiEntity;
-import com.shaun.knowledgetree.services.lookup.LookupServiceImpl;
+import com.shaun.knowledgetree.services.lookup.LookupService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StopWatch;
 
@@ -14,7 +15,8 @@ import java.util.Set;
 @Component
 public class WikiEntitiesServicesImpl implements WikiEntitiesServices {
 
-    private LookupServiceImpl lookupServiceImpl = new LookupServiceImpl();
+    @Autowired
+    private LookupService lookupService;
 
     /**
      * For each entity in the set passed in we aggregate all the children we find and then return them.
@@ -35,7 +37,7 @@ public class WikiEntitiesServicesImpl implements WikiEntitiesServices {
 
             for (SingularWikiEntity firstLayerEntity : inputEntities) {
                 stopWatch.start(firstLayerEntity.getTitle());
-                Set<SingularWikiEntity> childEntities = lookupServiceImpl.findEntities(firstLayerEntity,rootEntity);
+                Set<SingularWikiEntity> childEntities = lookupService.findEntities(firstLayerEntity,rootEntity);
                 toReturn.addAll(childEntities);
                 stopWatch.stop();
                 System.out.println(stopWatch.getLastTaskName() + " : " + stopWatch.getLastTaskTimeMillis() + "ms\t|" + "\tProgress = " + count + "/" + toDo);

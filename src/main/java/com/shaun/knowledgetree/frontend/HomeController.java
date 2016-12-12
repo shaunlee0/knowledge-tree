@@ -26,15 +26,6 @@ public class HomeController {
 		return "home";
 	}
 
-	@RequestMapping(value = "validate", method = RequestMethod.POST, params = "searchTerm")
-	@ResponseBody
-	public String validateSearch(@RequestParam("searchTerm") String searchTerm, HttpServletRequest request) {
-		System.out.println(searchTerm);
-//		return new SearchTermValidation("failure");
-		//TODO test with postman before integrating.
-		return "{\"status\":\"failure\"}";
-	}
-
 	@RequestMapping(value = "/test", method = RequestMethod.GET)
 	public ModelAndView testViewAndModel() {
 		HashMap<String,Object> model = new HashMap<>();

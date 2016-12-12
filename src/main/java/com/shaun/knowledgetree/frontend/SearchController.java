@@ -7,16 +7,13 @@ import com.shaun.knowledgetree.domain.SingularWikiEntityDto;
 import com.shaun.knowledgetree.services.MovieService;
 import com.shaun.knowledgetree.services.Neo4jServices;
 import com.shaun.knowledgetree.services.entities.WikiEntitiesServicesImpl;
-import com.shaun.knowledgetree.services.lookup.LookupServiceImpl;
+import com.shaun.knowledgetree.services.lookup.LookupService;
 import com.shaun.knowledgetree.services.pageContent.PageContentService;
 import com.shaun.knowledgetree.util.Common;
 import com.shaun.knowledgetree.util.SingularWikiEntityDtoBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,8 +22,8 @@ import java.util.List;
 import java.util.Set;
 
 @Controller
-@RequestMapping("/results")
-public class ResultsController {
+@RequestMapping("/search")
+public class SearchController {
 
     @Autowired
     MovieService movieService;
@@ -38,13 +35,24 @@ public class ResultsController {
     WikiEntitiesServicesImpl wikiEntitiesServicesImpl;
 
     @Autowired
-    LookupServiceImpl lookupServiceImpl;
+    LookupService lookupService;
 
     @Autowired
     SingularWikiEntityDtoBuilder singularWikiEntityDtoBuilder;
 
     @Autowired
     PageContentService pageContentService;
+
+    @RequestMapping(value = "validate", method = RequestMethod.GET, params = "searchTerm")
+    @ResponseBody
+    public String validateSearch(@RequestParam("searchTerm") String searchTerm) {
+        boolean result = lookupService.checkArticleExists(searchTerm);
+        if(result) {
+            return "{\"status\":\"success\"}";
+        }else{
+            return "{\"status\":\"failure\"}";
+        }
+    }
 
 	@RequestMapping(value = "{rootNodeTitle}", method = RequestMethod.GET)
 	public ModelAndView showResultsDetails(@PathVariable("rootNodeTitle")String rootNodeTitle, HttpServletRequest request){
@@ -58,7 +66,7 @@ public class ResultsController {
             Common.setGraph(new Graph(rootNodeTitle));
 
             //Find root
-            SingularWikiEntity rootEntity = lookupServiceImpl.findRoot(rootNodeTitle);
+            SingularWikiEntity rootEntity = lookupService.findRoot(rootNodeTitle);
             rootEntity.setDepthFromRoot(0);
 
             SingularWikiEntityDto rootEntityDto = singularWikiEntityDtoBuilder.convertRoot(rootEntity);
@@ -66,7 +74,7 @@ public class ResultsController {
             Common.getGraph().getEntities().add(rootEntityDto);
 
             //Our first layer is only a set of size 10
-            Set<SingularWikiEntity> firstEntities = lookupServiceImpl.findEntities(rootEntity, rootEntity);
+            Set<SingularWikiEntity> firstEntities = lookupService.findEntities(rootEntity, rootEntity);
 
             //For each wiki entity hanging off the root(first entities) convert it and add it to the graph
             firstEntities.forEach(singularWikiEntity -> {

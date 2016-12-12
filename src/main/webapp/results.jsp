@@ -5,8 +5,17 @@
 <jsp:include page='header.jsp'/>
 <!-- include header end -->
 
+<%
+    Graph graph = (Graph)request.getAttribute("graph");
+    Set<Category> categories = graph.getAllCategories();
+%>
+
+<head>
+    <title>Knowledge Tree : <%graph.getSearchTerm();%></title>
+</head>
+
 <!-- page content start (customise) -->
-<h1>Results</h1>
+<h1>Results for <%graph.getSearchTerm();%></h1>
 <div class="row" id="graphTable">
     <div class="col-md-12">
         <table class="table">
@@ -18,8 +27,6 @@
             </thead>
             <tbody>
             <%
-                Graph graph = (Graph)request.getAttribute("graph");
-                Set<Category> categories = graph.getAllCategories();
                 for (Category category : categories) {
             %>
             <form role="form" method="get" action="category">

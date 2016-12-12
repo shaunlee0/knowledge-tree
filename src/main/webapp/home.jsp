@@ -24,7 +24,10 @@
       </span>
         </div><!-- /input-group -->
         <br>
-        <div style="text-align: center">Please enter a valid wikipedia article as a search term</div>
+        <div id="validationErrorMsg" class="alert alert-danger" role="alert" style="display: none">
+            <strong>Oh snap!</strong> Please enter an existing wikipedia article as a search term.
+        </div>
+        <%--<div style="text-align: center; display: none; color:red" id="validationErrorMsg">Please enter an existing valid wikipedia article as a search term</div>--%>
     </form>
     <%--<div class="form-group has-error has-feedback">--%>
     <%--<label class="col-sm-2 control-label" for="inputError">Input with error and glyphicon</label>--%>
