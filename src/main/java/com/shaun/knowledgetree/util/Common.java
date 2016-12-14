@@ -1,7 +1,6 @@
 package com.shaun.knowledgetree.util;
 
 import com.shaun.knowledgetree.domain.Graph;
-import com.shaun.knowledgetree.domain.Link;
 import com.shaun.knowledgetree.domain.SingularWikiEntityDto;
 
 import java.util.*;
@@ -37,7 +36,15 @@ public class Common {
         Common.allEntities = allEntities;
     }
 
-    private static HashMap<String, Integer> allLinksAndOccurences = new LinkedHashMap<>();
+    private static HashMap<String, Integer> allLinksAndOccurrences = new LinkedHashMap<>();
+
+    public static HashMap<String, Integer> getAllLinksAndOccurrences() {
+        return allLinksAndOccurrences;
+    }
+
+    public static void setAllLinksAndOccurrences(HashMap<String, Integer> allLinksAndOccurrences) {
+        Common.allLinksAndOccurrences = allLinksAndOccurrences;
+    }
 
     public static void findLinksAndOccurences() {
         //for all entities
@@ -46,19 +53,19 @@ public class Common {
             Set<String> entityLinks = allEntities.get(key).getPageContent().getLinks();
 
             entityLinks.forEach(link ->
-                    allLinksAndOccurences.put(link, occurrenceOfLink(link)));
+                    allLinksAndOccurrences.put(link, occurrenceOfLink(link)));
         });
 
-//        Set<String> linksKeySet = allLinksAndOccurences.keySet();
+//        Set<String> linksKeySet = allLinksAndOccurrences.keySet();
 //        for (String link : linksKeySet) {
-//            int linkOccurrences = allLinksAndOccurences.get(link);
+//            int linkOccurrences = allLinksAndOccurrences.get(link);
 //            if (linkOccurrences > 1){
 //                System.out.println(link + " has showed up " + linkOccurrences + " times");
 //            }
 //        }
 
         //Sort all links and occurences by descending order
-        allLinksAndOccurences = allLinksAndOccurences.entrySet().stream()
+        allLinksAndOccurrences = allLinksAndOccurrences.entrySet().stream()
                 .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
@@ -71,7 +78,7 @@ public class Common {
 
         System.out.println("Top ten occurring links over the search domain");
         int count = 1;
-        for (Map.Entry<String, Integer> entry : allLinksAndOccurences.entrySet()) {
+        for (Map.Entry<String, Integer> entry : allLinksAndOccurrences.entrySet()) {
             if (count > 10) {
                 break;
             } else {
@@ -83,8 +90,8 @@ public class Common {
     }
 
     private static Integer occurrenceOfLink(String linkText) {
-        if (allLinksAndOccurences.keySet().contains(linkText)) {
-            return allLinksAndOccurences.get(linkText) + 1;
+        if (allLinksAndOccurrences.keySet().contains(linkText)) {
+            return allLinksAndOccurrences.get(linkText) + 1;
         } else {
             return 1;
         }

@@ -1,7 +1,6 @@
 $(document).ready(function() {
-    jQuery("#submitSearch").click(function (e) {
-        console.log("prevented search");
-        e.preventDefault();
+    var contextPath = '/knowledge-tree/';
+    $("#submitSearch").click(function (e) {
 
         $.ajax({
             type: 'GET',
@@ -10,9 +9,10 @@ $(document).ready(function() {
             dataType: 'json',
             success: function (data) {
                 console.log(data);
-                if (data.status !== "failure") {
+                var contextPath;
+                if (data.status == "success") {
                     console.log("Status is success");
-                    window.location.href += '/search/' + $('#searchTerm').val();
+                    window.location.href = contextPath + 'search/' + $('#searchTerm').val();
                 } else {
                     console.log("Status is failure");
                     $('#validationErrorMsg').show(100);

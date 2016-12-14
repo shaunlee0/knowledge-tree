@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Set;
 
 @Controller
-@RequestMapping("/search")
+@RequestMapping("search")
 public class SearchController {
 
     @Autowired
@@ -59,9 +59,17 @@ public class SearchController {
 
         boolean result = true;
         HashMap<String,Object> model = new HashMap<>();
+        Graph sessionGraph = (Graph)request.getSession().getAttribute("graph");
+
+        if(sessionGraph!= null){
+            if(rootNodeTitle.equals(sessionGraph.getSearchTerm())){
+                return new ModelAndView("results");
+            }
+        }
 
         try {
-
+            System.out.println("Searching for " + rootNodeTitle);
+            request.getSession().removeAttribute("graph");
             neo4jServices.clearGraph();
             Common.setGraph(new Graph(rootNodeTitle));
 
@@ -102,14 +110,14 @@ public class SearchController {
                         singularWikiEntityDto.getRelatedEntities().addAll(childToParentRelationships);
                     }
                 }
-
             });
 
+            Common.findLinksAndOccurences();
             neo4jServices.saveGraph(Common.getGraph());
             neo4jServices.removeVerboseRelationships();
-            model.put("graph",Common.getGraph());
             System.out.println("Graph saved.");
-            Common.findLinksAndOccurences();
+            request.getSession().setAttribute("graph",Common.getGraph());
+            request.getSession().setAttribute("allLinksAndOccurrences",Common.getAllLinksAndOccurrences());
         } catch (Exception e){
             e.printStackTrace();
             result = false;
@@ -122,5 +130,6 @@ public class SearchController {
         }
 
         return new ModelAndView("results",model);
+
 	}
 }

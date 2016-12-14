@@ -8,12 +8,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class TestUtil {
 
-	@Autowired
-	PageContentRepository pageContentRepository;
-
 	@Test
 	public void utilTest(){
-		PageContentDto pageContentDto = pageContentRepository.findPageContentByTitle("Papal States");
-		System.out.println(pageContentDto);
+
 	}
 }
