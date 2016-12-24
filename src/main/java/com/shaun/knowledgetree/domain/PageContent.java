@@ -1,4 +1,4 @@
-package com.shaun.knowledgetree.article;
+package com.shaun.knowledgetree.domain;
 
 import com.shaun.knowledgetree.domain.Category;
 import com.shaun.knowledgetree.domain.Event;

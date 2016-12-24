@@ -6,7 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-import com.shaun.knowledgetree.MyNeo4jTestConfiguration;
+import com.shaun.knowledgetree.config.MyNeo4jTestConfiguration;
 import com.shaun.knowledgetree.domain.Movie;
 import com.shaun.knowledgetree.domain.Role;
 import com.shaun.knowledgetree.domain.Person;
@@ -16,6 +16,8 @@ import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -28,6 +30,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = MyNeo4jTestConfiguration.class)
 @ActiveProfiles(profiles = "test")
+@ComponentScan(basePackages = {"com.shaun.knowledgetree"})
 public class MovieRepositoryTest {
     
     @Autowired

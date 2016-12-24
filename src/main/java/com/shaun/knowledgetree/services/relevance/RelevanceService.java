@@ -1,6 +1,6 @@
 package com.shaun.knowledgetree.services.relevance;
 
-import com.shaun.knowledgetree.article.SingularWikiEntity;
+import com.shaun.knowledgetree.domain.SingularWikiEntity;
 import org.springframework.stereotype.Component;
 
 @Component

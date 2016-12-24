@@ -1,5 +1,6 @@
 package com.shaun.knowledgetree;
 
+import com.shaun.knowledgetree.config.MyNeo4jConfiguration;
 import com.shaun.knowledgetree.services.neo4j.MovieService;
 import com.shaun.knowledgetree.services.Neo4jServices;
 import com.shaun.knowledgetree.services.entities.WikiEntitiesServicesImpl;

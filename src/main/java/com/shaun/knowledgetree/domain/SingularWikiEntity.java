@@ -1,6 +1,5 @@
-package com.shaun.knowledgetree.article;
+package com.shaun.knowledgetree.domain;
 
-import com.shaun.knowledgetree.domain.Relationship;
 import info.bliki.api.Page;
 
 import java.util.ArrayList;

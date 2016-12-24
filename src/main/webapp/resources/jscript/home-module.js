@@ -12,7 +12,7 @@ $(document).ready(function() {
                 var contextPath;
                 if (data.status == "success") {
                     console.log("Status is success");
-                    window.location.href = contextPath + 'search/' + $('#searchTerm').val();
+                    window.location.href = '/knowledge-tree/search/' + $('#searchTerm').val();
                 } else {
                     console.log("Status is failure");
                     $('#validationErrorMsg').show(100);

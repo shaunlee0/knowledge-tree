@@ -1,6 +1,6 @@
 package com.shaun.knowledgetree.frontend;
 
-import com.shaun.knowledgetree.article.SingularWikiEntity;
+import com.shaun.knowledgetree.domain.SingularWikiEntity;
 import com.shaun.knowledgetree.domain.Graph;
 import com.shaun.knowledgetree.domain.Relationship;
 import com.shaun.knowledgetree.domain.SingularWikiEntityDto;

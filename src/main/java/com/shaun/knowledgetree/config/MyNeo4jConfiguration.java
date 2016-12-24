@@ -1,4 +1,4 @@
-package com.shaun.knowledgetree;
+package com.shaun.knowledgetree.config;
 
 import org.neo4j.ogm.session.SessionFactory;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;

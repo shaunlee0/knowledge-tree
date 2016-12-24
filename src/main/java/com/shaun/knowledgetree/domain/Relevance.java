@@ -1,4 +1,4 @@
-package com.shaun.knowledgetree.article;
+package com.shaun.knowledgetree.domain;
 
 /**
  * Created by Shaun Lee on 14/05/2016.

@@ -1,4 +1,4 @@
-package com.shaun.knowledgetree;
+package com.shaun.knowledgetree.config;
 
 import org.neo4j.ogm.session.SessionFactory;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -9,11 +9,6 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.data.neo4j.config.Neo4jConfiguration;
 import org.springframework.data.neo4j.repository.config.EnableNeo4jRepositories;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-
-/**
- *
- * @author pdtyreus
- */
 
 @EnableTransactionManagement
 @EnableAutoConfiguration

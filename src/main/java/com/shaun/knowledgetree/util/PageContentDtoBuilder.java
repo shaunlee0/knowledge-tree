@@ -1,6 +1,6 @@
 package com.shaun.knowledgetree.util;
 
-import com.shaun.knowledgetree.article.PageContent;
+import com.shaun.knowledgetree.domain.PageContent;
 import com.shaun.knowledgetree.domain.PageContentDto;
 import org.springframework.stereotype.Component;
 

@@ -1,8 +1,5 @@
 package com.shaun.knowledgetree.frontend;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.shaun.knowledgetree.article.SingularWikiEntity;
 import com.shaun.knowledgetree.domain.SingularWikiEntityDto;
 import com.shaun.knowledgetree.services.neo4j.GraphService;
 import org.springframework.beans.factory.annotation.Autowired;
