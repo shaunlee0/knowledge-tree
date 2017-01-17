@@ -2,11 +2,7 @@ package com.shaun.knowledgetree;
 
 import com.shaun.knowledgetree.config.MyNeo4jConfiguration;
 import com.shaun.knowledgetree.services.neo4j.MovieService;
-import com.shaun.knowledgetree.services.Neo4jServices;
-import com.shaun.knowledgetree.services.entities.WikiEntitiesServicesImpl;
-import com.shaun.knowledgetree.services.lookup.LookupService;
-import com.shaun.knowledgetree.services.pageContent.PageContentService;
-import com.shaun.knowledgetree.util.SingularWikiEntityDtoBuilder;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -32,21 +28,6 @@ public class Application extends WebMvcConfigurerAdapter {
 
     @Autowired
     MovieService movieService;
-
-    @Autowired
-    Neo4jServices neo4jServices;
-
-    @Autowired
-    WikiEntitiesServicesImpl wikiEntitiesServicesImpl;
-
-    @Autowired
-    LookupService lookupService;
-
-    @Autowired
-    SingularWikiEntityDtoBuilder singularWikiEntityDtoBuilder;
-
-    @Autowired
-    PageContentService pageContentService;
 
     @RequestMapping("/graph-to-d3")
     public Map<String, Object> graph(@RequestParam(value = "limit", required = false) Integer limit) {

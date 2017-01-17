@@ -13,18 +13,18 @@ import java.util.stream.Collectors;
  */
 public class PageContent {
 
-    String pageWikiText;
-    String summarySentance;
-    String pagePlainText;
+    private String pageWikiText;
+    private String summarySentance;
+    private String pagePlainText;
     private String title;
-    String html;
-    String lifeSpan; //  life_span = 754–1870
-    Set<Event> events;// within Infobox : event2 = [[Treaty of Venice]] (Independence from the Holy Roman Empire)
-    Set<String> seeAlsoSet;// ==See also== section
-    Set<Category> categories; // [[Category:Religion and government]]
-    Map<String, String> keyValuesPairs;
-    Event startEvent;
-    Event endEvent;
+    private String html;
+    private String lifeSpan; //  life_span = 754–1870
+    private Set<Event> events;// within Infobox : event2 = [[Treaty of Venice]] (Independence from the Holy Roman Empire)
+    private Set<String> seeAlsoSet;// ==See also== section
+    private Set<Category> categories; // [[Category:Religion and government]]
+    private Map<String, String> keyValuesPairs;
+    private Event startEvent;
+    private Event endEvent;
 
     public PageContent() {
 

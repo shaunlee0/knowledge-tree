@@ -10,22 +10,30 @@ import org.springframework.stereotype.Component;
 @Component
 public class GraphService {
 
-	@Autowired
-	GraphMapRepository graphMapRepository;
+    @Autowired
+    GraphMapRepository graphMapRepository;
 
-	@Autowired
-	PageContentRepository pageContentRepository;
+    @Autowired
+    PageContentRepository pageContentRepository;
 
-	public GraphService(){
+    public GraphService() {
 
-	}
+    }
 
-	public SingularWikiEntityDto getRootEntity(){
-		SingularWikiEntityDto rootEntity = graphMapRepository.findRootEntity();
-		PageContentDto pageContentDto = pageContentRepository.findPageContentByTitle(rootEntity.getTitle());
-		rootEntity.setPageContentDto(pageContentDto);
+    public SingularWikiEntityDto getRootEntity() {
+        SingularWikiEntityDto rootEntity = graphMapRepository.findRootEntity();
+        PageContentDto pageContentDto = pageContentRepository.findPageContentByTitle(rootEntity.getTitle());
+        rootEntity.setPageContentDto(pageContentDto);
 
-		return rootEntity;
-	}
+        return rootEntity;
+    }
+
+    public String getAndExtractDataForVisualGraph() {
+        return null;
+    }
+
+    public SingularWikiEntityDto getSingularWikiEntity(String title) {
+        return null;
+    }
 
 }

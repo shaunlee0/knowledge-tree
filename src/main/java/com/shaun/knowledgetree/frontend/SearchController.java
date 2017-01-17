@@ -5,7 +5,7 @@ import com.shaun.knowledgetree.domain.Graph;
 import com.shaun.knowledgetree.domain.Relationship;
 import com.shaun.knowledgetree.domain.SingularWikiEntityDto;
 import com.shaun.knowledgetree.services.Neo4jServices;
-import com.shaun.knowledgetree.services.entities.WikiEntitiesServicesImpl;
+import com.shaun.knowledgetree.services.relationships.RelationshipService;
 import com.shaun.knowledgetree.services.lookup.LookupService;
 import com.shaun.knowledgetree.services.neo4j.MovieService;
 import com.shaun.knowledgetree.services.pageContent.PageContentService;
@@ -32,9 +32,6 @@ public class SearchController {
     Neo4jServices neo4jServices;
 
     @Autowired
-    WikiEntitiesServicesImpl wikiEntitiesServicesImpl;
-
-    @Autowired
     LookupService lookupService;
 
     @Autowired
@@ -42,6 +39,9 @@ public class SearchController {
 
     @Autowired
     PageContentService pageContentService;
+
+    @Autowired
+    RelationshipService relationshipService;
 
     @RequestMapping(value = "validate", method = RequestMethod.GET, params = "searchTerm")
     @ResponseBody
@@ -85,7 +85,7 @@ public class SearchController {
             //Our first layer is only a set of size 10
             Set<SingularWikiEntity> firstEntities = lookupService.findEntities(rootEntity, rootEntity);
 
-            //For each wiki entity hanging off the root(first entities) convert it and add it to the graph
+            //For each wiki entity hanging off the root(first relationships) convert it and add it to the graph
             firstEntities.forEach(singularWikiEntity -> {
                 SharedSearchStorage.getGraph().getEntities().add(singularWikiEntityDtoBuilder.convert(singularWikiEntity));
             });
@@ -100,13 +100,13 @@ public class SearchController {
                 if (singularWikiEntityDto.getParent() != null) {
 
                     //Establish parent to child relationship
-                    List<Relationship> parentToChildRelationships = pageContentService.extractRelationshipContentFromPageContent(singularWikiEntityDto.getParent(), singularWikiEntityDto);
+                    List<Relationship> parentToChildRelationships = relationshipService.extractRelationshipContentFromPageContent(singularWikiEntityDto.getParent(), singularWikiEntityDto);
                     if (parentToChildRelationships.size() > 0) {
                         singularWikiEntityDto.getParent().getRelatedEntities().addAll(parentToChildRelationships);
                     }
 
                     //Establish child to parent relationship
-                    List<Relationship> childToParentRelationships = pageContentService.extractRelationshipContentFromPageContent(singularWikiEntityDto, singularWikiEntityDto.getParent());
+                    List<Relationship> childToParentRelationships = relationshipService.extractRelationshipContentFromPageContent(singularWikiEntityDto, singularWikiEntityDto.getParent());
                     if (childToParentRelationships.size() > 0) {
                         singularWikiEntityDto.getRelatedEntities().addAll(childToParentRelationships);
                     }

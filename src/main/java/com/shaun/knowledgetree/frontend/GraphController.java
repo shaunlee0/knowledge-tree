@@ -12,13 +12,20 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping("/graph")
 public class GraphController {
 
-	@Autowired
-	GraphService graphService;
+    @Autowired
+    private GraphService graphService;
 
-	@RequestMapping(value = "root", method = RequestMethod.GET, produces = "application/json")
-	@ResponseBody
-	public SingularWikiEntityDto getRootEntity() {
-		SingularWikiEntityDto rootEntity = graphService.getRootEntity();
-		return rootEntity;
-	}
+    @RequestMapping(value = "root", method = RequestMethod.GET, produces = "application/json")
+    @ResponseBody
+    public SingularWikiEntityDto getRootEntity() {
+        return graphService.getRootEntity();
+    }
+
+    public String getDataForVisualGraph() {
+        return null;
+    }
+
+    public SingularWikiEntityDto getSingularWikiEntity(String title) {
+        return null;
+    }
 }

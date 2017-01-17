@@ -31,12 +31,6 @@ public class SingularWikiEntity  {
         this.relatedEntities = new ArrayList<>();
     }
 
-    public SingularWikiEntity(Page page, String title, Set<String> externalLinks) {
-        this.page = page;
-        this.title = title;
-        this.externalLinks = externalLinks;
-    }
-
     public List<Relationship> getRelatedEntities() {
         return relatedEntities;
     }

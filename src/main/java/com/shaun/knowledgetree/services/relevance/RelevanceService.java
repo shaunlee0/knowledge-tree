@@ -10,8 +10,8 @@ public class RelevanceService {
 
     }
 
-    public void calculateRelevanceOfEntity(SingularWikiEntity singularWikiEntity) {
-
+    public String calculateRelevanceOfEntityToRoot(SingularWikiEntity singularWikiEntity) {
+        return "";
     }
 
 

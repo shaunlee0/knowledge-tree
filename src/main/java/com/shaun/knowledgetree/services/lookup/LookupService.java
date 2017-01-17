@@ -9,6 +9,7 @@ import info.bliki.wiki.filter.PlainTextConverter;
 import info.bliki.wiki.model.WikiModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StopWatch;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -122,11 +123,11 @@ public class LookupService {
 
     /**
      * Pass in parent and root, get links from parent add them to titles to search.
-     * Carry out search on these titles, setting depth from root, aggregate and return found entities.
+     * Carry out search on these titles, setting depth from root, aggregate and return found relationships.
      *
      * @param parent     - Parent, we use this as starting point.
-     * @param rootEntity - root to set root to new entities.
-     * @return - Aggregated group of entities we find.
+     * @param rootEntity - root to set root to new relationships.
+     * @return - Aggregated group of relationships we find.
      */
     public Set<SingularWikiEntity> findEntities(SingularWikiEntity parent, SingularWikiEntity rootEntity) throws InterruptedException {
 
@@ -134,7 +135,7 @@ public class LookupService {
 
         parent.getPageContent().getLinks().forEach(titles::add);
 
-        //Find the set of entities from this object, then set its parent,root and depth
+        //Find the set of relationships from this object, then set its parent,root and depth
         Set<SingularWikiEntity> wikiEntitySet = findPages(titles,rootEntity);
 
         wikiEntitySet.forEach(wikiEntity -> {
@@ -144,6 +145,44 @@ public class LookupService {
         });
 
         return wikiEntitySet;
+    }
+
+    /**
+     * For each entity in the set passed in we aggregate all the children we find and then return them.
+     *
+     * @param inputEntities : Set of relationships to find children for
+     * @param rootEntity    : used to set root entity.
+     * @return : Set of child relationships combined for every element in the input set.
+     */
+    public Set<SingularWikiEntity> aggregateAndReturnChildrenFromSetOfEntities(Set<SingularWikiEntity> inputEntities, SingularWikiEntity rootEntity) {
+        Set<SingularWikiEntity> toReturn = new HashSet<>();
+
+        try {
+            int count = 1;
+            int toDo = inputEntities.size();
+
+            StopWatch stopWatch = new StopWatch();
+
+            for (SingularWikiEntity firstLayerEntity : inputEntities) {
+                stopWatch.start(firstLayerEntity.getTitle());
+                Set<SingularWikiEntity> childEntities = findEntities(firstLayerEntity,rootEntity);
+                toReturn.addAll(childEntities);
+                stopWatch.stop();
+                System.out.println(stopWatch.getLastTaskName() + " : " + stopWatch.getLastTaskTimeMillis() + "ms\t|" + "\tProgress = " + count + "/" + toDo);
+                count++;
+            }
+
+            if (count == 5) {
+                System.out.println("stop");
+            }
+
+            System.out.println("Finished");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return toReturn;
     }
 
     public Set<String> extractExternalLinksFromHtml(String html) {
