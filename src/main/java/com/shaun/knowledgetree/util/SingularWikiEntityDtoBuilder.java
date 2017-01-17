@@ -15,21 +15,21 @@ public class SingularWikiEntityDtoBuilder {
     public SingularWikiEntityDto convert(SingularWikiEntity singularWikiEntity) {
         SingularWikiEntityDto singularWikiEntityDto;
         //if not in all entities create it and add it to it
-        if (!Common.allEntities.containsKey(singularWikiEntity.getTitle())) {
+        if (!SharedSearchStorage.allEntities.containsKey(singularWikiEntity.getTitle())) {
             singularWikiEntityDto = new SingularWikiEntityDto();
             singularWikiEntityDto.setTitle(singularWikiEntity.getTitle());
             singularWikiEntityDto.getPageContent().setLinks(singularWikiEntity.getPageContent().getLinks());
             singularWikiEntityDto.setExternalLinks(singularWikiEntity.getExternalLinks());
             singularWikiEntityDto.setDepthFromRoot(singularWikiEntity.getDepthFromRoot());
             singularWikiEntityDto.setPageContentDto(pageContentDtoBuilder.convert(singularWikiEntity.getPageContent()));
-            singularWikiEntityDto.setRootEntity(Common.getRootEntity());
+            singularWikiEntityDto.setRootEntity(SharedSearchStorage.getRootEntity());
             singularWikiEntityDto.setParent(retrieveParent(singularWikiEntity.getParent()));
             singularWikiEntityDto.setRelatedEntities(singularWikiEntity.getRelatedEntities());
-            Common.allEntities.put(singularWikiEntityDto.getTitle(), singularWikiEntityDto);
+            SharedSearchStorage.allEntities.put(singularWikiEntityDto.getTitle(), singularWikiEntityDto);
         }
         //Otherwise just grab it.
         else {
-            singularWikiEntityDto = Common.allEntities.get(singularWikiEntity.getTitle());
+            singularWikiEntityDto = SharedSearchStorage.allEntities.get(singularWikiEntity.getTitle());
         }
         return singularWikiEntityDto;
     }
@@ -42,22 +42,22 @@ public class SingularWikiEntityDtoBuilder {
         rootEntityDto.setDepthFromRoot(singularWikiEntity.getDepthFromRoot());
         rootEntityDto.setIsRoot(singularWikiEntity.isRoot());
         rootEntityDto.setPageContentDto(pageContentDtoBuilder.convert(singularWikiEntity.getPageContent()));
-        Common.setRootEntity(rootEntityDto);
+        SharedSearchStorage.setRootEntity(rootEntityDto);
         return rootEntityDto;
     }
 
     private SingularWikiEntityDto retrieveParent(SingularWikiEntity singularWikiEntity) {
         SingularWikiEntityDto singularWikiEntityDto;
-        if (!Common.allEntities.containsKey(singularWikiEntity.getTitle())) {
+        if (!SharedSearchStorage.allEntities.containsKey(singularWikiEntity.getTitle())) {
             singularWikiEntityDto = new SingularWikiEntityDto();
             singularWikiEntityDto.setTitle(singularWikiEntity.getTitle());
             singularWikiEntityDto.getPageContent().setLinks(singularWikiEntity.getPageContent().getLinks());
             singularWikiEntityDto.setExternalLinks(singularWikiEntity.getExternalLinks());
             singularWikiEntityDto.setDepthFromRoot(singularWikiEntity.getDepthFromRoot());
             singularWikiEntityDto.setPageContentDto(pageContentDtoBuilder.convert(singularWikiEntity.getPageContent()));
-            Common.allEntities.put(singularWikiEntityDto.getTitle(), singularWikiEntityDto);
+            SharedSearchStorage.allEntities.put(singularWikiEntityDto.getTitle(), singularWikiEntityDto);
         } else {
-            singularWikiEntityDto = Common.allEntities.get(singularWikiEntity.getTitle());
+            singularWikiEntityDto = SharedSearchStorage.allEntities.get(singularWikiEntity.getTitle());
         }
 
         return singularWikiEntityDto;

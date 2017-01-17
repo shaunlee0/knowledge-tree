@@ -10,7 +10,7 @@ import java.util.Set;
 public interface WikiEntitiesServices {
 
     /**
-     * Returns the set of all child entities form every element in the set passed in.
+     * Returns the set of all child entities from every element in the set passed in.
      * If first entities contains 10 SingularWikiEntities we return the set of children for all ten combined.
      * @param firstEntities : input to find children for
      * @param rootEntity : used to set root entity.

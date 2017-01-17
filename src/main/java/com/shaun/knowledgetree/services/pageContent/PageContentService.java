@@ -3,7 +3,7 @@ package com.shaun.knowledgetree.services.pageContent;
 import com.shaun.knowledgetree.domain.Category;
 import com.shaun.knowledgetree.domain.Relationship;
 import com.shaun.knowledgetree.domain.SingularWikiEntityDto;
-import com.shaun.knowledgetree.util.Common;
+import com.shaun.knowledgetree.util.SharedSearchStorage;
 import org.jsoup.Jsoup;
 import org.springframework.stereotype.Component;
 
@@ -41,7 +41,7 @@ public class PageContentService {
 
             boolean categoryFoundInAllCategories = false;
 
-            for (Category category : Common.getGraph().getAllCategories()) {
+            for (Category category : SharedSearchStorage.getGraph().getAllCategories()) {
                 if (category.getName().equals(categories[i])) {
                     toReturn.add(category);
                     categoryFoundInAllCategories = true;
@@ -50,7 +50,7 @@ public class PageContentService {
 
             if (!categoryFoundInAllCategories) {
                 Category newCategoryFound = new Category(categories[i]);
-                Common.getGraph().getAllCategories().add(newCategoryFound);
+                SharedSearchStorage.getGraph().getAllCategories().add(newCategoryFound);
                 toReturn.add(newCategoryFound);
             }
 

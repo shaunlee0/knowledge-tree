@@ -9,7 +9,7 @@ import com.shaun.knowledgetree.services.entities.WikiEntitiesServicesImpl;
 import com.shaun.knowledgetree.services.lookup.LookupService;
 import com.shaun.knowledgetree.services.neo4j.MovieService;
 import com.shaun.knowledgetree.services.pageContent.PageContentService;
-import com.shaun.knowledgetree.util.Common;
+import com.shaun.knowledgetree.util.SharedSearchStorage;
 import com.shaun.knowledgetree.util.SingularWikiEntityDtoBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -68,34 +68,35 @@ public class SearchController {
         }
 
         try {
+            SharedSearchStorage sharedSearchStorage = new SharedSearchStorage();
             System.out.println("Searching for " + rootNodeTitle);
             request.getSession().removeAttribute("graph");
             neo4jServices.clearGraph();
-            Common.setGraph(new Graph(rootNodeTitle));
+            SharedSearchStorage.setGraph(new Graph(rootNodeTitle));
 
             //Find root
             SingularWikiEntity rootEntity = lookupService.findRoot(rootNodeTitle);
             rootEntity.setDepthFromRoot(0);
 
             SingularWikiEntityDto rootEntityDto = singularWikiEntityDtoBuilder.convertRoot(rootEntity);
-            Common.setRootEntity(rootEntityDto);
-            Common.getGraph().getEntities().add(rootEntityDto);
+            SharedSearchStorage.setRootEntity(rootEntityDto);
+            SharedSearchStorage.getGraph().getEntities().add(rootEntityDto);
 
             //Our first layer is only a set of size 10
             Set<SingularWikiEntity> firstEntities = lookupService.findEntities(rootEntity, rootEntity);
 
             //For each wiki entity hanging off the root(first entities) convert it and add it to the graph
             firstEntities.forEach(singularWikiEntity -> {
-                Common.getGraph().getEntities().add(singularWikiEntityDtoBuilder.convert(singularWikiEntity));
+                SharedSearchStorage.getGraph().getEntities().add(singularWikiEntityDtoBuilder.convert(singularWikiEntity));
             });
 
-            //Second layer is a set size 100, converting all these and adding to graph
-            Set<SingularWikiEntity> allSecondLayerEntities = wikiEntitiesServicesImpl.aggregateAndReturnChildrenFromSetOfEntities(firstEntities, rootEntity);
-            allSecondLayerEntities.forEach(singularWikiEntity -> {
-                Common.getGraph().getEntities().add(singularWikiEntityDtoBuilder.convert(singularWikiEntity));
-            });
+//            //Second layer is a set size 100, converting all these and adding to graph
+//            Set<SingularWikiEntity> allSecondLayerEntities = wikiEntitiesServicesImpl.aggregateAndReturnChildrenFromSetOfEntities(firstEntities, rootEntity);
+//            allSecondLayerEntities.forEach(singularWikiEntity -> {
+//                SharedSearchStorage.getGraph().getEntities().add(singularWikiEntityDtoBuilder.convert(singularWikiEntity));
+//            });
 
-            Common.getGraph().getEntities().forEach(singularWikiEntityDto -> {
+            SharedSearchStorage.getGraph().getEntities().forEach(singularWikiEntityDto -> {
                 if (singularWikiEntityDto.getParent() != null) {
 
                     //Establish parent to child relationship
@@ -112,12 +113,12 @@ public class SearchController {
                 }
             });
 
-            Common.findLinksAndOccurences();
-            neo4jServices.saveGraph(Common.getGraph());
+            SharedSearchStorage.findLinksAndOccurrences();
+            neo4jServices.saveGraph(SharedSearchStorage.getGraph());
             neo4jServices.removeVerboseRelationships();
             System.out.println("Graph saved.");
-            request.getSession().setAttribute("graph",Common.getGraph());
-            request.getSession().setAttribute("allLinksAndOccurrences",Common.getAllLinksAndOccurrences());
+            request.getSession().setAttribute("graph", SharedSearchStorage.getGraph());
+            request.getSession().setAttribute("allLinksAndOccurrences", SharedSearchStorage.getAllLinksAndOccurrences());
         } catch (Exception e){
             e.printStackTrace();
             result = false;

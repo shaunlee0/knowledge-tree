@@ -6,7 +6,10 @@ import com.shaun.knowledgetree.domain.SingularWikiEntityDto;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class Common {
+/**
+ * Class encapsulating various shared data and functions pertaining to a search.
+ */
+public class SharedSearchStorage {
 
     private static Graph graph;
     private static SingularWikiEntityDto rootEntity;
@@ -17,7 +20,7 @@ public class Common {
     }
 
     public static void setRootEntity(SingularWikiEntityDto rootEntity) {
-        Common.rootEntity = rootEntity;
+        SharedSearchStorage.rootEntity = rootEntity;
     }
 
     public static Graph getGraph() {
@@ -25,7 +28,7 @@ public class Common {
     }
 
     public static void setGraph(Graph graph) {
-        Common.graph = graph;
+        SharedSearchStorage.graph = graph;
     }
 
     public static HashMap<String, SingularWikiEntityDto> getAllEntities() {
@@ -33,7 +36,7 @@ public class Common {
     }
 
     public static void setAllEntities(HashMap<String, SingularWikiEntityDto> allEntities) {
-        Common.allEntities = allEntities;
+        SharedSearchStorage.allEntities = allEntities;
     }
 
     private static HashMap<String, Integer> allLinksAndOccurrences = new LinkedHashMap<>();
@@ -43,10 +46,10 @@ public class Common {
     }
 
     public static void setAllLinksAndOccurrences(HashMap<String, Integer> allLinksAndOccurrences) {
-        Common.allLinksAndOccurrences = allLinksAndOccurrences;
+        SharedSearchStorage.allLinksAndOccurrences = allLinksAndOccurrences;
     }
 
-    public static void findLinksAndOccurences() {
+    public static void findLinksAndOccurrences() {
         //for all entities
         allEntities.keySet().forEach(key -> {
             //for each one, get links
@@ -55,14 +58,6 @@ public class Common {
             entityLinks.forEach(link ->
                     allLinksAndOccurrences.put(link, occurrenceOfLink(link)));
         });
-
-//        Set<String> linksKeySet = allLinksAndOccurrences.keySet();
-//        for (String link : linksKeySet) {
-//            int linkOccurrences = allLinksAndOccurrences.get(link);
-//            if (linkOccurrences > 1){
-//                System.out.println(link + " has showed up " + linkOccurrences + " times");
-//            }
-//        }
 
         //Sort all links and occurences by descending order
         allLinksAndOccurrences = allLinksAndOccurrences.entrySet().stream()
@@ -75,18 +70,6 @@ public class Common {
                         },
                         LinkedHashMap::new
                 ));
-
-        System.out.println("Top ten occurring links over the search domain");
-        int count = 1;
-        for (Map.Entry<String, Integer> entry : allLinksAndOccurrences.entrySet()) {
-            if (count > 10) {
-                break;
-            } else {
-                System.out.println(count + ". " + entry.getKey() + " : " + entry.getValue());
-            }
-            count++;
-        }
-
     }
 
     private static Integer occurrenceOfLink(String linkText) {

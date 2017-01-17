@@ -2,7 +2,6 @@ package com.shaun.knowledgetree.repositories;
 
 import com.shaun.knowledgetree.domain.Graph;
 import com.shaun.knowledgetree.domain.SingularWikiEntityDto;
-import com.sun.tools.javac.util.List;
 import org.springframework.data.neo4j.annotation.Query;
 import org.springframework.data.neo4j.repository.GraphRepository;
 import org.springframework.data.repository.query.Param;
