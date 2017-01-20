@@ -24,9 +24,6 @@ public class LookupService {
     @Autowired
     private PageContentService pageContentService;
 
-    @Autowired
-    private RelevanceService relevanceService;
-
     private User user;
 
     public LookupService() {

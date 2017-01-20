@@ -55,7 +55,7 @@ public class SearchController {
     }
 
 	@RequestMapping(value = "{rootNodeTitle}", method = RequestMethod.GET)
-	public ModelAndView showResultsDetails(@PathVariable("rootNodeTitle")String rootNodeTitle, HttpServletRequest request){
+	public ModelAndView performSearch(@PathVariable("rootNodeTitle")String rootNodeTitle, HttpServletRequest request){
 
         boolean result = true;
         HashMap<String,Object> model = new HashMap<>();

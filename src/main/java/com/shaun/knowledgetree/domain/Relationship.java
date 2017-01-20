@@ -1,12 +1,6 @@
 package com.shaun.knowledgetree.domain;
 
-import com.shaun.knowledgetree.domain.SingularWikiEntityDto;
 import org.neo4j.ogm.annotation.*;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 @RelationshipEntity(type = "RELATIONSHIP")
 public class Relationship {
@@ -14,7 +8,10 @@ public class Relationship {
     private Long relationshipId;
 
     @Property
-    private String content;
+    private String explicitConnection;
+
+    @Property
+    private String onlyEndNodeConnection;
 
     @StartNode
     private SingularWikiEntityDto startNode;
@@ -39,12 +36,20 @@ public class Relationship {
     }
 
     //Content
-    public String getContent() {
-        return content;
+    public String getExplicitConnection() {
+        return explicitConnection;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public void setExplicitConnection(String explicitConnection) {
+        this.explicitConnection = explicitConnection;
+    }
+
+    public String getOnlyEndNodeConnection() {
+        return onlyEndNodeConnection;
+    }
+
+    public void setOnlyEndNodeConnection(String onlyEndNodeConnection) {
+        this.onlyEndNodeConnection = onlyEndNodeConnection;
     }
 
     //Nodes
