@@ -80,14 +80,14 @@ public class LookupService {
         return listOfPages.get(0).getPageid()!=null;
     }
 
-    public Set<SingularWikiEntity> findPages(List<String> titles, SingularWikiEntity rootEntity) throws InterruptedException {
+    public Set<SingularWikiEntity> findPages(List<String> titles, SingularWikiEntity rootEntity, int depthLimit) throws InterruptedException {
 
         List<String> titlesSubSet;
         List<Page> listOfPages;
 
         Set<SingularWikiEntity> toReturn = new HashSet<>();
-        if (titles.size() > 10) {
-            titlesSubSet = titles.subList(0, 10);
+        if (titles.size() > depthLimit) {
+            titlesSubSet = titles.subList(0, depthLimit);
             listOfPages = user.queryContent(titlesSubSet);
         } else {
             listOfPages = user.queryContent(titles);
@@ -125,14 +125,14 @@ public class LookupService {
      * @param rootEntity - root to set root to new relationships.
      * @return - Aggregated group of relationships we find.
      */
-    public Set<SingularWikiEntity> findEntities(SingularWikiEntity parent, SingularWikiEntity rootEntity) throws InterruptedException {
+    public Set<SingularWikiEntity> findEntities(SingularWikiEntity parent, SingularWikiEntity rootEntity, int linkDepthLimit) throws InterruptedException {
 
         List<String> titles = new ArrayList<>();
 
         parent.getPageContent().getLinks().forEach(titles::add);
 
         //Find the set of relationships from this object, then set its parent,root and depth
-        Set<SingularWikiEntity> wikiEntitySet = findPages(titles,rootEntity);
+        Set<SingularWikiEntity> wikiEntitySet = findPages(titles,rootEntity,linkDepthLimit);
 
         wikiEntitySet.forEach(wikiEntity -> {
             wikiEntity.setParent(parent);
@@ -150,7 +150,7 @@ public class LookupService {
      * @param rootEntity    : used to set root entity.
      * @return : Set of child relationships combined for every element in the input set.
      */
-    public Set<SingularWikiEntity> aggregateAndReturnChildrenFromSetOfEntities(Set<SingularWikiEntity> inputEntities, SingularWikiEntity rootEntity) {
+    public Set<SingularWikiEntity> aggregateAndReturnChildrenFromSetOfEntities(Set<SingularWikiEntity> inputEntities, SingularWikiEntity rootEntity, int linkDepthLimit) {
         Set<SingularWikiEntity> toReturn = new HashSet<>();
 
         try {
@@ -161,7 +161,7 @@ public class LookupService {
 
             for (SingularWikiEntity firstLayerEntity : inputEntities) {
                 stopWatch.start(firstLayerEntity.getTitle());
-                Set<SingularWikiEntity> childEntities = findEntities(firstLayerEntity,rootEntity);
+                Set<SingularWikiEntity> childEntities = findEntities(firstLayerEntity,rootEntity,linkDepthLimit);
                 toReturn.addAll(childEntities);
                 stopWatch.stop();
                 System.out.println(stopWatch.getLastTaskName() + " : " + stopWatch.getLastTaskTimeMillis() + "ms\t|" + "\tProgress = " + count + "/" + toDo);
