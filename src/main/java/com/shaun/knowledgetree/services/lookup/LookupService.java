@@ -2,7 +2,6 @@ package com.shaun.knowledgetree.services.lookup;
 
 import com.shaun.knowledgetree.domain.SingularWikiEntity;
 import com.shaun.knowledgetree.services.pageContent.PageContentService;
-import com.shaun.knowledgetree.services.relevance.RelevanceService;
 import info.bliki.api.Page;
 import info.bliki.api.User;
 import info.bliki.wiki.filter.PlainTextConverter;

@@ -56,19 +56,12 @@
                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                     <ul class="nav navbar-nav">
 
-                        <li><a href="<%=request.getContextPath()%>/admin/dashboard">Admin Dashboard</a></li>
-                        <li><a href="<%=request.getContextPath()%>/admin/PendingClaims">View Pending Claims</a></li>
-                        <li><a href="<%=request.getContextPath()%>/admin/reports">Admin Reports</a></li>
-
-
+                        <li><a href="<%=request.getContextPath()%>/error">-</a></li>
 
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
 
-                        <li><a href="<%=request.getContextPath()%>/logout">Logout</a></li>
-
-                        <li><a href="login">Login</a></li>
-                        <li><a href="register">Register</a></li>
+                        <li><a href="<%=request.getContextPath()%>/logout">-</a></li>
 
                     </ul>
                 </div>
