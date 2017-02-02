@@ -122,4 +122,5 @@ public class SingularWikiEntityDto {
         isRoot = root;
     }
 
+
 }

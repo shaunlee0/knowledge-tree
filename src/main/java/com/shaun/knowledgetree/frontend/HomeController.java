@@ -7,7 +7,6 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 
-@Controller
 public class HomeController {
 
 //	@RequestMapping(value = "/test", method = RequestMethod.GET)

@@ -1,13 +1,14 @@
 package com.shaun.knowledgetree.services.pageContent;
 
 import com.shaun.knowledgetree.domain.Category;
-import com.shaun.knowledgetree.domain.Relationship;
-import com.shaun.knowledgetree.domain.SingularWikiEntityDto;
 import com.shaun.knowledgetree.util.SharedSearchStorage;
 import org.jsoup.Jsoup;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by Shaun on 29/05/2016.

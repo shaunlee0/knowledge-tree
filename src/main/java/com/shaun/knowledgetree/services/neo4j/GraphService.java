@@ -4,6 +4,7 @@ import com.shaun.knowledgetree.domain.PageContentDto;
 import com.shaun.knowledgetree.domain.SingularWikiEntityDto;
 import com.shaun.knowledgetree.repositories.GraphMapRepository;
 import com.shaun.knowledgetree.repositories.PageContentRepository;
+import com.shaun.knowledgetree.repositories.SingularWikiEntityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -15,6 +16,9 @@ public class GraphService {
 
     @Autowired
     PageContentRepository pageContentRepository;
+
+    @Autowired
+    SingularWikiEntityRepository singularWikiEntityRepository;
 
     public GraphService() {
 
@@ -33,7 +37,7 @@ public class GraphService {
     }
 
     public SingularWikiEntityDto getSingularWikiEntity(String title) {
-        return null;
+        return singularWikiEntityRepository.findSingularWikiEntityDtoByTitle(title);
     }
 
 }
