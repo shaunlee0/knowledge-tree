@@ -9,4 +9,8 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface SingularWikiEntityRepository extends GraphRepository<SingularWikiEntityDto> {
+
+	//TODO : Test this method
+	SingularWikiEntityDto findSingularWikiEntityDtoByTitle(String title);
+
 }
