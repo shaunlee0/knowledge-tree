@@ -4,6 +4,7 @@ import org.neo4j.ogm.annotation.*;
 
 @RelationshipEntity(type = "RELATIONSHIP")
 public class Relationship {
+
     @GraphId
     private Long relationshipId;
 
@@ -20,17 +21,14 @@ public class Relationship {
     private SingularWikiEntityDto endNode;
 
     public Relationship(SingularWikiEntityDto startNode, SingularWikiEntityDto endNode) {
-
         this.startNode = startNode;
         this.endNode = endNode;
     }
-
 
     //ID
     public Long getRelationshipId() {
         return relationshipId;
     }
-
     public void setRelationshipId(Long relationshipId) {
         this.relationshipId = relationshipId;
     }
@@ -39,15 +37,12 @@ public class Relationship {
     public String getExplicitConnection() {
         return explicitConnection;
     }
-
     public void setExplicitConnection(String explicitConnection) {
         this.explicitConnection = explicitConnection;
     }
-
     public String getOnlyEndNodeConnection() {
         return onlyEndNodeConnection;
     }
-
     public void setOnlyEndNodeConnection(String onlyEndNodeConnection) {
         this.onlyEndNodeConnection = onlyEndNodeConnection;
     }
@@ -56,15 +51,12 @@ public class Relationship {
     public SingularWikiEntityDto getStartNode() {
         return startNode;
     }
-
     public void setStartNode(SingularWikiEntityDto startNode) {
         this.startNode = startNode;
     }
-
     public SingularWikiEntityDto getEndNode() {
         return endNode;
     }
-
     public void setEndNode(SingularWikiEntityDto endNode) {
         this.endNode = endNode;
     }

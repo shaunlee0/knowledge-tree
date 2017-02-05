@@ -80,7 +80,8 @@ public class LookupService {
         return listOfPages.get(0).getPageid()!=null;
     }
 
-    public Set<SingularWikiEntity> findPages(List<String> titles, SingularWikiEntity rootEntity, int depthLimit) throws InterruptedException {
+    public Set<SingularWikiEntity> findPages(List<String> titles, SingularWikiEntity rootEntity,
+                                             int depthLimit) throws InterruptedException {
 
         List<String> titlesSubSet;
         List<Page> listOfPages;
@@ -125,7 +126,8 @@ public class LookupService {
      * @param rootEntity - root to set root to new relationships.
      * @return - Aggregated group of relationships we find.
      */
-    public Set<SingularWikiEntity> findEntities(SingularWikiEntity parent, SingularWikiEntity rootEntity, int linkDepthLimit) throws InterruptedException {
+    public Set<SingularWikiEntity> findEntities(SingularWikiEntity parent, SingularWikiEntity rootEntity,
+                                                int linkDepthLimit) throws InterruptedException {
 
         List<String> titles = new ArrayList<>();
 
