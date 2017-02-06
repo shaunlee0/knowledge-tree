@@ -2,6 +2,8 @@ package com.shaun.knowledgetree.domain;
 
 import org.neo4j.ogm.annotation.*;
 
+import java.util.Set;
+
 @RelationshipEntity(type = "RELATIONSHIP")
 public class Relationship {
 
@@ -19,6 +21,8 @@ public class Relationship {
 
     @EndNode
     private SingularWikiEntityDto endNode;
+
+    private Set<String> synsetFromConnectingSentence;
 
     public Relationship(SingularWikiEntityDto startNode, SingularWikiEntityDto endNode) {
         this.startNode = startNode;
@@ -45,6 +49,12 @@ public class Relationship {
     }
     public void setOnlyEndNodeConnection(String onlyEndNodeConnection) {
         this.onlyEndNodeConnection = onlyEndNodeConnection;
+    }
+    public Set<String> getSynsetFromConnectingSentence() {
+        return synsetFromConnectingSentence;
+    }
+    public void setSynsetFromConnectingSentence(Set<String> synsetFromConnectingSentence) {
+        this.synsetFromConnectingSentence = synsetFromConnectingSentence;
     }
 
     //Nodes
