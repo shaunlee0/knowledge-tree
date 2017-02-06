@@ -36,9 +36,9 @@ public class LookupService {
 
         List<Page> listOfPages = user.queryContent(listOfTitleStrings);
         String pageWikiText = listOfPages.get(0).getCurrentContent();
-        if(pageWikiText.contains("#REDIRECT")){
-            pageWikiText = pageWikiText.replace("#REDIRECT","");
-            String correctedSpelling = pageWikiText.substring(pageWikiText.indexOf("[[") + 2,pageWikiText.indexOf("]]"));
+        if (pageWikiText.contains("#REDIRECT")) {
+            pageWikiText = pageWikiText.replace("#REDIRECT", "");
+            String correctedSpelling = pageWikiText.substring(pageWikiText.indexOf("[[") + 2, pageWikiText.indexOf("]]"));
             listOfTitleStrings[0] = correctedSpelling;
             listOfPages = user.queryContent(listOfTitleStrings);
         }
@@ -65,19 +65,19 @@ public class LookupService {
         return singularWikiEntity;
     }
 
-    public boolean checkArticleExists(String articleTitle){
+    public boolean checkArticleExists(String articleTitle) {
         String[] listOfTitleStrings = {articleTitle};
 
         List<Page> listOfPages = user.queryContent(listOfTitleStrings);
         String pageWikiText = listOfPages.get(0).getCurrentContent();
-        if(pageWikiText.contains("#REDIRECT")){
-            pageWikiText = pageWikiText.replace("#REDIRECT","");
-            String correctedSpelling = pageWikiText.substring(pageWikiText.indexOf("[[") + 2,pageWikiText.indexOf("]]"));
+        if (pageWikiText.contains("#REDIRECT")) {
+            pageWikiText = pageWikiText.replace("#REDIRECT", "");
+            String correctedSpelling = pageWikiText.substring(pageWikiText.indexOf("[[") + 2, pageWikiText.indexOf("]]"));
             listOfTitleStrings[0] = correctedSpelling;
             listOfPages = user.queryContent(listOfTitleStrings);
         }
 
-        return listOfPages.get(0).getPageid()!=null;
+        return listOfPages.get(0).getPageid() != null;
     }
 
     public Set<SingularWikiEntity> findPages(List<String> titles, SingularWikiEntity rootEntity,
@@ -99,23 +99,58 @@ public class LookupService {
             WikiModel wikiModel = new WikiModel("${image}", "${title}");
             String html = wikiModel.render(page.toString());
             String wikiPageText = page.getCurrentContent();
-            String pagePlainText = wikiModel.render(new PlainTextConverter(), wikiPageText);
-            String title = page.getTitle();
-            singularWikiEntity.setTitle(title);
-            singularWikiEntity.getPageContent().setTitle(title);
-            singularWikiEntity.getPageContent().setPageWikiText(wikiPageText);
-            singularWikiEntity.getPageContent().setPagePlainText(pagePlainText);
-            singularWikiEntity.getPageContent().setHtml(html);
-            singularWikiEntity.setExternalLinks(extractExternalLinksFromHtml(html));
-            singularWikiEntity.getPageContent().setCategories(pageContentService.extractCategories(wikiPageText));
-            singularWikiEntity.getPageContent().setKeyValuesPairs(pageContentService.extractKeyValuePairs(wikiPageText));
-            singularWikiEntity.getPageContent().extractKeyValuePairsToContent();
-            singularWikiEntity.getPageContent().extractSeeAlsoSet();
-            singularWikiEntity.getPageContent().setLinks(wikiModel.getLinks());
-            singularWikiEntity.setIsRoot(false);
+            if (wikiPageText.contains("#REDIRECT")) {
+                wikiPageText = wikiPageText.replace("#REDIRECT", "");
+                String correctedSpelling = wikiPageText.substring(wikiPageText.indexOf("[[") + 2, wikiPageText.indexOf("]]"));
+                singularWikiEntity = getSingularWikiEntityForSearchTerm(correctedSpelling);
+            } else {
+                String pagePlainText = wikiModel.render(new PlainTextConverter(), wikiPageText);
+                String title = page.getTitle();
+                singularWikiEntity.setTitle(title);
+                singularWikiEntity.getPageContent().setTitle(title);
+                singularWikiEntity.getPageContent().setPageWikiText(wikiPageText);
+                singularWikiEntity.getPageContent().setPagePlainText(pagePlainText);
+                singularWikiEntity.getPageContent().setHtml(html);
+                singularWikiEntity.setExternalLinks(extractExternalLinksFromHtml(html));
+                singularWikiEntity.getPageContent().setCategories(pageContentService.extractCategories(wikiPageText));
+                singularWikiEntity.getPageContent().setKeyValuesPairs(pageContentService.extractKeyValuePairs(wikiPageText));
+                singularWikiEntity.getPageContent().extractKeyValuePairsToContent();
+                singularWikiEntity.getPageContent().extractSeeAlsoSet();
+                singularWikiEntity.getPageContent().setLinks(wikiModel.getLinks());
+                singularWikiEntity.setIsRoot(false);
+            }
             toReturn.add(singularWikiEntity);
         }
         return toReturn;
+    }
+
+    private SingularWikiEntity getSingularWikiEntityForSearchTerm(String correctedSpelling) {
+        SingularWikiEntity singularWikiEntity = new SingularWikiEntity();
+        String[] listOfTitleStrings = {correctedSpelling};
+
+        List<Page> listOfPages = user.queryContent(listOfTitleStrings);
+        Page page = listOfPages.get(0);
+        WikiModel wikiModel = new WikiModel("${image}", "${title}");
+        String html = null;
+        html = wikiModel.render(page.toString());
+        String wikiPageText = page.getCurrentContent();
+        String title = page.getTitle();
+        String pagePlainText = wikiModel.render(new PlainTextConverter(), wikiPageText);
+        singularWikiEntity.setTitle(title);
+        singularWikiEntity.getPageContent().setTitle(title);
+        singularWikiEntity.getPageContent().setPageWikiText(wikiPageText);
+        singularWikiEntity.getPageContent().setPagePlainText(pagePlainText);
+        singularWikiEntity.getPageContent().setCategories(pageContentService.extractCategories(wikiPageText));
+        singularWikiEntity.getPageContent().setKeyValuesPairs(pageContentService.extractKeyValuePairs(wikiPageText));
+        singularWikiEntity.getPageContent().extractKeyValuePairsToContent();
+        singularWikiEntity.getPageContent().extractSeeAlsoSet();
+        singularWikiEntity.getPageContent().setHtml(html);
+        singularWikiEntity.setExternalLinks(extractExternalLinksFromHtml(html));
+        singularWikiEntity.getPageContent().setLinks(wikiModel.getLinks());
+        singularWikiEntity.setIsRoot(true);
+
+        return singularWikiEntity;
+
     }
 
     /**
@@ -134,7 +169,7 @@ public class LookupService {
         parent.getPageContent().getLinks().forEach(titles::add);
 
         //Find the set of relationships from this object, then set its parent,root and depth
-        Set<SingularWikiEntity> wikiEntitySet = findPages(titles,rootEntity,linkDepthLimit);
+        Set<SingularWikiEntity> wikiEntitySet = findPages(titles, rootEntity, linkDepthLimit);
 
         wikiEntitySet.forEach(wikiEntity -> {
             wikiEntity.setParent(parent);
@@ -163,7 +198,7 @@ public class LookupService {
 
             for (SingularWikiEntity firstLayerEntity : inputEntities) {
                 stopWatch.start(firstLayerEntity.getTitle());
-                Set<SingularWikiEntity> childEntities = findEntities(firstLayerEntity,rootEntity,linkDepthLimit);
+                Set<SingularWikiEntity> childEntities = findEntities(firstLayerEntity, rootEntity, linkDepthLimit);
                 toReturn.addAll(childEntities);
                 stopWatch.stop();
                 System.out.println(stopWatch.getLastTaskName() + " : " + stopWatch.getLastTaskTimeMillis() + "ms\t|" + "\tProgress = " + count + "/" + toDo);

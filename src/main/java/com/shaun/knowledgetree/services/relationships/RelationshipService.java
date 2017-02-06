@@ -3,7 +3,7 @@ package com.shaun.knowledgetree.services.relationships;
 import com.shaun.knowledgetree.domain.Relationship;
 import com.shaun.knowledgetree.domain.SingularWikiEntityDto;
 import com.shaun.knowledgetree.services.neo4j.GraphService;
-import org.apache.commons.httpclient.util.HttpURLConnection;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -61,15 +61,51 @@ public class RelationshipService {
      * @return relationship(s) and content between start node and end node.
      */
     private List<Relationship> findRelationshipContentOfStartToEndNode(SingularWikiEntityDto startNode, SingularWikiEntityDto endNode) {
-        String articleContent = startNode.getPageContent().getPagePlainText();
-        String tempContent = startNode.getPageContent().getPagePlainText();
-        String titleToFind = endNode.getTitle();
+        List<Relationship> toReturn = new ArrayList<>();
 
-        //Remove bracket content in title (these never show up in article text)
-        int indexOfBracket = titleToFind.indexOf("(");
-        if (indexOfBracket != -1) {
-            titleToFind = titleToFind.substring(0, indexOfBracket);
+        try {
+
+            String articleContent = startNode.getPageContent().getPagePlainText();
+            String tempContent = startNode.getPageContent().getPagePlainText();
+            String titleToFind = endNode.getTitle();
+            String endNodeArticle = endNode.getPageContent().getPagePlainText();
+            String startNodeAcronym = null;
+
+            //Remove bracket content in title (these never show up in article text)
+            int indexOfBracket = titleToFind.indexOf("(");
+            if (indexOfBracket != -1) {
+                titleToFind = titleToFind.substring(0, indexOfBracket);
+            }
+            int indexOfOpeningBracketInStartNodeArticle = articleContent.indexOf("(");
+            int indexOfClosingBracketInStartNodeArticle = articleContent.indexOf(")");
+            int indexOfFirstFullStop = articleContent.indexOf(".");
+
+            //Extract substitute acronym if possible.
+            if (indexOfOpeningBracketInStartNodeArticle != -1 || indexOfClosingBracketInStartNodeArticle != -1) {
+                if(indexOfOpeningBracketInStartNodeArticle < indexOfFirstFullStop){
+                    startNodeAcronym = articleContent.substring(indexOfOpeningBracketInStartNodeArticle + 1, indexOfClosingBracketInStartNodeArticle);
+                    if (!StringUtils.isAllUpperCase(startNodeAcronym)) {
+                        startNodeAcronym = null;
+                    }
+                }
+            }
+
+
+            toReturn.addAll(findRelationshipSentences(titleToFind, tempContent, articleContent, startNode, endNode,null));
+
+            //Use acronym if applicable.
+            if (startNodeAcronym != null) {
+                toReturn.addAll(findRelationshipSentences(titleToFind, tempContent, articleContent, startNode, endNode,startNodeAcronym));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+
+        return toReturn;
+    }
+
+    private List<Relationship> findRelationshipSentences(String titleToFind, String tempContent, String articleContent,
+                                                         SingularWikiEntityDto startNode, SingularWikiEntityDto endNode, String startNodeAcronym) {
         String sentenceContainingMatch = "";
         List<Relationship> toReturn = new ArrayList<>();
 
@@ -78,7 +114,6 @@ public class RelationshipService {
         //Count occurrences to work out how many relationships to create if more than one.
         while (containsIgnoreCase(tempContent, titleToFind)) {
             titleOccurrences++;
-            System.out.println(titleOccurrences + " : " + titleToFind);
             tempContent = tempContent.replaceFirst(titleToFind, "");
             tempContent = tempContent.replaceFirst(titleToFind.toLowerCase(), "");
             if (titleOccurrences > 50) {
@@ -128,7 +163,7 @@ public class RelationshipService {
             }
 
             Relationship relationship = new Relationship(startNode, endNode);
-            extractSemanticContentOfRelationshipInSentence(sentenceContainingMatch, startNode.getTitle(), endNode.getTitle(), relationship);
+            extractSemanticContentOfRelationshipInSentence(sentenceContainingMatch, startNode.getTitle(), relationship,startNodeAcronym);
             toReturn.add(relationship);
         }
         return toReturn;
@@ -137,13 +172,12 @@ public class RelationshipService {
     /**
      * This method decides the relationship content. For now if both start && end node exist it is an explicit connection.
      * Otherwise it is just set as only end node connection.
-     *
-     * @param sentenceContainingMatch : sentence to analyse.
+     *  @param sentenceContainingMatch : sentence to analyse.
      * @param startNodeTitle          :
-     * @param endNodeTitle            :
      * @param relationship            : to configure.
+     * @param startNodeAcronym : If an acronym can be used to make the connection use it.
      */
-    private void extractSemanticContentOfRelationshipInSentence(String sentenceContainingMatch, String startNodeTitle, String endNodeTitle, Relationship relationship) {
+    private void extractSemanticContentOfRelationshipInSentence(String sentenceContainingMatch, String startNodeTitle , Relationship relationship, String startNodeAcronym) {
 
         int indexOfBracket = startNodeTitle.indexOf("(");
         if (indexOfBracket != -1) {
@@ -153,10 +187,15 @@ public class RelationshipService {
         //If sentence directly references the start node return it. No more details need adding just now.
         if (containsIgnoreCase(sentenceContainingMatch, startNodeTitle)) {
             relationship.setExplicitConnection(sentenceContainingMatch);
-            extractSynsetsAndStoreToRelationship(relationship);
-        } else {
+//            extractSynsetsAndStoreToRelationship(relationship);
+            //Otherwise check acronym.
+        } else if (startNodeAcronym!= null){
+            if(containsIgnoreCase(sentenceContainingMatch,startNodeAcronym)){
+                relationship.setExplicitConnection(sentenceContainingMatch);
+            }
+        }else{
             relationship.setOnlyEndNodeConnection(sentenceContainingMatch);
-            extractSynsetsAndStoreToRelationship(relationship);
+//            extractSynsetsAndStoreToRelationship(relationship);
         }
     }
 
