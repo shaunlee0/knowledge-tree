@@ -33,13 +33,9 @@ public class RelationshipController {
                                                HttpServletRequest request){
 
         HashMap<String, Object> model = new HashMap<>();
-
-
         SingularWikiEntityDto startNode = graphService.getSingularWikiEntity(startNodeTitle);
         SingularWikiEntityDto endNode = graphService.getSingularWikiEntity(endNodeTitle);
         List<Relationship> foundRelationships = relationshipService.getRelationships(startNode,endNodeTitle);
-
-
 
         model.put("relationships",foundRelationships);
         model.put("startNode",startNode);

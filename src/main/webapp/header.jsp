@@ -58,12 +58,16 @@
                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                     <ul class="nav navbar-nav">
 
-                        <li><a href="<%=request.getContextPath()%>/error">-</a></li>
+                        <li><a href="<%=request.getContextPath()%>/results">Results</a></li>
+                        <li><a href="<%=request.getContextPath()%>/graph/root">Root Entity</a></li>
+                        <li><a href="<%=request.getContextPath()%>/graph/visual">Show Graph</a></li>
 
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
 
-                        <li><a href="<%=request.getContextPath()%>/logout">-</a></li>
+                        <li>
+
+                        </li>
 
                     </ul>
                 </div>

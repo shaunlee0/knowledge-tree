@@ -295,13 +295,13 @@ public class RelationshipService {
 
     public List<Relationship> getRelationships(SingularWikiEntityDto startNode, String endNodeTitle) {
 
-        List<Relationship> foundRelationships = startNode.getRelatedEntities();
+        List<Relationship> foundRelationships = new ArrayList<>();
 
-        foundRelationships.addAll(
-                startNode.getRelatedEntities()
-                        .stream()
-                        .filter(relationship -> relationship.getEndNode().getTitle().equals(endNodeTitle))
-                        .collect(Collectors.toSet()));
+        for (Relationship relationship : startNode.getRelatedEntities()) {
+            if (relationship.getEndNode().getTitle().equals(endNodeTitle)){
+                foundRelationships.add(relationship);
+            }
+        }
 
         foundRelationships.forEach(this::extractSynsetsAndStoreToRelationship);
 

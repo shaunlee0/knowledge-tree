@@ -9,6 +9,7 @@ import com.shaun.knowledgetree.services.relationships.RelationshipService;
 import com.shaun.knowledgetree.services.lookup.LookupService;
 import com.shaun.knowledgetree.services.neo4j.MovieService;
 import com.shaun.knowledgetree.services.pageContent.PageContentService;
+import com.shaun.knowledgetree.services.relevance.RelevanceService;
 import com.shaun.knowledgetree.util.SharedSearchStorage;
 import com.shaun.knowledgetree.util.SingularWikiEntityDtoBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,9 +18,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("search")
@@ -42,6 +42,9 @@ public class SearchController {
 
 	@Autowired
 	RelationshipService relationshipService;
+
+    @Autowired
+    RelevanceService relevanceService;
 
 	@RequestMapping(value = "validate", method = RequestMethod.GET, params = "searchTerm")
 	@ResponseBody
@@ -124,10 +127,32 @@ public class SearchController {
 				}
 			});
 
+
 			SharedSearchStorage.findLinksAndOccurrences();
 			neo4jServices.saveGraph(SharedSearchStorage.getGraph());
 			neo4jServices.removeVerboseRelationships();
 			System.out.println("Graph saved.");
+            HashMap<String, Double> entitiesAndRelevance = new LinkedHashMap<>();
+
+            for (SingularWikiEntityDto entity : SharedSearchStorage.getGraph().getEntities()) {
+                double tfidf = relevanceService.calculateTfidfWeightingForEntity(entity);
+                entitiesAndRelevance.put(entity.getTitle(), tfidf);
+            }
+
+            //Sort all links and occurences by descending order
+            entitiesAndRelevance = entitiesAndRelevance.entrySet().stream()
+                    .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+                    .collect(Collectors.toMap(
+                            Map.Entry::getKey,
+                            Map.Entry::getValue,
+                            (x, y) -> {
+                                throw new AssertionError();
+                            },
+                            LinkedHashMap::new
+                    ));
+
+
+            request.getSession().setAttribute("relevanceRankings",entitiesAndRelevance);
 			request.getSession().setAttribute("graph", SharedSearchStorage.getGraph());
 			request.getSession().setAttribute("allLinksAndOccurrences", SharedSearchStorage.getAllLinksAndOccurrences());
 		} catch (Exception e) {

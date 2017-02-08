@@ -6,22 +6,23 @@
 <!-- include header start (leave me alone) -->
 <jsp:include page='header.jsp'/>
 <!-- include header end -->
-
 <%
-    Graph graph = (Graph)session.getAttribute("graph");
+    Graph graph = (Graph) session.getAttribute("graph");
     Set<Category> categories = graph.getAllCategories();
-    HashMap<String,Integer> allLinksAndOccurrences = (HashMap<String,Integer>) session.getAttribute("allLinksAndOccurrences");
-    out.println(allLinksAndOccurrences.size());
+    HashMap<String, Integer> allLinksAndOccurrences = (HashMap<String, Integer>) session.getAttribute("allLinksAndOccurrences");
+    HashMap<String, Double> entitiesAndRelevance = (HashMap<String, Double>) session.getAttribute("relevanceRankings");
 %>
-
 <head>
-    <title>Knowledge Tree - Results : <%=graph.getSearchTerm()%></title>
+    <title>Knowledge Tree - Results : <%=graph.getSearchTerm()%>
+    </title>
 </head>
 
 <!-- page content start (customise) -->
-<h1>Results for <%=graph.getSearchTerm()%></h1>
+<h1>Results for <%=graph.getSearchTerm()%>
+</h1>
 <button class="btn btn-info" data-toggle="collapse" data-target="#categoriesTable">Show Categories</button>
 <button class="btn btn-info" data-toggle="collapse" data-target="#topOccurringArticlesTable">Show Top Occurring Links</button>
+<button class="btn btn-info" data-toggle="collapse" data-target="#mostRelevantArticlesTable">Show Most Relevant Articles</button>
 <div class="row collapse" id="categoriesTable">
     <div class="col-md-12">
         <table class="table">
@@ -37,8 +38,11 @@
             %>
             <form role="form" method="get" action="category">
                 <tr>
-                    <td><%=category.getName()%></td>
-                    <td><button class="btn btn-success">View</button></td>
+                    <td><%=category.getName()%>
+                    </td>
+                    <td>
+                        <button class="btn btn-success">View</button>
+                    </td>
                 </tr>
             </form>
             <%
@@ -69,20 +73,65 @@
 
 
             %>
-                <tr>
-                    <td><b><%=count%>.</b></td>
-                    <td><%=entry.getKey()%></td>
-                    <td><%=entry.getValue()%></td>
-                    <td><button class="btn btn-success">View Article</button></td>
-                </tr>
+            <tr>
+                <td><b><%=count%>.</b></td>
+                <td><%=entry.getKey()%>
+                </td>
+                <td><%=entry.getValue()%>
+                </td>
+                <td>
+                    <button class="btn btn-success">View Article</button>
+                </td>
+            </tr>
             <%
-                    count++; }
+                    count++;
+                }
             %>
             </tbody>
         </table>
     </div>
 </div>
+<div class="row collapse" id="mostRelevantArticlesTable">
+    <div class="col-md-12">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Article Title</th>
+                <th>Occurrences</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <%
 
+                int counter = 1;
+                for (Map.Entry<String, Double> entry : entitiesAndRelevance.entrySet()) {
+                    if (counter > 10) {
+                        break;
+                    }
+
+
+            %>
+            <tr>
+                <td><b><%=counter%>.</b></td>
+                <td><%=entry.getKey()%>
+                </td>
+                <td><%=entry.getValue()%>
+                </td>
+                <td>
+                    <button class="btn btn-success">View Article</button>
+                </td>
+            </tr>
+            <%
+                    counter++;
+                }
+
+            %>
+            </tbody>
+        </table>
+    </div>
+</div>
 
 <!-- page content end -->
 

@@ -38,27 +38,34 @@ public class RelevanceService {
     }
 
     public double calculateTfidfWeightingForEntity(SingularWikiEntityDto singularWikiEntityDto) {
-        String title = singularWikiEntityDto.getTitle();
-        String articleContent = singularWikiEntityDto.getPageContent().getPagePlainText();
-        int occurrencesInArticle = StringUtils.countMatches(articleContent, title);
-        int totalWordsInArticle = articleContent.split(" ").length;
+        double tfidf = 0;
+        try {
+            String title = singularWikiEntityDto.getTitle();
+            String articleContent = singularWikiEntityDto.getPageContent().getPagePlainText();
+            int occurrencesInArticle = StringUtils.countMatches(articleContent, title);
+            int totalWordsInArticle = articleContent.split(" ").length;
 
-        if (occurrencesInArticle == 0) {
-            occurrencesInArticle = StringUtils.countMatches(articleContent, title.toLowerCase());
+            if (occurrencesInArticle == 0) {
+                occurrencesInArticle = StringUtils.countMatches(articleContent, title.toLowerCase());
+            }
+
+            //Calculate Term Frequency
+            double tf = (double) occurrencesInArticle / (double) totalWordsInArticle;
+
+            HashMap<String, SingularWikiEntityDto> allEntities = SharedSearchStorage.getAllEntities();
+            HashMap<String, Integer> linksAndOccurrences = SharedSearchStorage.getAllLinksAndOccurrences();
+
+            //Calculate inverse document frequency
+            int totalArticlesInDomain = allEntities.size();
+            int articlesContainingTitle = linksAndOccurrences.get(title);
+
+            double idf = 1 + (double) Math.log((double) totalArticlesInDomain / (double) articlesContainingTitle);
+
+            tfidf = tf * idf;
+        }catch (Exception e){
+            e.printStackTrace();
         }
 
-        //Calculate Term Frequency
-        double tf = (double) occurrencesInArticle / (double) totalWordsInArticle;
-
-        HashMap<String, SingularWikiEntityDto> allEntities = SharedSearchStorage.getAllEntities();
-        HashMap<String, Integer> linksAndOccurrences = SharedSearchStorage.getAllLinksAndOccurrences();
-
-        //Calculate inverse document frequency
-        int totalArticlesInDomain = allEntities.size();
-        int articlesContainingTitle = linksAndOccurrences.get(title);
-
-        double idf = 1 + Math.log(totalArticlesInDomain / articlesContainingTitle);
-
-        return tf * idf;
+        return tfidf;
     }
 }

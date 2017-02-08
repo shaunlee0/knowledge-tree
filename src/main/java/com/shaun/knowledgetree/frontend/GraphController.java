@@ -24,10 +24,12 @@ public class GraphController {
     @Autowired
     private RelevanceService relevanceService;
 
-    @RequestMapping(value = "root", method = RequestMethod.GET, produces = "application/json")
-    @ResponseBody
-    public SingularWikiEntityDto getRootEntity() {
-        return graphService.getRootEntity();
+    @RequestMapping(value = "root", method = RequestMethod.GET)
+    public ModelAndView getRootEntity() {
+        SingularWikiEntityDto root = graphService.getRootEntity();
+        HashMap<String, Object> model = new HashMap<>();
+        model.put("article",root);
+        return new ModelAndView("article",model);
     }
 
     public String getDataForVisualGraph() {
@@ -39,8 +41,6 @@ public class GraphController {
     public ModelAndView getSingularWikiEntity(@PathVariable("title") String title) {
         HashMap<String, Object> model = new HashMap<>();
         SingularWikiEntityDto singularWikiEntityDto = graphService.getSingularWikiEntity(title);
-        double tfidf = relevanceService.calculateTfidfWeightingForEntity(singularWikiEntityDto);
-        model.put("tfidf",tfidf);
         model.put("article",singularWikiEntityDto);
         return new ModelAndView("article",model);
     }
