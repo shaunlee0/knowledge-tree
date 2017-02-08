@@ -17,6 +17,8 @@
 
 <h1>Article info for <%=article.getTitle()%></h1>
 
+<%=article.getPageContent().getHtml()%>
+
 <!-- page content end -->
 
 <!-- include footer start (leave me alone) -->

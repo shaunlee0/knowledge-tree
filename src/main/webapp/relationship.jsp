@@ -22,30 +22,38 @@
     <table class="table">
         <thead>
         <tr>
-            <th>Explicit Connection</th>
-            <th>Only End Node Connection</th>
+            <th>Type</th>
+            <th>Relationship Content</th>
             <th>Action</th>
         </tr>
         </thead>
         <tbody>
         <%
+            int relationshipIndex = 1;
+
             for (Relationship relationship : relationshipList) {
         %>
         <tr>
             <td>
                 <%if(relationship.getExplicitConnection()!=null){
-                out.print(relationship.getExplicitConnection());
+                    out.print("<b>Explicit</b>");
+                }%>
+                <%if(relationship.getOnlyEndNodeConnection()!=null){
+                    out.print("<b>Only End Node</b>");
                 }%>
             </td>
             <td>
+                <%if(relationship.getExplicitConnection()!=null){
+                out.print(relationship.getExplicitConnection());
+                }%>
                 <%if(relationship.getOnlyEndNodeConnection()!=null){
                 out.print(relationship.getOnlyEndNodeConnection());
                 }%>
             </td>
             <td>
-                <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#sysnsetModal">View Synset of Relationship</button>
+                <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#sysnsetModal<%=relationshipIndex%>">View Synset of Relationship</button>
                 <!-- Modal -->
-                <div id="sysnsetModal" class="modal fade" role="dialog">
+                <div id="sysnsetModal<%=relationshipIndex%>" class="modal fade" role="dialog">
                     <div class="modal-dialog">
 
                         <!-- Modal content-->
@@ -81,7 +89,7 @@
                 </div>
             </td>
             <%
-                }
+              relationshipIndex ++;  }
             %>
         </tr>
         </tbody>

@@ -45,7 +45,7 @@ public class LookupService {
         listOfPages.parallelStream().forEach(page -> {
             WikiModel wikiModel = new WikiModel("${image}", "${title}");
             String html = null;
-            html = wikiModel.render(page.toString());
+            html = WikiModel.toHtml(page.getCurrentContent()).replaceAll("\\{\\{.*?}}", "");
             String wikiPageText = page.getCurrentContent();
             String title = page.getTitle();
             String pagePlainText = wikiModel.render(new PlainTextConverter(), wikiPageText);
@@ -97,7 +97,7 @@ public class LookupService {
             SingularWikiEntity singularWikiEntity = new SingularWikiEntity();
             singularWikiEntity.setRootEntity(rootEntity);
             WikiModel wikiModel = new WikiModel("${image}", "${title}");
-            String html = wikiModel.render(page.toString());
+            String html = WikiModel.toHtml(page.getCurrentContent()).replaceAll("\\{\\{.*?}}", "");
             String wikiPageText = page.getCurrentContent();
             if (wikiPageText.contains("#REDIRECT")) {
                 wikiPageText = wikiPageText.replace("#REDIRECT", "");
@@ -131,8 +131,7 @@ public class LookupService {
         List<Page> listOfPages = user.queryContent(listOfTitleStrings);
         Page page = listOfPages.get(0);
         WikiModel wikiModel = new WikiModel("${image}", "${title}");
-        String html = null;
-        html = wikiModel.render(page.toString());
+        String html = WikiModel.toHtml(page.getCurrentContent()).replaceAll("\\{\\{.*?}}", "");
         String wikiPageText = page.getCurrentContent();
         String title = page.getTitle();
         String pagePlainText = wikiModel.render(new PlainTextConverter(), wikiPageText);
