@@ -1,6 +1,7 @@
 package com.shaun.knowledgetree.services.neo4j;
 
 import com.shaun.knowledgetree.domain.PageContentDto;
+import com.shaun.knowledgetree.domain.SingularWikiEntity;
 import com.shaun.knowledgetree.domain.SingularWikiEntityDto;
 import com.shaun.knowledgetree.repositories.GraphMapRepository;
 import com.shaun.knowledgetree.repositories.PageContentRepository;

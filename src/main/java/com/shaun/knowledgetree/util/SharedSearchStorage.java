@@ -2,6 +2,7 @@ package com.shaun.knowledgetree.util;
 
 import com.shaun.knowledgetree.domain.Graph;
 import com.shaun.knowledgetree.domain.SingularWikiEntityDto;
+import org.neo4j.helpers.collection.Iterables;
 
 import java.util.*;
 import java.util.stream.Collectors;

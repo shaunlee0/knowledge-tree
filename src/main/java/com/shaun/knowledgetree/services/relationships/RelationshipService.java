@@ -18,6 +18,7 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
@@ -82,7 +83,7 @@ public class RelationshipService {
 
             //Extract substitute acronym if possible.
             if (indexOfOpeningBracketInStartNodeArticle != -1 || indexOfClosingBracketInStartNodeArticle != -1) {
-                if(indexOfOpeningBracketInStartNodeArticle < indexOfFirstFullStop){
+                if (indexOfOpeningBracketInStartNodeArticle < indexOfFirstFullStop) {
                     startNodeAcronym = articleContent.substring(indexOfOpeningBracketInStartNodeArticle + 1, indexOfClosingBracketInStartNodeArticle);
                     if (!StringUtils.isAllUpperCase(startNodeAcronym)) {
                         startNodeAcronym = null;
@@ -91,11 +92,11 @@ public class RelationshipService {
             }
 
 
-            toReturn.addAll(findRelationshipSentences(titleToFind, tempContent, articleContent, startNode, endNode,null));
+            toReturn.addAll(findRelationshipSentences(titleToFind, tempContent, articleContent, startNode, endNode, null));
 
             //Use acronym if applicable.
             if (startNodeAcronym != null) {
-                toReturn.addAll(findRelationshipSentences(titleToFind, tempContent, articleContent, startNode, endNode,startNodeAcronym));
+                toReturn.addAll(findRelationshipSentences(titleToFind, tempContent, articleContent, startNode, endNode, startNodeAcronym));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -163,7 +164,7 @@ public class RelationshipService {
             }
 
             Relationship relationship = new Relationship(startNode, endNode);
-            extractSemanticContentOfRelationshipInSentence(sentenceContainingMatch, startNode.getTitle(), relationship,startNodeAcronym);
+            extractSemanticContentOfRelationshipInSentence(sentenceContainingMatch, startNode.getTitle(), relationship, startNodeAcronym);
             toReturn.add(relationship);
         }
         return toReturn;
@@ -172,12 +173,13 @@ public class RelationshipService {
     /**
      * This method decides the relationship content. For now if both start && end node exist it is an explicit connection.
      * Otherwise it is just set as only end node connection.
-     *  @param sentenceContainingMatch : sentence to analyse.
+     *
+     * @param sentenceContainingMatch : sentence to analyse.
      * @param startNodeTitle          :
      * @param relationship            : to configure.
-     * @param startNodeAcronym : If an acronym can be used to make the connection use it.
+     * @param startNodeAcronym        : If an acronym can be used to make the connection use it.
      */
-    private void extractSemanticContentOfRelationshipInSentence(String sentenceContainingMatch, String startNodeTitle , Relationship relationship, String startNodeAcronym) {
+    private void extractSemanticContentOfRelationshipInSentence(String sentenceContainingMatch, String startNodeTitle, Relationship relationship, String startNodeAcronym) {
 
         int indexOfBracket = startNodeTitle.indexOf("(");
         if (indexOfBracket != -1) {
@@ -187,15 +189,13 @@ public class RelationshipService {
         //If sentence directly references the start node return it. No more details need adding just now.
         if (containsIgnoreCase(sentenceContainingMatch, startNodeTitle)) {
             relationship.setExplicitConnection(sentenceContainingMatch);
-//            extractSynsetsAndStoreToRelationship(relationship);
             //Otherwise check acronym.
-        } else if (startNodeAcronym!= null){
-            if(containsIgnoreCase(sentenceContainingMatch,startNodeAcronym)){
+        } else if (startNodeAcronym != null) {
+            if (containsIgnoreCase(sentenceContainingMatch, startNodeAcronym)) {
                 relationship.setExplicitConnection(sentenceContainingMatch);
             }
-        }else{
+        } else {
             relationship.setOnlyEndNodeConnection(sentenceContainingMatch);
-//            extractSynsetsAndStoreToRelationship(relationship);
         }
     }
 
@@ -291,5 +291,20 @@ public class RelationshipService {
         }
         rd.close();
         return result.toString();
+    }
+
+    public List<Relationship> getRelationships(SingularWikiEntityDto startNode, String endNodeTitle) {
+
+        List<Relationship> foundRelationships = startNode.getRelatedEntities();
+
+        foundRelationships.addAll(
+                startNode.getRelatedEntities()
+                        .stream()
+                        .filter(relationship -> relationship.getEndNode().getTitle().equals(endNodeTitle))
+                        .collect(Collectors.toSet()));
+
+        foundRelationships.forEach(this::extractSynsetsAndStoreToRelationship);
+
+        return foundRelationships;
     }
 }

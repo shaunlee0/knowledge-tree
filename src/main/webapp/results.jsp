@@ -15,7 +15,7 @@
 %>
 
 <head>
-    <title>Knowledge Tree : <%=graph.getSearchTerm()%></title>
+    <title>Knowledge Tree - Results : <%=graph.getSearchTerm()%></title>
 </head>
 
 <!-- page content start (customise) -->
