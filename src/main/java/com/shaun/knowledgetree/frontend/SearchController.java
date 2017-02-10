@@ -43,8 +43,8 @@ public class SearchController {
 	@Autowired
 	RelationshipService relationshipService;
 
-    @Autowired
-    RelevanceService relevanceService;
+	@Autowired
+	RelevanceService relevanceService;
 
 	@RequestMapping(value = "validate", method = RequestMethod.GET, params = "searchTerm")
 	@ResponseBody
@@ -59,7 +59,7 @@ public class SearchController {
 
 	@RequestMapping(value = "{rootNodeTitle}", method = RequestMethod.GET)
 	public ModelAndView performSearch(@PathVariable("rootNodeTitle") String rootNodeTitle,
-																		@RequestParam(value = "linkDepthLimit",defaultValue = "20") String linkDepthLimitString,
+																		@RequestParam(value = "linkDepthLimit", defaultValue = "20") String linkDepthLimitString,
 																		@RequestParam("maxGenerations") String maxGenerationsString,
 																		HttpServletRequest request) {
 
@@ -100,7 +100,7 @@ public class SearchController {
 			});
 
 			//If using two generations do the following
-			if(maxGenerations == 2){
+			if (maxGenerations == 2) {
 
 				//Second layer is a set size 100, converting all these and adding to graph
 				Set<SingularWikiEntity> allSecondLayerEntities = lookupService.aggregateAndReturnChildrenFromSetOfEntities(firstEntities, rootEntity, linkDepthLimit);
@@ -132,27 +132,7 @@ public class SearchController {
 			neo4jServices.saveGraph(SharedSearchStorage.getGraph());
 			neo4jServices.removeVerboseRelationships();
 			System.out.println("Graph saved.");
-            HashMap<String, Double> entitiesAndRelevance = new LinkedHashMap<>();
-
-            for (SingularWikiEntityDto entity : SharedSearchStorage.getGraph().getEntities()) {
-                double tfidf = relevanceService.calculateTfidfWeightingForEntity(entity);
-                entitiesAndRelevance.put(entity.getTitle(), tfidf);
-            }
-
-            //Sort all links and occurences by descending order
-            entitiesAndRelevance = entitiesAndRelevance.entrySet().stream()
-                    .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
-                    .collect(Collectors.toMap(
-                            Map.Entry::getKey,
-                            Map.Entry::getValue,
-                            (x, y) -> {
-                                throw new AssertionError();
-                            },
-                            LinkedHashMap::new
-                    ));
-
-
-            request.getSession().setAttribute("relevanceRankings",entitiesAndRelevance);
+			request.getSession().setAttribute("relevanceRankings", relevanceService.rankEntitiesByRelevanceToRoot());
 			request.getSession().setAttribute("graph", SharedSearchStorage.getGraph());
 			request.getSession().setAttribute("allLinksAndOccurrences", SharedSearchStorage.getAllLinksAndOccurrences());
 		} catch (Exception e) {

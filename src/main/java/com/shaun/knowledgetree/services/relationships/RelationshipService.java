@@ -3,6 +3,7 @@ package com.shaun.knowledgetree.services.relationships;
 import com.shaun.knowledgetree.domain.Relationship;
 import com.shaun.knowledgetree.domain.SingularWikiEntityDto;
 import com.shaun.knowledgetree.services.neo4j.GraphService;
+import com.shaun.knowledgetree.util.StringUtilities;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -31,6 +32,9 @@ public class RelationshipService {
 
     @Autowired
     GraphService graphService;
+
+    @Autowired
+    StringUtilities stringUtilities;
 
     Set<String> stopWords = new HashSet<>();
 
@@ -248,20 +252,14 @@ public class RelationshipService {
             if (!word.isEmpty()) {
                 word = word.replace("\"", "");
                 word = word.replace(".", "");
-                if (wordIsValid(word)) {
+                if (stringUtilities.wordIsValid(word)) {
                     relationshipKeyWords.add(word);
                 }
             }
         }
     }
 
-    private boolean wordIsValid(String word) {
-        return (!stopWords.contains(word)
-                && (!Character.isUpperCase(word.charAt(0)))
-                && (!word.matches(".*\\d+.*"))
-                && (!word.contains("/"))
-                && (word.length() > 3));
-    }
+
 
     private String makeWordNetRequest(String word) {
 

@@ -80,7 +80,9 @@
                 <td><%=entry.getValue()%>
                 </td>
                 <td>
-                    <button class="btn btn-success">View Article</button>
+                    <form target="_blank" action="<%=request.getContextPath()%>/graph/article/<%=entry.getKey()%>" method="get">
+                        <button type="submit" class="btn btn-success">View Article</button>
+                    </form>
                 </td>
             </tr>
             <%
@@ -98,7 +100,7 @@
             <tr>
                 <th>#</th>
                 <th>Article Title</th>
-                <th>Occurrences</th>
+                <th>Cosine Similarity</th>
                 <th></th>
             </tr>
             </thead>
@@ -120,7 +122,9 @@
                 <td><%=entry.getValue()%>
                 </td>
                 <td>
-                    <button class="btn btn-success">View Article</button>
+                    <form target="_blank" action="<%=request.getContextPath()%>/graph/article/<%=entry.getKey()%>" method="get">
+                        <button type="submit" class="btn btn-success">View Article</button>
+                    </form>
                 </td>
             </tr>
             <%
