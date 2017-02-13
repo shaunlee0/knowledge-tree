@@ -47,7 +47,6 @@ public class RelevanceService {
 
 		int count = 1;
 		for (SingularWikiEntityDto entity : allEntities.values()) {
-			System.out.println(count + " of " + allEntities.size());
 			String[] entityDocumentTerms = entity.getPageContent().getPagePlainText().split(" ");
 			Set<String> tempEntityDocumentTerms = new HashSet<>();
 
@@ -77,7 +76,6 @@ public class RelevanceService {
 			int count = 0;
 			//For each term get tf-idf
 			for (String term : allTerms) {
-				System.out.println(count + " of " + allTerms.size());
 				tf = new Tfidf().tfCalculator(docTermsArray.getValue(), term);
 				idf = new Tfidf().idfCalculator(termsDocsArray.values(), term);
 				tfidf = tf * idf;

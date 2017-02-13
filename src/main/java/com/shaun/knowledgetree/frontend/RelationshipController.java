@@ -42,6 +42,5 @@ public class RelationshipController {
         model.put("endNode",endNode);
         return new ModelAndView("relationship", model);
 
-        //TODO: Test this method.
     }
 }
