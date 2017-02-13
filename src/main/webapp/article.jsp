@@ -1,6 +1,7 @@
 <%@ page import="com.shaun.knowledgetree.domain.SingularWikiEntityDto" %>
 <%@ page import="com.shaun.knowledgetree.domain.Relationship" %>
 <%@ page import="java.util.List" %>
+<%@ page import="java.util.Set" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <!-- include header start (leave me alone) -->
@@ -11,7 +12,7 @@
 
 <%
     SingularWikiEntityDto article = (SingularWikiEntityDto) request.getAttribute("article");
-    List<Relationship> relationshipList = article.getRelatedEntities();
+    Set<Relationship> relationshipSet = (Set<Relationship>) request.getAttribute("relationshipSet");
 %>
 
 <head>
@@ -38,7 +39,7 @@
             </thead>
             <tbody>
             <%
-                for (Relationship relationship : relationshipList) {
+                for (Relationship relationship : relationshipSet) {
             %>
             <form target="_blank" role="form" method="get" action="<%=request.getContextPath()%>/results/relationship/<%=article.getTitle()%>">
                 <tr>

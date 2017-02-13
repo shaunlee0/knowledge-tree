@@ -1,5 +1,6 @@
 package com.shaun.knowledgetree.frontend;
 
+import com.shaun.knowledgetree.domain.Relationship;
 import com.shaun.knowledgetree.domain.SingularWikiEntity;
 import com.shaun.knowledgetree.domain.SingularWikiEntityDto;
 import com.shaun.knowledgetree.services.neo4j.GraphService;
@@ -13,6 +14,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 @Controller
 @RequestMapping("/graph")
@@ -27,9 +30,7 @@ public class GraphController {
     @RequestMapping(value = "root", method = RequestMethod.GET)
     public ModelAndView getRootEntity() {
         SingularWikiEntityDto root = graphService.getRootEntity();
-        HashMap<String, Object> model = new HashMap<>();
-        model.put("article",root);
-        return new ModelAndView("article",model);
+        return getSingularWikiEntity(root.getTitle());
     }
 
     public String getDataForVisualGraph() {
@@ -41,7 +42,21 @@ public class GraphController {
     public ModelAndView getSingularWikiEntity(@PathVariable("title") String title) {
         HashMap<String, Object> model = new HashMap<>();
         SingularWikiEntityDto singularWikiEntityDto = graphService.getSingularWikiEntity(title);
+        Set<Relationship> relationshipSetNoDuplicates = new HashSet<>();
+        for (Relationship relationshipInEntity : singularWikiEntityDto.getRelatedEntities()) {
+            boolean exists = false;
+            for (Relationship relationshipInSet : relationshipSetNoDuplicates) {
+                if (relationshipInSet.getEndNode().getTitle().equals(relationshipInEntity.getEndNode().getTitle())){
+                    exists = true;
+                }
+            }
+            if (!exists){
+                relationshipSetNoDuplicates.add(relationshipInEntity);
+            }
+
+        }
         model.put("article",singularWikiEntityDto);
+        model.put("relationshipSet",relationshipSetNoDuplicates);
         return new ModelAndView("article",model);
     }
 }
