@@ -19,184 +19,178 @@ import java.util.stream.Stream;
 @Component
 public class RelevanceService {
 
-	//This variable will hold all terms of each document in an array.
-	private LinkedHashMap<String, String[]> termsDocsArray = new LinkedHashMap<>();
-	private LinkedHashMap<String, Double> cosineSimilarityToRootRankings = new LinkedHashMap<>();
-	private List<String> allTerms = new ArrayList<String>(); //to hold all terms
-	private HashMap<String, double[]> tfidfDocsVector = new HashMap<>();
-	HashMap<String, SingularWikiEntityDto> allEntities = SharedSearchStorage.getAllEntities();
-	Set<String> stopWords = new HashSet<>();
+    //This variable will hold all terms of each document in an array.
+    private LinkedHashMap<String, String[]> termsDocsArray = new LinkedHashMap<>();
+    private LinkedHashMap<String, Double> cosineSimilarityToRootRankings = new LinkedHashMap<>();
+    private List<String> allTerms = new ArrayList<String>(); //to hold all terms
+    private HashMap<String, double[]> tfidfDocsVector = new HashMap<>();
+    HashMap<String, SingularWikiEntityDto> allEntities = SharedSearchStorage.getAllEntities();
+    Set<String> stopWords = new HashSet<>();
 
-	@Autowired
-	StringUtilities stringUtilities;
+    @Autowired
+    StringUtilities stringUtilities;
 
-	public RelevanceService() {
-		ClassLoader classLoader = getClass().getClassLoader();
-		File file = new File(classLoader.getResource("txt/stop-words.txt").getFile());
+    public RelevanceService() {
+        ClassLoader classLoader = getClass().getClassLoader();
+        File file = new File(classLoader.getResource("txt/stop-words.txt").getFile());
 
-		String path = file.getPath();
+        String path = file.getPath();
 
-		try (Stream<String> stream = Files.lines(Paths.get(path))) {
-			stream.forEach(stopWords::add);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+        try (Stream<String> stream = Files.lines(Paths.get(path))) {
+            stream.forEach(stopWords::add);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
-	public void parseEntities() {
+    private void parseEntities() {
+        for (SingularWikiEntityDto entity : allEntities.values()) {
+            String[] entityDocumentTerms = entity.getPageContent().getPagePlainText().split(" ");
+            Set<String> tempEntityDocumentTerms = new HashSet<>();
 
-		int count = 1;
-		for (SingularWikiEntityDto entity : allEntities.values()) {
-			String[] entityDocumentTerms = entity.getPageContent().getPagePlainText().split(" ");
-			Set<String> tempEntityDocumentTerms = new HashSet<>();
+            //Add non stop words to allTerms, remove non alpha and stop terms from entityDocumentTerms
+            for (String term : entityDocumentTerms) {
+                if (!allTerms.contains(term) && stringUtilities.wordIsNotStopWord(term)) {
+                    allTerms.add(term);
+                    tempEntityDocumentTerms.add(term);
+                }
+            }
+            entityDocumentTerms = tempEntityDocumentTerms.toArray(new String[tempEntityDocumentTerms.size()]);
+            termsDocsArray.put(entity.getTitle(), entityDocumentTerms);
+        }
+    }
 
-			//Add non stop words to allTerms, remove non alpha and stop terms from entityDocumentTerms
-			for (String term : entityDocumentTerms) {
-				if (!allTerms.contains(term) && stringUtilities.wordIsNotStopWord(term)) {
-					allTerms.add(term);
-					tempEntityDocumentTerms.add(term);
-				}
-			}
+    private void tfIdfCalculator() {
+        double tf;
+        double idf;
+        double tfidf;
 
-			entityDocumentTerms = tempEntityDocumentTerms.toArray(new String[tempEntityDocumentTerms.size()]);
+        //For each article
+        for (Map.Entry<String, String[]> docTermsArray : termsDocsArray.entrySet()) {
+            double[] tfidfvectors = new double[allTerms.size()];
+            int count = 0;
+            //For each term get tf-idf
+            for (String term : allTerms) {
+                tf = new Tfidf().tfCalculator(docTermsArray.getValue(), term);
+                idf = new Tfidf().idfCalculator(termsDocsArray.values(), term);
+                tfidf = tf * idf;
+                tfidfvectors[count] = tfidf;
+                count++;
+            }
+            tfidfDocsVector.put(docTermsArray.getKey(), tfidfvectors);  //storing document vectors;
+        }
+    }
 
-			termsDocsArray.put(entity.getTitle(), entityDocumentTerms);
-			count ++;
-		}
-	}
+    public LinkedHashMap<String, Double> getCosineSimilarity() {
 
-	public void tfIdfCalculator() {
-		double tf;
-		double idf;
-		double tfidf;
+        double[] rootNodeVector = tfidfDocsVector.get(SharedSearchStorage.getRootEntity().getTitle());
 
-		//For each article
-		for (Map.Entry<String, String[]> docTermsArray : termsDocsArray.entrySet()) {
-			double[] tfidfvectors = new double[allTerms.size()];
-			int count = 0;
-			//For each term get tf-idf
-			for (String term : allTerms) {
-				tf = new Tfidf().tfCalculator(docTermsArray.getValue(), term);
-				idf = new Tfidf().idfCalculator(termsDocsArray.values(), term);
-				tfidf = tf * idf;
-				tfidfvectors[count] = tfidf;
-				count++;
-			}
-			tfidfDocsVector.put(docTermsArray.getKey(), tfidfvectors);  //storing document vectors;
-		}
-	}
+        //Loop through tfidfDocsVector Elements
+        for (Map.Entry<String, double[]> currentEntity : tfidfDocsVector.entrySet()) {
+            cosineSimilarityToRootRankings.put(currentEntity.getKey(), new CosineSimilarity().cosineSimilarity
+                    (
+                            rootNodeVector,
+                            currentEntity.getValue()
+                    )
+            );
+        }
 
-	public LinkedHashMap<String, Double> getCosineSimilarity() {
+        //Sort these rankings.
+        cosineSimilarityToRootRankings = cosineSimilarityToRootRankings.entrySet().stream()
+                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (x, y) -> {
+                            throw new AssertionError();
+                        },
+                        LinkedHashMap::new
+                ));
 
-		double[] rootNodeVector = tfidfDocsVector.get(SharedSearchStorage.getRootEntity().getTitle());
+        return cosineSimilarityToRootRankings;
 
-		//Loop through tfidfDocsVector Elements
-		for (Map.Entry<String, double[]> currentEntity : tfidfDocsVector.entrySet()) {
-			cosineSimilarityToRootRankings.put(currentEntity.getKey(),new CosineSimilarity().cosineSimilarity
-							(
-											rootNodeVector,
-											currentEntity.getValue()
-							)
-			);
-		}
+    }
 
-		//Sort these rankings.
-		//Sort all links and occurences by descending order
-		cosineSimilarityToRootRankings = cosineSimilarityToRootRankings.entrySet().stream()
-						.sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
-						.collect(Collectors.toMap(
-										Map.Entry::getKey,
-										Map.Entry::getValue,
-										(x, y) -> {
-											throw new AssertionError();
-										},
-										LinkedHashMap::new
-						));
+    public LinkedHashMap<String, Double> rankEntitiesByRelevanceToRoot() {
+        parseEntities();
+        tfIdfCalculator();
+        return getCosineSimilarity();
+    }
 
-		return cosineSimilarityToRootRankings;
+    private int findLinkOcurences(String searching, String toFind) {
+        int lastIndex = 0;
+        int count = 0;
 
-	}
+        while (lastIndex != -1 && !toFind.isEmpty()) {
 
-	public LinkedHashMap<String, Double> rankEntitiesByRelevanceToRoot() {
-		parseEntities();
-		tfIdfCalculator();
-		return getCosineSimilarity();
-	}
+            lastIndex = searching.indexOf(toFind, lastIndex);
 
-	private int findLinkOcurences(String searching, String toFind) {
-		int lastIndex = 0;
-		int count = 0;
+            if (lastIndex != -1) {
+                count++;
+                lastIndex += toFind.length();
+            }
+        }
 
-		while (lastIndex != -1 && !toFind.isEmpty()) {
+        return count;
+    }
 
-			lastIndex = searching.indexOf(toFind, lastIndex);
+    public double calculateTf(String articleContent, String term) {
+        int occurrencesInArticle = StringUtils.countMatches(articleContent, term);
+        int totalWordsInArticle = articleContent.split(" ").length;
 
-			if (lastIndex != -1) {
-				count++;
-				lastIndex += toFind.length();
-			}
-		}
+        if (occurrencesInArticle == 0) {
+            occurrencesInArticle = StringUtils.countMatches(articleContent, term.toLowerCase());
+        }
 
-		return count;
-	}
+        //Calculate Term Frequency
+        return (double) occurrencesInArticle / (double) totalWordsInArticle;
+    }
 
-	public double calculateTf(String articleContent, String term) {
-		int occurrencesInArticle = StringUtils.countMatches(articleContent, term);
-		int totalWordsInArticle = articleContent.split(" ").length;
+    /**
+     * Calculated idf of term termToCheck
+     *
+     * @param allTerms    : all the terms of all the documents
+     * @param termToCheck
+     * @return idf(inverse document frequency) score
+     */
+    public double idfCalculator(List<String[]> allTerms, String termToCheck) {
+        double count = 0;
+        for (String[] ss : allTerms) {
+            for (String s : ss) {
+                if (s.equalsIgnoreCase(termToCheck)) {
+                    count++;
+                    break;
+                }
+            }
+        }
+        return Math.log(allTerms.size() / count);
+    }
 
-		if (occurrencesInArticle == 0) {
-			occurrencesInArticle = StringUtils.countMatches(articleContent, term.toLowerCase());
-		}
-
-		//Calculate Term Frequency
-		return (double) occurrencesInArticle / (double) totalWordsInArticle;
-	}
-
-	/**
-	 * Calculated idf of term termToCheck
-	 *
-	 * @param allTerms    : all the terms of all the documents
-	 * @param termToCheck
-	 * @return idf(inverse document frequency) score
-	 */
-	public double idfCalculator(List<String[]> allTerms, String termToCheck) {
-		double count = 0;
-		for (String[] ss : allTerms) {
-			for (String s : ss) {
-				if (s.equalsIgnoreCase(termToCheck)) {
-					count++;
-					break;
-				}
-			}
-		}
-		return Math.log(allTerms.size() / count);
-	}
-
-	public double calculateTfidfWeightingForEntity(SingularWikiEntityDto singularWikiEntityDto) {
-		double tfidf = 0;
-		try {
-			String title = singularWikiEntityDto.getTitle();
-			String articleContent = singularWikiEntityDto.getPageContent().getPagePlainText();
+    public double calculateTfidfWeightingForEntity(SingularWikiEntityDto singularWikiEntityDto) {
+        double tfidf = 0;
+        try {
+            String title = singularWikiEntityDto.getTitle();
+            String articleContent = singularWikiEntityDto.getPageContent().getPagePlainText();
 
 
-			//Calculate Term Frequency
-			double tf = calculateTf(articleContent, title);
+            //Calculate Term Frequency
+            double tf = calculateTf(articleContent, title);
 
 
-			HashMap<String, Integer> linksAndOccurrences = SharedSearchStorage.getAllLinksAndOccurrences();
+            HashMap<String, Integer> linksAndOccurrences = SharedSearchStorage.getAllLinksAndOccurrences();
 
-			//Calculate inverse document frequency
-			int totalArticlesInDomain = allEntities.size();
-			int articlesContainingTitle = linksAndOccurrences.get(title);
+            //Calculate inverse document frequency
+            int totalArticlesInDomain = allEntities.size();
+            int articlesContainingTitle = linksAndOccurrences.get(title);
 
-			double idf = 1 + (double) Math.log((double) totalArticlesInDomain / (double) articlesContainingTitle);
+            double idf = 1 + (double) Math.log((double) totalArticlesInDomain / (double) articlesContainingTitle);
 
-			tfidf = tf * idf;
+            tfidf = tf * idf;
 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-		return tfidf;
-	}
+        return tfidf;
+    }
 }

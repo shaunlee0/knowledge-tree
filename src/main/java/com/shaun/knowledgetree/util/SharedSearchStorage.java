@@ -50,17 +50,22 @@ public class SharedSearchStorage {
         SharedSearchStorage.allLinksAndOccurrences = allLinksAndOccurrences;
     }
 
+    /**
+     * For all entities in the graph, rank the articles by occurrences.
+     */
     public static void findLinksAndOccurrences() {
+
         //for all entities
         allEntities.keySet().forEach(key -> {
             //for each one, get links
             Set<String> entityLinks = allEntities.get(key).getPageContent().getLinks();
 
+            //Put the article on the map, incrementing the value if it already exists
             entityLinks.forEach(link ->
                     allLinksAndOccurrences.put(link, occurrenceOfLink(link)));
         });
 
-        //Sort all links and occurences by descending order
+        //Sort all links and occurrences by descending order
         allLinksAndOccurrences = allLinksAndOccurrences.entrySet().stream()
                 .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
                 .collect(Collectors.toMap(
@@ -73,6 +78,12 @@ public class SharedSearchStorage {
                 ));
     }
 
+    /**
+     * Increment the occurrence value of a given article if the occurrence map contains that key.
+     * Otherwise return 1 as this is the first occurrence of that article.
+     * @param linkText : Title of the given article found within the links.
+     * @return : The value to be used when putting the article-occurrence pair on the occurrences map.
+     */
     private static Integer occurrenceOfLink(String linkText) {
         if (allLinksAndOccurrences.keySet().contains(linkText)) {
             return allLinksAndOccurrences.get(linkText) + 1;

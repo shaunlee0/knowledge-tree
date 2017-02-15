@@ -3,9 +3,6 @@ package com.shaun.knowledgetree.services.relevance;
 import java.util.Collection;
 import java.util.List;
 
-/**
- * Created by 45923Sh(Shaun Lee) on 10/02/2017.
- */
 public class Tfidf {
 
 	/**

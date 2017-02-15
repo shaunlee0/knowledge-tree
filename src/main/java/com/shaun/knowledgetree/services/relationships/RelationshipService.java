@@ -260,13 +260,10 @@ public class RelationshipService {
     }
 
 
-
     private String makeWordNetRequest(String word) {
 
         String wordNetResponse = "";
-
         String requestUrl = "http://wordnetweb.princeton.edu/perl/webwn?s=%s&sub=Search+WordNet&o2=&o0=&o8=1&o1=&o7=&o5=&o9=&o6=&o3=&o4=&h=00000";
-
         requestUrl = String.format(requestUrl, word);
 
         try {
@@ -274,11 +271,10 @@ public class RelationshipService {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return wordNetResponse;
     }
 
-    public static String getHTML(String urlToRead) throws Exception {
+    private static String getHTML(String urlToRead) throws Exception {
         StringBuilder result = new StringBuilder();
         URL url = new URL(urlToRead);
         URLConnection conn = url.openConnection();
@@ -296,7 +292,7 @@ public class RelationshipService {
         List<Relationship> foundRelationships = new ArrayList<>();
 
         for (Relationship relationship : startNode.getRelatedEntities()) {
-            if (relationship.getEndNode().getTitle().equals(endNodeTitle)){
+            if (relationship.getEndNode().getTitle().equals(endNodeTitle)) {
                 foundRelationships.add(relationship);
             }
         }
