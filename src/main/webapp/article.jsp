@@ -16,46 +16,51 @@
 %>
 
 <head>
-    <title>Knowledge Tree - Article : <%=article.getTitle()%></title>
+    <title>Knowledge Tree - Article : <%=article.getTitle()%>
+    </title>
 </head>
 
-<h1>Article info for <%=article.getTitle()%></h1>
+<h1 align="center">Article : <%=article.getTitle()%>
+</h1>
+<br>
+<div align="center">
+    <button class="btn btn-info" data-toggle="collapse" data-target="#articleContent">Show Article Content</button>
+    <button class="btn btn-info" data-toggle="collapse" data-target="#relationships">Show Relationships</button>
 
-<button class="btn btn-info" data-toggle="collapse" data-target="#articleContent">Show Article Content</button>
-<button class="btn btn-info" data-toggle="collapse" data-target="#relationships">Show Relationships</button>
+    <div align="left" class="row collapse" id="articleContent">
+        <%=article.getPageContent().getHtml()%>
+    </div>
 
-<div class="row collapse" id="articleContent">
-    <%=article.getPageContent().getHtml()%>
-</div>
-
-<div class="row collapse" id="relationships">
-    <div class="col-md-12">
-        <table class="table">
-            <thead>
-            <tr>
-                <th>Relationship End Node</th>
-                <th>Action</th>
-            </tr>
-            </thead>
-            <tbody>
-            <%
-                for (Relationship relationship : relationshipSet) {
-            %>
-            <form target="_blank" role="form" method="get" action="<%=request.getContextPath()%>/results/relationship/<%=article.getTitle()%>">
+    <div class="row collapse" id="relationships">
+        <div class="col-md-12">
+            <table class="table">
+                <thead>
                 <tr>
-                    <td><%=relationship.getEndNode().getTitle()%>
-                    </td>
-                    <td>
-                        <button type="submit" class="btn btn-success">View Relationship</button>
-                    </td>
+                    <th>Relationship End Node</th>
+                    <th>Action</th>
                 </tr>
-                <input type="hidden" name="endNodeTitle" value="<%=relationship.getEndNode().getTitle()%>">
-            </form>
-            <%
-                }
-            %>
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                <%
+                    for (Relationship relationship : relationshipSet) {
+                %>
+                <form target="_blank" role="form" method="get"
+                      action="<%=request.getContextPath()%>/results/relationship/<%=article.getTitle()%>">
+                    <tr>
+                        <td><%=relationship.getEndNode().getTitle()%>
+                        </td>
+                        <td>
+                            <button type="submit" class="btn btn-success">View Relationship</button>
+                        </td>
+                    </tr>
+                    <input type="hidden" name="endNodeTitle" value="<%=relationship.getEndNode().getTitle()%>">
+                </form>
+                <%
+                    }
+                %>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 

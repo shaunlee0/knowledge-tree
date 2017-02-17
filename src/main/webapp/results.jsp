@@ -18,122 +18,131 @@
 </head>
 
 <!-- page content start (customise) -->
-<h1>Results for <%=graph.getSearchTerm()%>
+<h1 align="center">Results for <%=graph.getSearchTerm()%>
 </h1>
-<button class="btn btn-info" data-toggle="collapse" data-target="#categoriesTable">Show Categories</button>
-<button class="btn btn-info" data-toggle="collapse" data-target="#topOccurringArticlesTable">Show Top Occurring Links</button>
-<button class="btn btn-info" data-toggle="collapse" data-target="#mostRelevantArticlesTable">Show Most Relevant Articles</button>
-<div class="row collapse" id="categoriesTable">
-    <div class="col-md-12">
-        <table class="table">
-            <thead>
-            <tr>
-                <th>Categories</th>
-                <th>View Category</th>
-            </tr>
-            </thead>
-            <tbody>
-            <%
-                for (Category category : categories) {
-            %>
-            <form role="form" method="get" action="category">
+<br>
+<div align="center">
+    <button class="btn btn-info" data-toggle="collapse" data-target="#categoriesTable">Show Categories</button>
+    <button class="btn btn-info" data-toggle="collapse" data-target="#topOccurringArticlesTable">Show Top Occurring
+        Links
+    </button>
+    <button class="btn btn-info" data-toggle="collapse" data-target="#mostRelevantArticlesTable">Show Most Relevant
+        Articles
+    </button>
+    <div class="row collapse" id="categoriesTable">
+        <div class="col-md-12">
+            <table class="table">
+                <thead>
                 <tr>
-                    <td><%=category.getName()%>
+                    <th>Categories</th>
+                    <th>View Category</th>
+                </tr>
+                </thead>
+                <tbody>
+                <%
+                    for (Category category : categories) {
+                %>
+                <form role="form" method="get" action="category">
+                    <tr>
+                        <td><%=category.getName()%>
+                        </td>
+                        <td>
+                            <button class="btn btn-success">View</button>
+                        </td>
+                    </tr>
+                </form>
+                <%
+                    }
+                %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row collapse" id="topOccurringArticlesTable">
+        <div class="col-md-12">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Article Title</th>
+                    <th>Occurrences</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <%
+                    int count = 1;
+                    for (Map.Entry<String, Integer> entry : allLinksAndOccurrences.entrySet()) {
+                        if (count > 10) {
+                            break;
+                        }
+
+
+                %>
+                <tr>
+                    <td><b><%=count%>.</b></td>
+                    <td><%=entry.getKey()%>
+                    </td>
+                    <td><%=entry.getValue()%>
                     </td>
                     <td>
-                        <button class="btn btn-success">View</button>
+                        <form target="_blank" action="<%=request.getContextPath()%>/graph/article/<%=entry.getKey()%>"
+                              method="get">
+                            <button type="submit" class="btn btn-success">View Article</button>
+                        </form>
                     </td>
                 </tr>
-            </form>
-            <%
-                }
-            %>
-            </tbody>
-        </table>
+                <%
+                        count++;
+                    }
+                %>
+                </tbody>
+            </table>
+        </div>
     </div>
-</div>
-<div class="row collapse" id="topOccurringArticlesTable">
-    <div class="col-md-12">
-        <table class="table">
-            <thead>
-            <tr>
-                <th>#</th>
-                <th>Article Title</th>
-                <th>Occurrences</th>
-                <th></th>
-            </tr>
-            </thead>
-            <tbody>
-            <%
-                int count = 1;
-                for (Map.Entry<String, Integer> entry : allLinksAndOccurrences.entrySet()) {
-                    if (count > 10) {
-                        break;
+    <div class="row collapse" id="mostRelevantArticlesTable">
+        <div class="col-md-12">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Article Title</th>
+                    <th>Cosine Similarity</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <%
+
+                    int counter = 1;
+                    for (Map.Entry<String, Double> entry : entitiesAndRelevance.entrySet()) {
+                        if (counter > 10) {
+                            break;
+                        }
+
+
+                %>
+                <tr>
+                    <td><b><%=counter%>.</b></td>
+                    <td><%=entry.getKey()%>
+                    </td>
+                    <td><%=entry.getValue()%>
+                    </td>
+                    <td>
+                        <form target="_blank" action="<%=request.getContextPath()%>/graph/article/<%=entry.getKey()%>"
+                              method="get">
+                            <button type="submit" class="btn btn-success">View Article</button>
+                        </form>
+                    </td>
+                </tr>
+                <%
+                        counter++;
                     }
 
-
-            %>
-            <tr>
-                <td><b><%=count%>.</b></td>
-                <td><%=entry.getKey()%>
-                </td>
-                <td><%=entry.getValue()%>
-                </td>
-                <td>
-                    <form target="_blank" action="<%=request.getContextPath()%>/graph/article/<%=entry.getKey()%>" method="get">
-                        <button type="submit" class="btn btn-success">View Article</button>
-                    </form>
-                </td>
-            </tr>
-            <%
-                    count++;
-                }
-            %>
-            </tbody>
-        </table>
-    </div>
-</div>
-<div class="row collapse" id="mostRelevantArticlesTable">
-    <div class="col-md-12">
-        <table class="table">
-            <thead>
-            <tr>
-                <th>#</th>
-                <th>Article Title</th>
-                <th>Cosine Similarity</th>
-                <th></th>
-            </tr>
-            </thead>
-            <tbody>
-            <%
-
-                int counter = 1;
-                for (Map.Entry<String, Double> entry : entitiesAndRelevance.entrySet()) {
-                    if (counter > 10) {
-                        break;
-                    }
-
-
-            %>
-            <tr>
-                <td><b><%=counter%>.</b></td>
-                <td><%=entry.getKey()%>
-                </td>
-                <td><%=entry.getValue()%>
-                </td>
-                <td>
-                    <form target="_blank" action="<%=request.getContextPath()%>/graph/article/<%=entry.getKey()%>" method="get">
-                        <button type="submit" class="btn btn-success">View Article</button>
-                    </form>
-                </td>
-            </tr>
-            <%
-                    counter++;
-                }
-
-            %>
-            </tbody>
-        </table>
+                %>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 

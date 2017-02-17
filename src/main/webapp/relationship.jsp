@@ -13,18 +13,19 @@
 %>
 
 <head>
-    <title>Knowledge Tree - Relationship Info for : <%=startNode.getTitle()%> &#8594; <%=endNode.getTitle()%></title>
+    <title>Knowledge Tree - Relationship : <%=startNode.getTitle()%> &#8594; <%=endNode.getTitle()%></title>
 </head>
 
-<h1>Relationship Info for : <%=startNode.getTitle()%> &#8594; <%=endNode.getTitle()%></h1>
+<h1 align="center">Relationship : <%=startNode.getTitle()%> &#8594; <%=endNode.getTitle()%></h1>
+<h3>Relationships Table</h3>
 
 <div class="col-md-12">
     <table class="table">
         <thead>
         <tr>
-            <th>Type</th>
-            <th>Relationship Content</th>
-            <th>Action</th>
+            <th width="15%">Type</th>
+            <th width="75%">Relationship Content</th>
+            <th width="10%">Action</th>
         </tr>
         </thead>
         <tbody>

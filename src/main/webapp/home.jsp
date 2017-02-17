@@ -12,6 +12,9 @@
 <jsp:include page='header.jsp'/>
 <!-- include header end -->
 
+<h1 align="center">Homepage
+</h1>
+
 <!-- page content start (customise) -->
 <div class="col-lg-6">
     <label for="searchTerm">Make a Search</label>
