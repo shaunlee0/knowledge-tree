@@ -41,6 +41,9 @@ public class Tfidf {
 				}
 			}
 		}
+
+		//TODO : If count < 2 then just return a 0. If this zero is found remove this term from all terms
+		// and do not carry out tf on it.
 		return Math.log(allTerms.size() / count);
 	}
 }

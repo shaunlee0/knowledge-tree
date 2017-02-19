@@ -5,12 +5,16 @@
   Time: 10:47
   To change this template use File | Settings | File Templates.
 --%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<html>
+<!-- include header start (leave me alone) -->
+<jsp:include page='header.jsp'/>
+<!-- include header end -->
 <head>
     <title>Knowledge Tree : Error</title>
 </head>
-<body>
-<h1>A system error has occurred</h1>
-</body>
-</html>
+<!-- page content start (customise) -->
+<h1 align="center" style="color: red"><strong>Apologies!</strong> <br> <br> A system error has occurred</h1>
+<!-- page content end -->
+
+<!-- include footer start (leave me alone) -->
+<jsp:include page='footer.jsp'/>
+<!-- include header end -->

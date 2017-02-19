@@ -91,4 +91,9 @@ public class SharedSearchStorage {
             return 1;
         }
     }
+
+    public static void clearContent() {
+        allEntities.clear();
+        allLinksAndOccurrences.clear();
+    }
 }

@@ -77,8 +77,14 @@ public class SearchController {
             }
         }
 
+        Enumeration<String> sessionAttributes = request.getSession().getAttributeNames();
+
+        while(sessionAttributes.hasMoreElements()){
+            request.getSession().removeAttribute(sessionAttributes.nextElement());
+        }
+
         try {
-            SharedSearchStorage sharedSearchStorage = new SharedSearchStorage();
+            SharedSearchStorage.clearContent();
             System.out.println("Searching for " + rootNodeTitle);
             request.getSession().removeAttribute("graph");
             neo4jServices.clearGraph();
@@ -142,7 +148,7 @@ public class SearchController {
         }
 
         if (!result) {
-            return new ModelAndView("error");
+            return new ModelAndView("redirect:/error");
         } else {
             model.put("status", "success");
         }
