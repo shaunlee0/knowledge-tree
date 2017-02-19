@@ -25,128 +25,129 @@ import java.util.stream.Collectors;
 @RequestMapping("search")
 public class SearchController {
 
-	@Autowired
-	MovieService movieService;
+    @Autowired
+    MovieService movieService;
 
-	@Autowired
-	Neo4jServices neo4jServices;
+    @Autowired
+    Neo4jServices neo4jServices;
 
-	@Autowired
-	LookupService lookupService;
+    @Autowired
+    LookupService lookupService;
 
-	@Autowired
-	SingularWikiEntityDtoBuilder singularWikiEntityDtoBuilder;
+    @Autowired
+    SingularWikiEntityDtoBuilder singularWikiEntityDtoBuilder;
 
-	@Autowired
-	PageContentService pageContentService;
+    @Autowired
+    PageContentService pageContentService;
 
-	@Autowired
-	RelationshipService relationshipService;
+    @Autowired
+    RelationshipService relationshipService;
 
-	@Autowired
-	RelevanceService relevanceService;
+    @Autowired
+    RelevanceService relevanceService;
 
-	@RequestMapping(value = "validate", method = RequestMethod.GET, params = "searchTerm")
-	@ResponseBody
-	public String validateSearch(@RequestParam("searchTerm") String searchTerm) {
-		boolean result = lookupService.checkArticleExists(searchTerm);
-		if (result) {
-			return "{\"status\":\"success\"}";
-		} else {
-			return "{\"status\":\"failure\"}";
-		}
-	}
+    @RequestMapping(value = "validate", method = RequestMethod.GET, params = "searchTerm")
+    @ResponseBody
+    public String validateSearch(@RequestParam("searchTerm") String searchTerm) {
+        boolean result = lookupService.checkArticleExists(searchTerm);
+        if (result) {
+            return "{\"status\":\"success\"}";
+        } else {
+            return "{\"status\":\"failure\"}";
+        }
+    }
 
-	@RequestMapping(value = "{rootNodeTitle}", method = RequestMethod.GET)
-	public ModelAndView performSearch(@PathVariable("rootNodeTitle") String rootNodeTitle,
-																		@RequestParam(value = "linkDepthLimit", defaultValue = "20") String linkDepthLimitString,
-																		@RequestParam("maxGenerations") String maxGenerationsString,
-																		HttpServletRequest request) {
+    @RequestMapping(value = "{rootNodeTitle}", method = RequestMethod.GET)
+    public ModelAndView performSearch(
+            @PathVariable("rootNodeTitle") String rootNodeTitle,
+            @RequestParam(value = "linkDepthLimit", defaultValue = "20") String linkDepthLimitString,
+            @RequestParam("maxGenerations") String maxGenerationsString,
+            HttpServletRequest request) {
 
-		int linkDepthLimit = Integer.parseInt(linkDepthLimitString);
-		int maxGenerations = Integer.parseInt(maxGenerationsString);
+        int linkDepthLimit = Integer.parseInt(linkDepthLimitString);
+        int maxGenerations = Integer.parseInt(maxGenerationsString);
 
-		boolean result = true;
-		HashMap<String, Object> model = new HashMap<>();
-		Graph sessionGraph = (Graph) request.getSession().getAttribute("graph");
+        boolean result = true;
+        HashMap<String, Object> model = new HashMap<>();
+        Graph sessionGraph = (Graph) request.getSession().getAttribute("graph");
 
-		if (sessionGraph != null) {
-			if (rootNodeTitle.equals(sessionGraph.getSearchTerm())) {
-				return new ModelAndView("results");
-			}
-		}
+        if (sessionGraph != null) {
+            if (rootNodeTitle.equals(sessionGraph.getSearchTerm())) {
+                return new ModelAndView("results");
+            }
+        }
 
-		try {
-			SharedSearchStorage sharedSearchStorage = new SharedSearchStorage();
-			System.out.println("Searching for " + rootNodeTitle);
-			request.getSession().removeAttribute("graph");
-			neo4jServices.clearGraph();
-			SharedSearchStorage.setGraph(new Graph(rootNodeTitle));
+        try {
+            SharedSearchStorage sharedSearchStorage = new SharedSearchStorage();
+            System.out.println("Searching for " + rootNodeTitle);
+            request.getSession().removeAttribute("graph");
+            neo4jServices.clearGraph();
+            SharedSearchStorage.setGraph(new Graph(rootNodeTitle));
 
-			//Find root
-			SingularWikiEntity rootEntity = lookupService.findRoot(rootNodeTitle);
-			rootEntity.setDepthFromRoot(0);
+            //Find root
+            SingularWikiEntity rootEntity = lookupService.findRoot(rootNodeTitle);
+            rootEntity.setDepthFromRoot(0);
 
-			SingularWikiEntityDto rootEntityDto = singularWikiEntityDtoBuilder.convertRoot(rootEntity);
-			SharedSearchStorage.setRootEntity(rootEntityDto);
-			SharedSearchStorage.getGraph().getEntities().add(rootEntityDto);
+            SingularWikiEntityDto rootEntityDto = singularWikiEntityDtoBuilder.convertRoot(rootEntity);
+            SharedSearchStorage.setRootEntity(rootEntityDto);
+            SharedSearchStorage.getGraph().getEntities().add(rootEntityDto);
 
-			//Our first layer is only a set of size 10
-			Set<SingularWikiEntity> firstEntities = lookupService.findEntities(rootEntity, rootEntity, linkDepthLimit);
+            //Our first layer is only a set of size 10
+            Set<SingularWikiEntity> firstEntities = lookupService.findEntities(rootEntity, rootEntity, linkDepthLimit);
 
-			//For each wiki entity hanging off the root(first relationships) convert it and add it to the graph
-			firstEntities.forEach(singularWikiEntity -> {
-				SharedSearchStorage.getGraph().getEntities().add(singularWikiEntityDtoBuilder.convert(singularWikiEntity));
-			});
+            //For each wiki entity hanging off the root(first relationships) convert it and add it to the graph
+            firstEntities.forEach(singularWikiEntity -> {
+                SharedSearchStorage.getGraph().getEntities().add(singularWikiEntityDtoBuilder.convert(singularWikiEntity));
+            });
 
-			//If using two generations do the following
-			if (maxGenerations == 2) {
+            //If using two generations do the following
+            if (maxGenerations == 2) {
 
-				//Second layer is a set size 100, converting all these and adding to graph
-				Set<SingularWikiEntity> allSecondLayerEntities = lookupService.aggregateAndReturnChildrenFromSetOfEntities(firstEntities, rootEntity, linkDepthLimit);
-				allSecondLayerEntities.forEach(singularWikiEntity -> {
-					SharedSearchStorage.getGraph().getEntities().add(singularWikiEntityDtoBuilder.convert(singularWikiEntity));
-				});
+                //Second layer is a set size 100, converting all these and adding to graph
+                Set<SingularWikiEntity> allSecondLayerEntities = lookupService.aggregateAndReturnChildrenFromSetOfEntities(firstEntities, rootEntity, linkDepthLimit);
+                allSecondLayerEntities.forEach(singularWikiEntity -> {
+                    SharedSearchStorage.getGraph().getEntities().add(singularWikiEntityDtoBuilder.convert(singularWikiEntity));
+                });
 
-			}
+            }
 
-			SharedSearchStorage.getGraph().getEntities().forEach(singularWikiEntityDto -> {
-				if (singularWikiEntityDto.getParent() != null) {
+            SharedSearchStorage.getGraph().getEntities().forEach(singularWikiEntityDto -> {
+                if (singularWikiEntityDto.getParent() != null) {
 
-					//Establish parent to child relationship
-					List<Relationship> parentToChildRelationships = relationshipService.extractRelationshipContentFromPageContent(singularWikiEntityDto.getParent(), singularWikiEntityDto);
-					if (parentToChildRelationships.size() > 0) {
-						singularWikiEntityDto.getParent().getRelatedEntities().addAll(parentToChildRelationships);
-					}
+                    //Establish parent to child relationship
+                    List<Relationship> parentToChildRelationships = relationshipService.extractRelationshipContentFromPageContent(singularWikiEntityDto.getParent(), singularWikiEntityDto);
+                    if (parentToChildRelationships.size() > 0) {
+                        singularWikiEntityDto.getParent().getRelatedEntities().addAll(parentToChildRelationships);
+                    }
 
-					//Establish child to parent relationship
-					List<Relationship> childToParentRelationships = relationshipService.extractRelationshipContentFromPageContent(singularWikiEntityDto, singularWikiEntityDto.getParent());
-					if (childToParentRelationships.size() > 0) {
-						singularWikiEntityDto.getRelatedEntities().addAll(childToParentRelationships);
-					}
-				}
-			});
+                    //Establish child to parent relationship
+                    List<Relationship> childToParentRelationships = relationshipService.extractRelationshipContentFromPageContent(singularWikiEntityDto, singularWikiEntityDto.getParent());
+                    if (childToParentRelationships.size() > 0) {
+                        singularWikiEntityDto.getRelatedEntities().addAll(childToParentRelationships);
+                    }
+                }
+            });
 
 
-			SharedSearchStorage.findLinksAndOccurrences();
-			neo4jServices.saveGraph(SharedSearchStorage.getGraph());
-			neo4jServices.removeVerboseRelationships();
-			System.out.println("Graph saved.");
-			request.getSession().setAttribute("relevanceRankings", relevanceService.rankEntitiesByRelevanceToRoot());
-			request.getSession().setAttribute("graph", SharedSearchStorage.getGraph());
-			request.getSession().setAttribute("allLinksAndOccurrences", SharedSearchStorage.getAllLinksAndOccurrences());
-		} catch (Exception e) {
-			e.printStackTrace();
-			result = false;
-		}
+            SharedSearchStorage.findLinksAndOccurrences();
+            neo4jServices.saveGraph(SharedSearchStorage.getGraph());
+            neo4jServices.removeVerboseRelationships();
+            System.out.println("Graph saved.");
+            request.getSession().setAttribute("relevanceRankings", relevanceService.rankEntitiesByRelevanceToRoot());
+            request.getSession().setAttribute("graph", SharedSearchStorage.getGraph());
+            request.getSession().setAttribute("allLinksAndOccurrences", SharedSearchStorage.getAllLinksAndOccurrences());
+        } catch (Exception e) {
+            e.printStackTrace();
+            result = false;
+        }
 
-		if (!result) {
-			model.put("status", "failure");
-		} else {
-			model.put("status", "success");
-		}
+        if (!result) {
+            return new ModelAndView("error");
+        } else {
+            model.put("status", "success");
+        }
 
-		return new ModelAndView("results", model);
+        return new ModelAndView("results", model);
 
-	}
+    }
 }
