@@ -3,6 +3,7 @@ package com.shaun.knowledgetree.util;
 import com.shaun.knowledgetree.domain.Graph;
 import com.shaun.knowledgetree.domain.SingularWikiEntityDto;
 import org.neo4j.helpers.collection.Iterables;
+import org.springframework.util.StopWatch;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -15,6 +16,7 @@ public class SharedSearchStorage {
     private static Graph graph;
     private static SingularWikiEntityDto rootEntity;
     public static HashMap<String, SingularWikiEntityDto> allEntities = new HashMap<>();
+    public static StopWatch stopWatch = new StopWatch();
 
     public static SingularWikiEntityDto getRootEntity() {
         return rootEntity;

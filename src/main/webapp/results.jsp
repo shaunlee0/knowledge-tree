@@ -26,9 +26,9 @@
     <button class="btn btn-info" data-toggle="collapse" data-target="#topOccurringArticlesTable">Show Top Occurring
         Links
     </button>
-    <button class="btn btn-info" data-toggle="collapse" data-target="#mostRelevantArticlesTable">Show Most Relevant
-        Articles
-    </button>
+    <form method="get" action="<%=request.getContextPath()%>/results/relevance">
+     <button type="submit" class="btn btn-info">Go To Relevance Rankings Page</button>
+    </form>
     <div class="row collapse" id="categoriesTable">
         <div class="col-md-12">
             <table class="table">
@@ -95,50 +95,6 @@
                 <%
                         count++;
                     }
-                %>
-                </tbody>
-            </table>
-        </div>
-    </div>
-    <div class="row collapse" id="mostRelevantArticlesTable">
-        <div class="col-md-12">
-            <table class="table">
-                <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Article Title</th>
-                    <th>Cosine Similarity</th>
-                    <th></th>
-                </tr>
-                </thead>
-                <tbody>
-                <%
-
-                    int counter = 1;
-                    for (Map.Entry<String, Double> entry : entitiesAndRelevance.entrySet()) {
-                        if (counter > 10) {
-                            break;
-                        }
-
-
-                %>
-                <tr>
-                    <td><b><%=counter%>.</b></td>
-                    <td><%=entry.getKey()%>
-                    </td>
-                    <td><%=entry.getValue()%>
-                    </td>
-                    <td>
-                        <form target="_blank" action="<%=request.getContextPath()%>/graph/article/<%=entry.getKey()%>"
-                              method="get">
-                            <button type="submit" class="btn btn-success">View Article</button>
-                        </form>
-                    </td>
-                </tr>
-                <%
-                        counter++;
-                    }
-
                 %>
                 </tbody>
             </table>

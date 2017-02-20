@@ -4,9 +4,12 @@ import com.shaun.knowledgetree.domain.SingularWikiEntityDto;
 import com.shaun.knowledgetree.util.SharedSearchStorage;
 import com.shaun.knowledgetree.util.StringUtilities;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StopWatch;
 
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.shaun.knowledgetree.util.SharedSearchStorage.stopWatch;
 
 @Component
 public class RelevanceService {
@@ -93,9 +96,17 @@ public class RelevanceService {
 
     public LinkedHashMap<String, Double> rankEntitiesByRelevanceToRoot() {
         clearStorage();
+        stopWatch.start("parseEntities");
         parseEntities();
+        stopWatch.stop();
+        stopWatch.start("tfidf");
         tfIdfCalculator();
-        return getCosineSimilarity();
+        stopWatch.stop();
+        stopWatch.start("cosineSimilarity");
+        LinkedHashMap<String, Double> toReturn = getCosineSimilarity();
+        stopWatch.stop();
+        System.out.print(stopWatch.prettyPrint());
+        return toReturn;
     }
 
     /**
