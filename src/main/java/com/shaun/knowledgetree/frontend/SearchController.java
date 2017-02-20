@@ -52,9 +52,7 @@ public class SearchController {
     @RequestMapping(value = "validate", method = RequestMethod.GET, params = "searchTerm")
     @ResponseBody
     public String validateSearch(@RequestParam("searchTerm") String searchTerm) {
-        stopWatch.start("check article exists");
         boolean result = lookupService.checkArticleExists(searchTerm);
-        stopWatch.stop();
         if (result) {
             return "{\"status\":\"success\"}";
         } else {
@@ -97,7 +95,7 @@ public class SearchController {
             neo4jServices.clearGraph();
             setGraph(new Graph(rootNodeTitle));
 
-            stopWatch.start("root");
+
             //Find root
             SingularWikiEntity rootEntity = lookupService.findRoot(rootNodeTitle);
             rootEntity.setDepthFromRoot(0);
@@ -105,8 +103,7 @@ public class SearchController {
             SingularWikiEntityDto rootEntityDto = singularWikiEntityDtoBuilder.convertRoot(rootEntity);
             setRootEntity(rootEntityDto);
             getGraph().getEntities().add(rootEntityDto);
-            stopWatch.stop();
-            stopWatch.start("first layer");
+
 
             //Our first layer is only a set of size 10
             Set<SingularWikiEntity> firstEntities = lookupService.findEntities(rootEntity, rootEntity, linkDepthLimit);
@@ -116,7 +113,6 @@ public class SearchController {
                 getGraph().getEntities().add(singularWikiEntityDtoBuilder.convert(singularWikiEntity));
             });
 
-            stopWatch.stop();
 
             //If using two generations do the following
             if (maxGenerations == 2) {
@@ -128,7 +124,7 @@ public class SearchController {
                 });
 
             }
-            stopWatch.start("relationships");
+
             getGraph().getEntities().forEach(singularWikiEntityDto -> {
                 if (singularWikiEntityDto.getParent() != null) {
 
@@ -146,10 +142,7 @@ public class SearchController {
                 }
             });
 
-            stopWatch.stop();
-            stopWatch.start("links and occurrences");
             findLinksAndOccurrences();
-            stopWatch.stop();
             neo4jServices.saveGraph(getGraph());
             neo4jServices.removeVerboseRelationships();
             System.out.println("Graph saved.");

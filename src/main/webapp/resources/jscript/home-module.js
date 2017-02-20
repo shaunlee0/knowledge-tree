@@ -1,4 +1,4 @@
-$(document).ready(function() {
+$(document).ready(function () {
     var contextPath = '/knowledge-tree/';
     $("#submitSearch").click(function (e) {
 
@@ -25,8 +25,13 @@ $(document).ready(function() {
     });
 });
 
+function forwardToRelevancePage() {
+    console.log("forwarding to relevance page");
+    window.location.href = '/knowledge-tree/results/relevance/';
+}
+
 // Wait for window load
-$(window).load(function() {
+$(window).load(function () {
     // Animate loader off screen
     $(".se-pre-con").fadeOut("slow");
 });

@@ -15,23 +15,26 @@ import javax.servlet.http.HttpServletRequest;
 @RequestMapping("/results")
 public class ResultsController {
 
-    @Autowired
-    RelevanceService relevanceService;
+	@Autowired
+	RelevanceService relevanceService;
 
-    public String getRelevanceToRoot(String toCompareTitle) {
-        return "";
-    }
+	public String getRelevanceToRoot(String toCompareTitle) {
+		return "";
+	}
 
-    @RequestMapping("")
-    public String openResultsPage() {
-        return "results";
-    }
+	@RequestMapping("")
+	public String openResultsPage() {
+		return "results";
+	}
 
-    @RequestMapping("/relevance")
-    public ModelAndView getRelevanceRankings(HttpServletRequest request) {
-
-        request.getSession().setAttribute("relevanceRankings", relevanceService.rankEntitiesByRelevanceToRoot());
-        return new ModelAndView("results");
-    }
+	@RequestMapping("/relevance")
+	public ModelAndView getRelevanceRankings(HttpServletRequest request) {
+		if (request.getSession().getAttribute("relevanceRankins") == null) {
+			request.getSession().setAttribute("relevanceRankings", relevanceService.rankEntitiesByRelevanceToRoot());
+			return new ModelAndView("relevance");
+		} else {
+			return new ModelAndView("relevance");
+		}
+	}
 
 }

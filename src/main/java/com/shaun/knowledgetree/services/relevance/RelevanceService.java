@@ -95,6 +95,9 @@ public class RelevanceService {
     }
 
     public LinkedHashMap<String, Double> rankEntitiesByRelevanceToRoot() {
+        if(stopWatch.isRunning()){
+            stopWatch.stop();
+        }
         clearStorage();
         stopWatch.start("parseEntities");
         parseEntities();

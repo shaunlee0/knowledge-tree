@@ -22,13 +22,11 @@
 </h1>
 <br>
 <div align="center">
+    <button onclick="forwardToRelevancePage()" id="goToRankingsPage" data-toggle="collapse" class="btn btn-info">Relevance Rankings Page</button>
     <button class="btn btn-info" data-toggle="collapse" data-target="#categoriesTable">Show Categories</button>
     <button class="btn btn-info" data-toggle="collapse" data-target="#topOccurringArticlesTable">Show Top Occurring
         Links
     </button>
-    <form method="get" action="<%=request.getContextPath()%>/results/relevance">
-     <button type="submit" class="btn btn-info">Go To Relevance Rankings Page</button>
-    </form>
     <div class="row collapse" id="categoriesTable">
         <div class="col-md-12">
             <table class="table">
