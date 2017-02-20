@@ -4,6 +4,7 @@ import com.shaun.knowledgetree.domain.SingularWikiEntityDto;
 import com.shaun.knowledgetree.util.SharedSearchStorage;
 import com.shaun.knowledgetree.util.StringUtilities;
 import org.springframework.stereotype.Component;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -91,8 +92,20 @@ public class RelevanceService {
     }
 
     public LinkedHashMap<String, Double> rankEntitiesByRelevanceToRoot() {
+        clearStorage();
         parseEntities();
         tfIdfCalculator();
         return getCosineSimilarity();
     }
+
+    /**
+     * When running multiple relevance processes the storage from the old search must be cleared.
+     */
+    private void clearStorage() {
+        termsDocsArray.clear();
+        cosineSimilarityToRootRankings.clear();
+        allTerms.clear();
+        tfidfDocsVector.clear();
+    }
+
 }

@@ -29,8 +29,7 @@ public class RelationshipController {
 
     @RequestMapping(value = "{startNodeTitle}", method = RequestMethod.GET)
     public ModelAndView getRelationshipDetails(@PathVariable("startNodeTitle") String startNodeTitle,
-                                               @RequestParam("endNodeTitle") String endNodeTitle,
-                                               HttpServletRequest request){
+                                               @RequestParam("endNodeTitle") String endNodeTitle){
 
         HashMap<String, Object> model = new HashMap<>();
         SingularWikiEntityDto startNode = graphService.getSingularWikiEntity(startNodeTitle);
@@ -41,6 +40,5 @@ public class RelationshipController {
         model.put("startNode",startNode);
         model.put("endNode",endNode);
         return new ModelAndView("relationship", model);
-
     }
 }
