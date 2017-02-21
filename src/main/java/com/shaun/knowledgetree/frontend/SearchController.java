@@ -119,13 +119,13 @@ public class SearchController {
 
                 //Second layer is a set size 100, converting all these and adding to graph
                 Set<SingularWikiEntity> allSecondLayerEntities = lookupService.aggregateAndReturnChildrenFromSetOfEntities(firstEntities, rootEntity, linkDepthLimit);
-                allSecondLayerEntities.forEach(singularWikiEntity -> {
+                allSecondLayerEntities.parallelStream().forEach(singularWikiEntity -> {
                     getGraph().getEntities().add(singularWikiEntityDtoBuilder.convert(singularWikiEntity));
                 });
 
             }
 
-            getGraph().getEntities().forEach(singularWikiEntityDto -> {
+            getGraph().getEntities().parallelStream().forEach(singularWikiEntityDto -> {
                 if (singularWikiEntityDto.getParent() != null) {
 
                     //Establish parent to child relationship

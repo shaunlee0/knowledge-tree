@@ -27,7 +27,30 @@ public class RelevanceService {
     }
 
     private void parseEntities() {
-        for (SingularWikiEntityDto entity : allEntities.values()) {
+
+        StopWatch stopWatch = new StopWatch();
+//        stopWatch.start("old");
+//
+//        //Slow old method.
+//        for (SingularWikiEntityDto entity : allEntities.values()) {
+//            String[] entityDocumentTerms = entity.getPageContent().getPagePlainText().split(" ");
+//            Set<String> tempEntityDocumentTerms = new HashSet<>();
+//
+//            //Add non stop words to allTerms, remove non alpha and stop terms from entityDocumentTerms
+//            for (String term : entityDocumentTerms) {
+//                if (!allTerms.contains(term) && stringUtilities.wordIsNotStopWord(term)) {
+//                    allTerms.add(term);
+//                    tempEntityDocumentTerms.add(term);
+//                }
+//            }
+//            entityDocumentTerms = tempEntityDocumentTerms.toArray(new String[tempEntityDocumentTerms.size()]);
+//            termsDocsArray.put(entity.getTitle(), entityDocumentTerms);
+//        }
+//
+//        stopWatch.stop();
+
+        stopWatch.start("new");
+        allEntities.values().stream().forEach(entity->{
             String[] entityDocumentTerms = entity.getPageContent().getPagePlainText().split(" ");
             Set<String> tempEntityDocumentTerms = new HashSet<>();
 
@@ -38,49 +61,36 @@ public class RelevanceService {
                     tempEntityDocumentTerms.add(term);
                 }
             }
+
             entityDocumentTerms = tempEntityDocumentTerms.toArray(new String[tempEntityDocumentTerms.size()]);
             termsDocsArray.put(entity.getTitle(), entityDocumentTerms);
-        }
+
+        });
+
+        stopWatch.stop();
+
+        System.out.println(stopWatch.prettyPrint());
     }
 
     private void tfIdfCalculator() {
 
         StopWatch stopWatch = new StopWatch();
 
-//        stopWatch.start("parallel stream");
-//        //One thread
-//        termsDocsArray.entrySet().parallelStream().forEach(entry -> {
-//            double[] tfidfvectors = new double[allTerms.size()];
-//            int count = 0;
-//            //For each term get tf-idf
-//            for (String term : allTerms) {
-//                double tf = new Tfidf().tfCalculator(entry.getValue(), term);
-//                double idf = new Tfidf().idfCalculator(termsDocsArray.values(), term);
-//                double tfidf = tf * idf;
-//                tfidfvectors[count] = tfidf;
-//                count++;
-//            }
-//            tfidfDocsVector.put(entry.getKey(), tfidfvectors);  //storing document vectors;
-//        });
-//
-//        stopWatch.stop();
-
-        stopWatch.start("single thread");
-
-        //For each article
-        for (Map.Entry<String, String[]> docTermsArray : termsDocsArray.entrySet()) {
+        stopWatch.start("parallel stream");
+        //One thread
+        termsDocsArray.entrySet().parallelStream().forEach(entry -> {
             double[] tfidfvectors = new double[allTerms.size()];
             int count = 0;
             //For each term get tf-idf
             for (String term : allTerms) {
-                double tf = new Tfidf().tfCalculator(docTermsArray.getValue(), term);
+                double tf = new Tfidf().tfCalculator(entry.getValue(), term);
                 double idf = new Tfidf().idfCalculator(termsDocsArray.values(), term);
                 double tfidf = tf * idf;
                 tfidfvectors[count] = tfidf;
                 count++;
             }
-            tfidfDocsVector.put(docTermsArray.getKey(), tfidfvectors);  //storing document vectors;
-        }
+            tfidfDocsVector.put(entry.getKey(), tfidfvectors);  //storing document vectors;
+        });
 
         stopWatch.stop();
 
@@ -91,18 +101,18 @@ public class RelevanceService {
 
         double[] rootNodeVector = tfidfDocsVector.get(SharedSearchStorage.getRootEntity().getTitle());
 
-        //Loop through tfidfDocsVector Elements
-        for (Map.Entry<String, double[]> currentEntity : tfidfDocsVector.entrySet()) {
+        tfidfDocsVector.entrySet().parallelStream().forEach(currentEntity -> {
             cosineSimilarityToRootRankings.put(currentEntity.getKey(), new CosineSimilarity().cosineSimilarity
                     (
                             rootNodeVector,
                             currentEntity.getValue()
                     )
             );
-        }
+        });
+
 
         //Sort these rankings.
-        cosineSimilarityToRootRankings = cosineSimilarityToRootRankings.entrySet().stream()
+        cosineSimilarityToRootRankings = cosineSimilarityToRootRankings.entrySet().parallelStream()
                 .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
@@ -122,16 +132,9 @@ public class RelevanceService {
             stopWatch.stop();
         }
         clearStorage();
-        stopWatch.start("parseEntities");
         parseEntities();
-        stopWatch.stop();
-        stopWatch.start("tfidf");
         tfIdfCalculator();
-        stopWatch.stop();
-        stopWatch.start("cosineSimilarity");
         LinkedHashMap<String, Double> toReturn = getCosineSimilarity();
-        stopWatch.stop();
-        System.out.print(stopWatch.prettyPrint());
         return toReturn;
     }
 

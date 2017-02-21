@@ -93,6 +93,8 @@ public class LookupService {
         } else {
             listOfPages = user.queryContent(titles);
         }
+
+
         for (Page page : listOfPages) {
             SingularWikiEntity singularWikiEntity = new SingularWikiEntity();
             singularWikiEntity.setRootEntity(rootEntity);
@@ -170,7 +172,7 @@ public class LookupService {
         //Find the set of relationships from this object, then set its parent,root and depth
         Set<SingularWikiEntity> wikiEntitySet = findPages(titles, rootEntity, linkDepthLimit);
 
-        wikiEntitySet.forEach(wikiEntity -> {
+        wikiEntitySet.parallelStream().forEach(wikiEntity -> {
             wikiEntity.setParent(parent);
             wikiEntity.setRootEntity(rootEntity);
             wikiEntity.setDepthFromRoot(wikiEntity.getParent().getDepthFromRoot() + 1);
@@ -189,30 +191,15 @@ public class LookupService {
     public Set<SingularWikiEntity> aggregateAndReturnChildrenFromSetOfEntities(Set<SingularWikiEntity> inputEntities, SingularWikiEntity rootEntity, int linkDepthLimit) {
         Set<SingularWikiEntity> toReturn = new HashSet<>();
 
-        try {
-            int count = 1;
-            int toDo = inputEntities.size();
-
-            StopWatch stopWatch = new StopWatch();
-
-            for (SingularWikiEntity firstLayerEntity : inputEntities) {
-                stopWatch.start(firstLayerEntity.getTitle());
-                Set<SingularWikiEntity> childEntities = findEntities(firstLayerEntity, rootEntity, linkDepthLimit);
+            inputEntities.parallelStream().forEach(firstLayerEntity ->{
+                Set<SingularWikiEntity> childEntities = null;
+                try {
+                    childEntities = findEntities(firstLayerEntity, rootEntity, linkDepthLimit);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 toReturn.addAll(childEntities);
-                stopWatch.stop();
-                System.out.println(stopWatch.getLastTaskName() + " : " + stopWatch.getLastTaskTimeMillis() + "ms\t|" + "\tProgress = " + count + "/" + toDo);
-                count++;
-            }
-
-            if (count == 5) {
-                System.out.println("stop");
-            }
-
-            System.out.println("Finished");
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+            });
 
         return toReturn;
     }
