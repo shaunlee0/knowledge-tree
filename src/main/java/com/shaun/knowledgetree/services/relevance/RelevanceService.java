@@ -44,9 +44,28 @@ public class RelevanceService {
     }
 
     private void tfIdfCalculator() {
-        double tf;
-        double idf;
-        double tfidf;
+
+        StopWatch stopWatch = new StopWatch();
+
+//        stopWatch.start("parallel stream");
+//        //One thread
+//        termsDocsArray.entrySet().parallelStream().forEach(entry -> {
+//            double[] tfidfvectors = new double[allTerms.size()];
+//            int count = 0;
+//            //For each term get tf-idf
+//            for (String term : allTerms) {
+//                double tf = new Tfidf().tfCalculator(entry.getValue(), term);
+//                double idf = new Tfidf().idfCalculator(termsDocsArray.values(), term);
+//                double tfidf = tf * idf;
+//                tfidfvectors[count] = tfidf;
+//                count++;
+//            }
+//            tfidfDocsVector.put(entry.getKey(), tfidfvectors);  //storing document vectors;
+//        });
+//
+//        stopWatch.stop();
+
+        stopWatch.start("single thread");
 
         //For each article
         for (Map.Entry<String, String[]> docTermsArray : termsDocsArray.entrySet()) {
@@ -54,14 +73,18 @@ public class RelevanceService {
             int count = 0;
             //For each term get tf-idf
             for (String term : allTerms) {
-                tf = new Tfidf().tfCalculator(docTermsArray.getValue(), term);
-                idf = new Tfidf().idfCalculator(termsDocsArray.values(), term);
-                tfidf = tf * idf;
+                double tf = new Tfidf().tfCalculator(docTermsArray.getValue(), term);
+                double idf = new Tfidf().idfCalculator(termsDocsArray.values(), term);
+                double tfidf = tf * idf;
                 tfidfvectors[count] = tfidf;
                 count++;
             }
             tfidfDocsVector.put(docTermsArray.getKey(), tfidfvectors);  //storing document vectors;
         }
+
+        stopWatch.stop();
+
+        System.out.println(stopWatch.prettyPrint());
     }
 
     private LinkedHashMap<String, Double> getCosineSimilarity() {
