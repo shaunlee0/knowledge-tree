@@ -2,6 +2,7 @@ package com.shaun.knowledgetree.services.relevance;
 
 import com.shaun.knowledgetree.domain.SingularWikiEntityDto;
 import com.shaun.knowledgetree.util.SharedSearchStorage;
+import com.shaun.knowledgetree.util.Stemmer;
 import com.shaun.knowledgetree.util.StringUtilities;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StopWatch;
@@ -21,6 +22,7 @@ public class RelevanceService {
     private HashMap<String, double[]> tfidfDocsVector = new HashMap<>();
     private HashMap<String, SingularWikiEntityDto> allEntities = SharedSearchStorage.getAllEntities();
     private StringUtilities stringUtilities = new StringUtilities();
+    private Stemmer stemmer = new Stemmer();
 
     public RelevanceService() {
 
@@ -56,6 +58,7 @@ public class RelevanceService {
 
             //Add non stop words to allTerms, remove non alpha and stop terms from entityDocumentTerms
             for (String term : entityDocumentTerms) {
+                term = stemmer.stem(term);
                 if (!allTerms.contains(term) && stringUtilities.wordIsNotStopWord(term)) {
                     allTerms.add(term);
                     tempEntityDocumentTerms.add(term);
