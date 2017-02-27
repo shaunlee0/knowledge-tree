@@ -5,6 +5,7 @@ import com.shaun.knowledgetree.domain.Graph;
 import com.shaun.knowledgetree.domain.Relationship;
 import com.shaun.knowledgetree.domain.SingularWikiEntityDto;
 import com.shaun.knowledgetree.services.Neo4jServices;
+import com.shaun.knowledgetree.services.neo4j.GraphService;
 import com.shaun.knowledgetree.services.relationships.RelationshipService;
 import com.shaun.knowledgetree.services.lookup.LookupService;
 import com.shaun.knowledgetree.services.neo4j.MovieService;
@@ -48,6 +49,9 @@ public class SearchController {
 
     @Autowired
     RelevanceService relevanceService;
+
+    @Autowired
+    GraphService graphService;
 
     @RequestMapping(value = "validate", method = RequestMethod.GET, params = "searchTerm")
     @ResponseBody
@@ -145,7 +149,7 @@ public class SearchController {
             findLinksAndOccurrences();
             neo4jServices.saveGraph(getGraph());
             neo4jServices.removeVerboseRelationships();
-            System.out.println("Graph saved.");
+            graphService.writeGraphDataToFile(getGraph(),request.getServletContext().getRealPath("resources/data"));
             request.getSession().setAttribute("graph", getGraph());
             request.getSession().setAttribute("allLinksAndOccurrences", getAllLinksAndOccurrences());
         } catch (Exception e) {

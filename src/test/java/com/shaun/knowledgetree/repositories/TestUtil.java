@@ -10,6 +10,8 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.UUID;
+
 import static org.hamcrest.Matchers.is;
 
 @Component
@@ -19,6 +21,8 @@ public class TestUtil {
 
 	@Test
 	public void utilTest(){
+		String uniqueID = UUID.randomUUID().toString();
+		System.out.println(uniqueID);
 	}
 
 	@Test

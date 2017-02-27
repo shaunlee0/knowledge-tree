@@ -1,6 +1,7 @@
 package com.shaun.knowledgetree.domain.json;
 
 import com.fasterxml.jackson.annotation.*;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 import java.util.HashMap;
 import java.util.List;
@@ -64,4 +65,8 @@ public class GraphData {
 		this.additionalProperties.put(name, value);
 	}
 
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this);
+	}
 }
