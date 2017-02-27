@@ -33,8 +33,9 @@ public class GraphController {
         return getSingularWikiEntity(root.getTitle());
     }
 
-    public String getDataForVisualGraph() {
-        return null;
+    @RequestMapping("visual")
+    public String openGraphPage() {
+        return "graph";
     }
 
 

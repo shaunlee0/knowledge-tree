@@ -24,6 +24,14 @@
         <%--Custom Scripts--%>
         <script src="<%=request.getContextPath()%>/resources/jscript/home-module.js"></script>
 
+        <%--Alchemy--%>
+        <link rel="stylesheet" href="<%=request.getContextPath()%>/resources/jscript/alchemy/0.4.1/alchemy.min.css"/>
+        <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.16.4/lodash.min.js"></script>
+        <script src="<%=request.getContextPath()%>/resources/jscript/alchemy/0.4.1/scripts/vendor.js"></script>
+        <script src="<%=request.getContextPath()%>/resources/jscript/alchemy/0.4.1/alchemy.js"></script>
+        <script src="<%=request.getContextPath()%>/resources/jscript/alchemy/0.4.1/alchemy.min.js"></script>
+
         <style>
             .info-heading {
                 color: green;
