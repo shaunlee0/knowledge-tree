@@ -28,6 +28,7 @@
     <button class="btn btn-info" data-toggle="collapse" data-target="#relationships">Show Relationships</button>
 
     <div align="left" class="row collapse" id="articleContent">
+        <br>
         <%=article.getPageContent().getHtml()%>
     </div>
 

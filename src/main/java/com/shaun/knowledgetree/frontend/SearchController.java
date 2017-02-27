@@ -14,12 +14,15 @@ import com.shaun.knowledgetree.util.SharedSearchStorage;
 import com.shaun.knowledgetree.util.SingularWikiEntityDtoBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StopWatch;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.shaun.knowledgetree.util.SharedSearchStorage.*;
 
 @Controller
 @RequestMapping("search")
@@ -64,6 +67,8 @@ public class SearchController {
             @RequestParam("maxGenerations") String maxGenerationsString,
             HttpServletRequest request) {
 
+        StopWatch requestTime = new StopWatch();
+        requestTime.start("request");
         int linkDepthLimit = Integer.parseInt(linkDepthLimitString);
         int maxGenerations = Integer.parseInt(maxGenerationsString);
 
@@ -84,40 +89,43 @@ public class SearchController {
         }
 
         try {
-            SharedSearchStorage.clearContent();
+            clearContent();
             System.out.println("Searching for " + rootNodeTitle);
             request.getSession().removeAttribute("graph");
             neo4jServices.clearGraph();
-            SharedSearchStorage.setGraph(new Graph(rootNodeTitle));
+            setGraph(new Graph(rootNodeTitle));
+
 
             //Find root
             SingularWikiEntity rootEntity = lookupService.findRoot(rootNodeTitle);
             rootEntity.setDepthFromRoot(0);
 
             SingularWikiEntityDto rootEntityDto = singularWikiEntityDtoBuilder.convertRoot(rootEntity);
-            SharedSearchStorage.setRootEntity(rootEntityDto);
-            SharedSearchStorage.getGraph().getEntities().add(rootEntityDto);
+            setRootEntity(rootEntityDto);
+            getGraph().getEntities().add(rootEntityDto);
+
 
             //Our first layer is only a set of size 10
             Set<SingularWikiEntity> firstEntities = lookupService.findEntities(rootEntity, rootEntity, linkDepthLimit);
 
             //For each wiki entity hanging off the root(first relationships) convert it and add it to the graph
             firstEntities.forEach(singularWikiEntity -> {
-                SharedSearchStorage.getGraph().getEntities().add(singularWikiEntityDtoBuilder.convert(singularWikiEntity));
+                getGraph().getEntities().add(singularWikiEntityDtoBuilder.convert(singularWikiEntity));
             });
+
 
             //If using two generations do the following
             if (maxGenerations == 2) {
 
                 //Second layer is a set size 100, converting all these and adding to graph
                 Set<SingularWikiEntity> allSecondLayerEntities = lookupService.aggregateAndReturnChildrenFromSetOfEntities(firstEntities, rootEntity, linkDepthLimit);
-                allSecondLayerEntities.forEach(singularWikiEntity -> {
-                    SharedSearchStorage.getGraph().getEntities().add(singularWikiEntityDtoBuilder.convert(singularWikiEntity));
+                allSecondLayerEntities.parallelStream().forEach(singularWikiEntity -> {
+                    getGraph().getEntities().add(singularWikiEntityDtoBuilder.convert(singularWikiEntity));
                 });
 
             }
 
-            SharedSearchStorage.getGraph().getEntities().forEach(singularWikiEntityDto -> {
+            getGraph().getEntities().parallelStream().forEach(singularWikiEntityDto -> {
                 if (singularWikiEntityDto.getParent() != null) {
 
                     //Establish parent to child relationship
@@ -134,14 +142,12 @@ public class SearchController {
                 }
             });
 
-
-            SharedSearchStorage.findLinksAndOccurrences();
-            neo4jServices.saveGraph(SharedSearchStorage.getGraph());
+            findLinksAndOccurrences();
+            neo4jServices.saveGraph(getGraph());
             neo4jServices.removeVerboseRelationships();
             System.out.println("Graph saved.");
-            request.getSession().setAttribute("relevanceRankings", relevanceService.rankEntitiesByRelevanceToRoot());
-            request.getSession().setAttribute("graph", SharedSearchStorage.getGraph());
-            request.getSession().setAttribute("allLinksAndOccurrences", SharedSearchStorage.getAllLinksAndOccurrences());
+            request.getSession().setAttribute("graph", getGraph());
+            request.getSession().setAttribute("allLinksAndOccurrences", getAllLinksAndOccurrences());
         } catch (Exception e) {
             e.printStackTrace();
             result = false;
@@ -152,7 +158,8 @@ public class SearchController {
         } else {
             model.put("status", "success");
         }
-
+        requestTime.stop();
+        System.out.println(requestTime.prettyPrint());
         return new ModelAndView("results", model);
 
     }

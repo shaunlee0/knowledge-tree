@@ -7,6 +7,7 @@ import com.shaun.knowledgetree.util.StringUtilities;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StopWatch;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -297,7 +298,15 @@ public class RelationshipService {
             }
         }
 
-        foundRelationships.forEach(this::extractSynsetsAndStoreToRelationship);
+        StopWatch stopWatch = new StopWatch();
+
+        stopWatch.start("stream");
+
+        foundRelationships.parallelStream().forEach(this::extractSynsetsAndStoreToRelationship);
+
+        stopWatch.stop();
+
+        System.out.println(stopWatch.prettyPrint());
 
         return foundRelationships;
     }

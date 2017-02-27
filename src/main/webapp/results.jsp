@@ -10,7 +10,6 @@
     Graph graph = (Graph) session.getAttribute("graph");
     Set<Category> categories = graph.getAllCategories();
     HashMap<String, Integer> allLinksAndOccurrences = (HashMap<String, Integer>) session.getAttribute("allLinksAndOccurrences");
-    HashMap<String, Double> entitiesAndRelevance = (HashMap<String, Double>) session.getAttribute("relevanceRankings");
 %>
 <head>
     <title>Knowledge Tree - Results : <%=graph.getSearchTerm()%>
@@ -22,13 +21,10 @@
 </h1>
 <br>
 <div align="center">
+    <button onclick="forwardToRelevancePage()" id="goToRankingsPage" data-toggle="collapse" class="btn btn-info">Relevance Rankings Page</button>
+    <button class="btn btn-info" data-toggle="collapse" data-target="#topOccurringArticlesTable">Show Top Occurring Links</button>
+    <button onclick="forwardToRootPage()" id="goToRootPage" data-toggle="collapse" class="btn btn-info">Root Article Page</button>
     <button class="btn btn-info" data-toggle="collapse" data-target="#categoriesTable">Show Categories</button>
-    <button class="btn btn-info" data-toggle="collapse" data-target="#topOccurringArticlesTable">Show Top Occurring
-        Links
-    </button>
-    <button class="btn btn-info" data-toggle="collapse" data-target="#mostRelevantArticlesTable">Show Most Relevant
-        Articles
-    </button>
     <div class="row collapse" id="categoriesTable">
         <div class="col-md-12">
             <table class="table">
@@ -73,7 +69,7 @@
                 <%
                     int count = 1;
                     for (Map.Entry<String, Integer> entry : allLinksAndOccurrences.entrySet()) {
-                        if (count > 10) {
+                        if (count > 20) {
                             break;
                         }
 
@@ -95,50 +91,6 @@
                 <%
                         count++;
                     }
-                %>
-                </tbody>
-            </table>
-        </div>
-    </div>
-    <div class="row collapse" id="mostRelevantArticlesTable">
-        <div class="col-md-12">
-            <table class="table">
-                <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Article Title</th>
-                    <th>Cosine Similarity</th>
-                    <th></th>
-                </tr>
-                </thead>
-                <tbody>
-                <%
-
-                    int counter = 1;
-                    for (Map.Entry<String, Double> entry : entitiesAndRelevance.entrySet()) {
-                        if (counter > 10) {
-                            break;
-                        }
-
-
-                %>
-                <tr>
-                    <td><b><%=counter%>.</b></td>
-                    <td><%=entry.getKey()%>
-                    </td>
-                    <td><%=entry.getValue()%>
-                    </td>
-                    <td>
-                        <form target="_blank" action="<%=request.getContextPath()%>/graph/article/<%=entry.getKey()%>"
-                              method="get">
-                            <button type="submit" class="btn btn-success">View Article</button>
-                        </form>
-                    </td>
-                </tr>
-                <%
-                        counter++;
-                    }
-
                 %>
                 </tbody>
             </table>
