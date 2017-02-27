@@ -9,7 +9,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * Created by 45923Sh(Shaun Lee) on 14/12/2016.
+ * Results controller to carry out all actions post the initial search phase.
  */
 @Controller
 @RequestMapping("/results")
@@ -18,10 +18,6 @@ public class ResultsController {
 	@Autowired
 	RelevanceService relevanceService;
 
-	public String getRelevanceToRoot(String toCompareTitle) {
-		return "";
-	}
-
 	@RequestMapping("")
 	public String openResultsPage() {
 		return "results";
@@ -29,7 +25,7 @@ public class ResultsController {
 
 	@RequestMapping("/relevance")
 	public ModelAndView getRelevanceRankings(HttpServletRequest request) {
-		if (request.getSession().getAttribute("relevanceRankins") == null) {
+		if (request.getSession().getAttribute("relevanceRankings") == null) {
 			request.getSession().setAttribute("relevanceRankings", relevanceService.rankEntitiesByRelevanceToRoot());
 			return new ModelAndView("relevance");
 		} else {

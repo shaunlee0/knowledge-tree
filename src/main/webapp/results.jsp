@@ -10,7 +10,6 @@
     Graph graph = (Graph) session.getAttribute("graph");
     Set<Category> categories = graph.getAllCategories();
     HashMap<String, Integer> allLinksAndOccurrences = (HashMap<String, Integer>) session.getAttribute("allLinksAndOccurrences");
-    HashMap<String, Double> entitiesAndRelevance = (HashMap<String, Double>) session.getAttribute("relevanceRankings");
 %>
 <head>
     <title>Knowledge Tree - Results : <%=graph.getSearchTerm()%>
@@ -23,10 +22,9 @@
 <br>
 <div align="center">
     <button onclick="forwardToRelevancePage()" id="goToRankingsPage" data-toggle="collapse" class="btn btn-info">Relevance Rankings Page</button>
+    <button class="btn btn-info" data-toggle="collapse" data-target="#topOccurringArticlesTable">Show Top Occurring Links</button>
+    <button onclick="forwardToRootPage()" id="goToRootPage" data-toggle="collapse" class="btn btn-info">Root Article Page</button>
     <button class="btn btn-info" data-toggle="collapse" data-target="#categoriesTable">Show Categories</button>
-    <button class="btn btn-info" data-toggle="collapse" data-target="#topOccurringArticlesTable">Show Top Occurring
-        Links
-    </button>
     <div class="row collapse" id="categoriesTable">
         <div class="col-md-12">
             <table class="table">
@@ -71,7 +69,7 @@
                 <%
                     int count = 1;
                     for (Map.Entry<String, Integer> entry : allLinksAndOccurrences.entrySet()) {
-                        if (count > 10) {
+                        if (count > 20) {
                             break;
                         }
 

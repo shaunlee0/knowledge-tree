@@ -26,8 +26,11 @@ $(document).ready(function () {
 });
 
 function forwardToRelevancePage() {
-    console.log("forwarding to relevance page");
     window.location.href = '/knowledge-tree/results/relevance/';
+}
+
+function forwardToRootPage() {
+    window.location.href = '/knowledge-tree/graph/root/';
 }
 
 // Wait for window load

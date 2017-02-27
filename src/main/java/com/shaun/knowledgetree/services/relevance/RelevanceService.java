@@ -59,8 +59,10 @@ public class RelevanceService {
             //Add non stop words to allTerms, remove non alpha and stop terms from entityDocumentTerms
             for (String term : entityDocumentTerms) {
                 term = stemmer.stem(term);
-                if (!allTerms.contains(term) && stringUtilities.wordIsNotStopWord(term)) {
-                    allTerms.add(term);
+                if (stringUtilities.wordIsNotStopWord(term)) {
+                    if(!allTerms.contains(term)){
+                        allTerms.add(term);
+                    }
                     tempEntityDocumentTerms.add(term);
                 }
             }

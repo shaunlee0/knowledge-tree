@@ -34,7 +34,7 @@
 
                 int counter = 1;
                 for (Map.Entry<String, Double> entry : entitiesAndRelevance.entrySet()) {
-                    if (counter > 10) {
+                    if (counter > 20) {
                         break;
                     }
 
