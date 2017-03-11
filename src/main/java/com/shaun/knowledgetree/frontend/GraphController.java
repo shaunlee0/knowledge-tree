@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.ws.rs.GET;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -33,7 +34,7 @@ public class GraphController {
         return getSingularWikiEntity(root.getTitle());
     }
 
-    @RequestMapping("visual")
+    @RequestMapping(value = "visual", method = RequestMethod.GET)
     public String openGraphPage() {
         return "graph";
     }

@@ -67,6 +67,7 @@
                 <li><a href="<%=request.getContextPath()%>/results">Results</a></li>
                 <li><a href="<%=request.getContextPath()%>/graph/root">Root Entity</a></li>
                 <li><a href="<%=request.getContextPath()%>/graph/visual">Show Graph</a></li>
+
                 <%
                     String url = (String) request.getAttribute("javax.servlet.forward.request_uri");
                     if (url.contains("visual")) { %>
@@ -78,9 +79,7 @@
             </ul>
             <ul class="nav navbar-nav navbar-right">
 
-                <li>
-
-                </li>
+                <li><a href="<%=request.getContextPath()%>/swagger-ui.html">API Documentation</a></li>
 
             </ul>
         </div>
