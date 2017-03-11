@@ -19,7 +19,6 @@
         dataSource: '<%=request.getContextPath()%>/resources/data/graphData.json',
         directedEdges: true
     };
-
     alchemy = new Alchemy(config)
 </script>
 <%--Graph End--%>

@@ -8,10 +8,8 @@ import com.shaun.knowledgetree.services.Neo4jServices;
 import com.shaun.knowledgetree.services.neo4j.GraphService;
 import com.shaun.knowledgetree.services.relationships.RelationshipService;
 import com.shaun.knowledgetree.services.lookup.LookupService;
-import com.shaun.knowledgetree.services.neo4j.MovieService;
 import com.shaun.knowledgetree.services.pageContent.PageContentService;
 import com.shaun.knowledgetree.services.relevance.RelevanceService;
-import com.shaun.knowledgetree.util.SharedSearchStorage;
 import com.shaun.knowledgetree.util.SingularWikiEntityDtoBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -21,16 +19,12 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.shaun.knowledgetree.util.SharedSearchStorage.*;
 
 @Controller
 @RequestMapping("search")
 public class SearchController {
-
-    @Autowired
-    MovieService movieService;
 
     @Autowired
     Neo4jServices neo4jServices;

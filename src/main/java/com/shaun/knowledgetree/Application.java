@@ -1,7 +1,6 @@
 package com.shaun.knowledgetree;
 
 import com.shaun.knowledgetree.config.MyNeo4jConfiguration;
-import com.shaun.knowledgetree.services.neo4j.MovieService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -24,14 +23,6 @@ public class Application extends WebMvcConfigurerAdapter {
 
     public static void main(String[] args) throws IOException {
         SpringApplication.run(Application.class, args);
-    }
-
-    @Autowired
-    MovieService movieService;
-
-    @RequestMapping("/graph-to-d3")
-    public Map<String, Object> graph(@RequestParam(value = "limit", required = false) Integer limit) {
-        return movieService.graph(limit == null ? 100 : limit);
     }
 
 }

@@ -54,16 +54,13 @@ public class GraphService {
 	}
 
 	public void writeGraphDataToFile(Graph graph, String path) {
-
 		final int[] currentId = {1};
 		GraphData graphData = new GraphData();
 		graphData.setComment("Visual graph representation of the " + graph.getSearchTerm() + " domain.");
 
-		//Nodes
 		List<Node> nodes = new ArrayList<>();
 		HashMap<String, Node> nodeAndTitleMap = new LinkedHashMap<>();
 
-		//Edges
 		List<Relationship> relationships = new ArrayList<>();
 		List<Edge> edges = new ArrayList<>();
 
@@ -86,10 +83,7 @@ public class GraphService {
 			edge.setTarget(nodeAndTitleMap.get(relationship.getEndNode().getTitle()).getId());
 			edges.add(edge);
 		});
-
-
 		nodes.addAll(nodeAndTitleMap.values());
-
 		graphData.setNodes(nodes);
 		graphData.setEdges(edges);
 
@@ -99,6 +93,5 @@ public class GraphService {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
 	}
 }
