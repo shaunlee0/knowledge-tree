@@ -11,6 +11,8 @@ import com.shaun.knowledgetree.services.lookup.LookupService;
 import com.shaun.knowledgetree.services.pageContent.PageContentService;
 import com.shaun.knowledgetree.services.relevance.RelevanceService;
 import com.shaun.knowledgetree.util.SingularWikiEntityDtoBuilder;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StopWatch;
@@ -24,6 +26,7 @@ import static com.shaun.knowledgetree.util.SharedSearchStorage.*;
 
 @Controller
 @RequestMapping("search")
+@Api(value = "search", description = "Controller for search operations.")
 public class SearchController {
 
     @Autowired
@@ -47,6 +50,7 @@ public class SearchController {
     @Autowired
     GraphService graphService;
 
+    @ApiOperation(value="validateSearch", notes = "Validate whether an article exists on Wikipedia")
     @RequestMapping(value = "validate", method = RequestMethod.GET, params = "searchTerm")
     @ResponseBody
     public String validateSearch(@RequestParam("searchTerm") String searchTerm) {
