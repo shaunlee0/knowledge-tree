@@ -33,12 +33,12 @@
         <span class="input-group-addon" id="basic-addon1">Enter related articles limit:</span>
         <input type="number" id="linkDepthLimit" class="form-control" placeholder="20"
                aria-describedby="basic-addon1">
-        <span class="input-group-addon" id="basic-addon2">Enter max generations:</span>
+        <%--<span class="input-group-addon" id="basic-addon2">Enter max generations:</span>--%>
 
-        <select class="selectpicker form-control" id="maxGenerations" aria-describedby="basic-addon2">
-            <option selected="selected">1</option>
-            <option>2</option>
-        </select>
+        <%--<select class="selectpicker form-control" id="maxGenerations" aria-describedby="basic-addon2">--%>
+            <%--<option selected="selected">1</option>--%>
+            <%--<option>2</option>--%>
+        <%--</select>--%>
     </div>
 
 

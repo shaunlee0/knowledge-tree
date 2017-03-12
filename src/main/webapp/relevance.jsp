@@ -26,7 +26,7 @@
                 <th>#</th>
                 <th>Article Title</th>
                 <th>Cosine Similarity</th>
-                <th></th>
+                <th>Actions</th>
             </tr>
             </thead>
             <tbody>
@@ -47,10 +47,8 @@
                 <td><%=entry.getValue()%>
                 </td>
                 <td>
-                    <form target="_blank" action="<%=request.getContextPath()%>/graph/article/<%=entry.getKey()%>"
-                          method="get">
-                        <button type="submit" class="btn btn-success">View Article</button>
-                    </form>
+                    <button onclick="location.href='<%=request.getContextPath()%>/graph/article/<%=entry.getKey()%>'" class="btn btn-success">View Article</button>
+                    <button onclick="location.href='<%=request.getContextPath()%>/search/<%=entry.getKey()%>'" class="btn btn-primary">New Search</button>
                 </td>
             </tr>
             <%

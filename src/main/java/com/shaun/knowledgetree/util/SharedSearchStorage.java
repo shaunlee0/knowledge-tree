@@ -15,7 +15,7 @@ public class SharedSearchStorage {
 
     private static Graph graph;
     private static SingularWikiEntityDto rootEntity;
-    public static HashMap<String, SingularWikiEntityDto> allEntities = new HashMap<>();
+    private static HashMap<String, SingularWikiEntityDto> allEntities = new HashMap<>();
     public static StopWatch stopWatch = new StopWatch();
 
     public static SingularWikiEntityDto getRootEntity() {

@@ -66,13 +66,16 @@ public class SearchController {
     public ModelAndView performSearch(
             @PathVariable("rootNodeTitle") String rootNodeTitle,
             @RequestParam(value = "linkDepthLimit", defaultValue = "20") String linkDepthLimitString,
-            @RequestParam("maxGenerations") String maxGenerationsString,
+            @RequestParam(value = "maxGenerations", defaultValue = "1") String maxGenerationsString,
             HttpServletRequest request) {
 
         StopWatch requestTime = new StopWatch();
         requestTime.start("request");
         int linkDepthLimit = Integer.parseInt(linkDepthLimitString);
-        int maxGenerations = Integer.parseInt(maxGenerationsString);
+        int maxGenerations = 1;
+        if(!maxGenerationsString.equals("undefined")){
+            maxGenerations = Integer.parseInt(maxGenerationsString);
+        }
 
         boolean result = true;
         HashMap<String, Object> model = new HashMap<>();

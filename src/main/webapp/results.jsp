@@ -31,7 +31,6 @@
                 <thead>
                 <tr>
                     <th>Categories</th>
-                    <th>View Category</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -41,9 +40,6 @@
                 <form role="form" method="get" action="category">
                     <tr>
                         <td><%=category.getName()%>
-                        </td>
-                        <td>
-                            <button class="btn btn-success">View</button>
                         </td>
                     </tr>
                 </form>
@@ -62,7 +58,7 @@
                     <th>#</th>
                     <th>Article Title</th>
                     <th>Occurrences</th>
-                    <th></th>
+                    <th>Action</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -82,10 +78,7 @@
                     <td><%=entry.getValue()%>
                     </td>
                     <td>
-                        <form target="_blank" action="<%=request.getContextPath()%>/graph/article/<%=entry.getKey()%>"
-                              method="get">
-                            <button type="submit" class="btn btn-success">View Article</button>
-                        </form>
+                            <button href="<%=request.getContextPath()%>/search/<%=entry.getKey()%>" class="btn btn-primary">New Search</button>
                     </td>
                 </tr>
                 <%

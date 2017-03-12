@@ -31,25 +31,6 @@ public class RelevanceService {
     private void parseEntities() {
 
         StopWatch stopWatch = new StopWatch();
-//        stopWatch.start("old");
-//
-//        //Slow old method.
-//        for (SingularWikiEntityDto entity : allEntities.values()) {
-//            String[] entityDocumentTerms = entity.getPageContent().getPagePlainText().split(" ");
-//            Set<String> tempEntityDocumentTerms = new HashSet<>();
-//
-//            //Add non stop words to allTerms, remove non alpha and stop terms from entityDocumentTerms
-//            for (String term : entityDocumentTerms) {
-//                if (!allTerms.contains(term) && stringUtilities.wordIsNotStopWord(term)) {
-//                    allTerms.add(term);
-//                    tempEntityDocumentTerms.add(term);
-//                }
-//            }
-//            entityDocumentTerms = tempEntityDocumentTerms.toArray(new String[tempEntityDocumentTerms.size()]);
-//            termsDocsArray.put(entity.getTitle(), entityDocumentTerms);
-//        }
-//
-//        stopWatch.stop();
 
         stopWatch.start("new");
         allEntities.values().stream().forEach(entity->{
@@ -107,12 +88,14 @@ public class RelevanceService {
         double[] rootNodeVector = tfidfDocsVector.get(SharedSearchStorage.getRootEntity().getTitle());
 
         tfidfDocsVector.entrySet().parallelStream().forEach(currentEntity -> {
-            cosineSimilarityToRootRankings.put(currentEntity.getKey(), new CosineSimilarity().cosineSimilarity
-                    (
-                            rootNodeVector,
-                            currentEntity.getValue()
-                    )
-            );
+            if(!currentEntity.getKey().equals(SharedSearchStorage.getRootEntity().getTitle())){
+                cosineSimilarityToRootRankings.put(currentEntity.getKey(), new CosineSimilarity().cosineSimilarity
+                        (
+                                rootNodeVector,
+                                currentEntity.getValue()
+                        )
+                );
+            }
         });
 
 
