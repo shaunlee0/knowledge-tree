@@ -16,7 +16,7 @@
     <title>Knowledge Tree - Relationship : <%=startNode.getTitle()%> &#8594; <%=endNode.getTitle()%></title>
 </head>
 
-<h1 align="center">Relationship : <%=startNode.getTitle()%> &#8594; <a href="<%=request.getContextPath()%>/graph/article/<%=endNode.getTitle()%>"><%=endNode.getTitle()%></a></h1>
+<h1 align="center">Relationship : <a href="<%=request.getContextPath()%>/graph/article/<%=startNode.getTitle()%>"><%=startNode.getTitle()%><a/> &#8594; <a href="<%=request.getContextPath()%>/graph/article/<%=endNode.getTitle()%>"><%=endNode.getTitle()%></a></h1>
 <h3>Relationships Table</h3>
 
 <div class="col-md-12">
