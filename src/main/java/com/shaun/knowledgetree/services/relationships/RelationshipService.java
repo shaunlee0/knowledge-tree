@@ -150,15 +150,18 @@ public class RelationshipService {
             int indexOfStartOfMatchedSentence = -1;
 
             //Find start of the matching sentence.
-            for (int j = indexOfMatch; j > 0; j--) {
+            for (int j = indexOfMatch; j >= 0; j--) {
                 char current = articleContent.charAt(j);
                 if (current == '.') {
                     indexOfStartOfMatchedSentence = j + 1;
                     break;
+                }if(j==0){
+                    indexOfStartOfMatchedSentence = j;
+                    break;
                 }
             }
             try {
-                if (((indexOfStartOfMatchedSentence > 0) && (indexOfEndOfMatchedSentence > 0)) && (indexOfStartOfMatchedSentence < indexOfEndOfMatchedSentence)) {
+                if (((indexOfStartOfMatchedSentence >= 0) && (indexOfEndOfMatchedSentence >= 0)) && (indexOfStartOfMatchedSentence < indexOfEndOfMatchedSentence)) {
                     sentenceContainingMatch = articleContent.substring(indexOfStartOfMatchedSentence, indexOfEndOfMatchedSentence);
                 } else {
                     System.out.println("Unable to find matching sentence stipulated by relationship");
