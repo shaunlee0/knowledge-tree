@@ -1,7 +1,15 @@
 package com.shaun.knowledgetree.services.lookup;
 
+import com.shaun.knowledgetree.domain.Graph;
+import com.shaun.knowledgetree.domain.Relationship;
 import com.shaun.knowledgetree.domain.SingularWikiEntity;
+import com.shaun.knowledgetree.domain.SingularWikiEntityDto;
+import com.shaun.knowledgetree.services.Neo4jServices;
+import com.shaun.knowledgetree.services.neo4j.GraphService;
 import com.shaun.knowledgetree.services.pageContent.PageContentService;
+import com.shaun.knowledgetree.services.relationships.RelationshipService;
+import com.shaun.knowledgetree.util.SharedSearchStorage;
+import com.shaun.knowledgetree.util.SingularWikiEntityDtoBuilder;
 import info.bliki.api.Page;
 import info.bliki.api.User;
 import info.bliki.wiki.filter.PlainTextConverter;
@@ -17,11 +25,27 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.shaun.knowledgetree.util.SharedSearchStorage.*;
+import static com.shaun.knowledgetree.util.SharedSearchStorage.getAllLinksAndOccurrences;
+import static com.shaun.knowledgetree.util.SharedSearchStorage.getGraph;
+
 @Component
 public class LookupService {
 
     @Autowired
     private PageContentService pageContentService;
+
+    @Autowired
+    private Neo4jServices neo4jServices;
+
+    @Autowired
+    SingularWikiEntityDtoBuilder singularWikiEntityDtoBuilder;
+
+    @Autowired
+    RelationshipService relationshipService;
+
+    @Autowired
+    GraphService graphService;
 
     private User user;
 
@@ -30,7 +54,78 @@ public class LookupService {
         user.login();
     }
 
-    public SingularWikiEntity findRoot(String searchPhrase) throws InterruptedException {
+    /**
+     * Method to encapsulate all actions to perform a search.
+     * @param maxGenerations - Generations to get entities for.
+     * @param rootNodeTitle - Search title.
+     * @param linkDepthLimit - Depth of links to add for each entity.
+     * @return result of the search.
+     */
+    public boolean performSearch(int maxGenerations, String rootNodeTitle, int linkDepthLimit){
+
+        boolean result = true;
+
+        try {
+            SharedSearchStorage.clearContent();
+            System.out.println("Searching for " + rootNodeTitle);
+            neo4jServices.clearGraph();
+            setGraph(new Graph(rootNodeTitle));
+
+            //Find root
+            SingularWikiEntity rootEntity = findRoot(rootNodeTitle);
+            rootEntity.setDepthFromRoot(0);
+
+            SingularWikiEntityDto rootEntityDto = singularWikiEntityDtoBuilder.convertRoot(rootEntity);
+            setRootEntity(rootEntityDto);
+            getGraph().getEntities().add(rootEntityDto);
+
+
+            //Our first layer is only a set of size 10
+            Set<SingularWikiEntity> firstEntities = findEntities(rootEntity, rootEntity, linkDepthLimit);
+
+            //For each wiki entity hanging off the root(first relationships) convert it and add it to the graph
+            firstEntities.forEach(singularWikiEntity -> {
+                getGraph().getEntities().add(singularWikiEntityDtoBuilder.convert(singularWikiEntity));
+            });
+
+            if (maxGenerations == 2) {
+                //Second layer is a set size 100, converting all these and adding to graph
+                Set<SingularWikiEntity> allSecondLayerEntities = aggregateAndReturnChildrenFromSetOfEntities(firstEntities, rootEntity, linkDepthLimit);
+                allSecondLayerEntities.parallelStream().forEach(singularWikiEntity -> {
+                    getGraph().getEntities().add(singularWikiEntityDtoBuilder.convert(singularWikiEntity));
+                });
+
+            }
+
+            getGraph().getEntities().parallelStream().forEach(singularWikiEntityDto -> {
+                if (singularWikiEntityDto.getParent() != null) {
+
+                    //Establish parent to child relationship
+                    List<Relationship> parentToChildRelationships = relationshipService.extractRelationshipContentFromPageContent(singularWikiEntityDto.getParent(), singularWikiEntityDto);
+                    if (parentToChildRelationships.size() > 0) {
+                        singularWikiEntityDto.getParent().getRelatedEntities().addAll(parentToChildRelationships);
+                    }
+
+                    //Establish child to parent relationship
+                    List<Relationship> childToParentRelationships = relationshipService.extractRelationshipContentFromPageContent(singularWikiEntityDto, singularWikiEntityDto.getParent());
+                    if (childToParentRelationships.size() > 0) {
+                        singularWikiEntityDto.getRelatedEntities().addAll(childToParentRelationships);
+                    }
+                }
+            });
+
+            findLinksAndOccurrences();
+            neo4jServices.saveGraph(getGraph());
+            neo4jServices.removeVerboseRelationships();
+        } catch (Exception e) {
+            e.printStackTrace();
+            result = false;
+        }
+
+        return result;
+    }
+
+    private SingularWikiEntity findRoot(String searchPhrase) throws InterruptedException {
         SingularWikiEntity singularWikiEntity = new SingularWikiEntity();
         String[] listOfTitleStrings = {searchPhrase};
 
@@ -80,7 +175,7 @@ public class LookupService {
         return listOfPages.get(0).getPageid() != null;
     }
 
-    public Set<SingularWikiEntity> findPages(List<String> titles, SingularWikiEntity rootEntity,
+    private Set<SingularWikiEntity> findPages(List<String> titles, SingularWikiEntity rootEntity,
                                              int depthLimit) throws InterruptedException {
 
         List<String> titlesSubSet;
@@ -162,12 +257,12 @@ public class LookupService {
      * @param rootEntity - root to set root to new relationships.
      * @return - Aggregated group of relationships we find.
      */
-    public Set<SingularWikiEntity> findEntities(SingularWikiEntity parent, SingularWikiEntity rootEntity,
+    private Set<SingularWikiEntity> findEntities(SingularWikiEntity parent, SingularWikiEntity rootEntity,
                                                 int linkDepthLimit) throws InterruptedException {
 
         List<String> titles = new ArrayList<>();
 
-        parent.getPageContent().getLinks().forEach(titles::add);
+        titles.addAll(parent.getPageContent().getLinks());
 
         //Find the set of relationships from this object, then set its parent,root and depth
         Set<SingularWikiEntity> wikiEntitySet = findPages(titles, rootEntity, linkDepthLimit);
@@ -188,7 +283,7 @@ public class LookupService {
      * @param rootEntity    : used to set root entity.
      * @return : Set of child relationships combined for every element in the input set.
      */
-    public Set<SingularWikiEntity> aggregateAndReturnChildrenFromSetOfEntities(Set<SingularWikiEntity> inputEntities, SingularWikiEntity rootEntity, int linkDepthLimit) {
+    private Set<SingularWikiEntity> aggregateAndReturnChildrenFromSetOfEntities(Set<SingularWikiEntity> inputEntities, SingularWikiEntity rootEntity, int linkDepthLimit) {
         Set<SingularWikiEntity> toReturn = new HashSet<>();
 
             inputEntities.parallelStream().forEach(firstLayerEntity ->{
@@ -204,7 +299,7 @@ public class LookupService {
         return toReturn;
     }
 
-    public Set<String> extractExternalLinksFromHtml(String html) {
+    private Set<String> extractExternalLinksFromHtml(String html) {
 
         Set<String> urls = new HashSet<>();
         Pattern p = Pattern.compile("\\b(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]", Pattern.CASE_INSENSITIVE);
