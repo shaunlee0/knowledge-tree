@@ -78,7 +78,7 @@
                     <td><%=entry.getValue()%>
                     </td>
                     <td>
-                            <button href="<%=request.getContextPath()%>/search/<%=entry.getKey()%>" class="btn btn-primary">New Search</button>
+                            <button onclick="window.location.href='<%=request.getContextPath()%>/search/<%=entry.getKey()%>'" class="btn btn-primary">New Search</button>
                     </td>
                 </tr>
                 <%
