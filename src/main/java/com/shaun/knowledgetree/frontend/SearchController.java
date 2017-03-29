@@ -1,17 +1,11 @@
 package com.shaun.knowledgetree.frontend;
 
-import com.shaun.knowledgetree.domain.SingularWikiEntity;
 import com.shaun.knowledgetree.domain.Graph;
-import com.shaun.knowledgetree.domain.Relationship;
-import com.shaun.knowledgetree.domain.SingularWikiEntityDto;
 import com.shaun.knowledgetree.services.Neo4jServices;
-import com.shaun.knowledgetree.services.neo4j.GraphService;
-import com.shaun.knowledgetree.services.relationships.RelationshipService;
 import com.shaun.knowledgetree.services.lookup.LookupService;
+import com.shaun.knowledgetree.services.neo4j.GraphService;
 import com.shaun.knowledgetree.services.pageContent.PageContentService;
 import com.shaun.knowledgetree.services.relevance.RelevanceService;
-import com.shaun.knowledgetree.util.SharedSearchStorage;
-import com.shaun.knowledgetree.util.SingularWikiEntityDtoBuilder;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +15,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.*;
+import java.util.Enumeration;
+import java.util.HashMap;
 
-import static com.shaun.knowledgetree.util.SharedSearchStorage.*;
+import static com.shaun.knowledgetree.util.SharedSearchStorage.getAllLinksAndOccurrences;
+import static com.shaun.knowledgetree.util.SharedSearchStorage.getGraph;
 
 @Controller
 @RequestMapping("search")

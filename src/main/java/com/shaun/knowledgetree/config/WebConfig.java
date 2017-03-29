@@ -8,9 +8,6 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
-/**
- * Created by 45923Sh(Shaun Lee) on 10/12/2016.
- */
 @Configuration
 @EnableWebMvc
 @ComponentScan("com.shaun.knowledgetree")

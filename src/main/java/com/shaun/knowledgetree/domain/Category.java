@@ -3,9 +3,6 @@ package com.shaun.knowledgetree.domain;
 import org.neo4j.ogm.annotation.GraphId;
 import org.neo4j.ogm.annotation.NodeEntity;
 
-/**
- * Created by shaun on 6/11/16.
- */
 @NodeEntity
 public class Category {
 

@@ -61,7 +61,7 @@ public class LookupService {
      * @param linkDepthLimit - Depth of links to add for each entity.
      * @return result of the search.
      */
-    public boolean performSearch(int maxGenerations, String rootNodeTitle, int linkDepthLimit){
+    public boolean  performSearch(int maxGenerations, String rootNodeTitle, int linkDepthLimit){
 
         boolean result = true;
 

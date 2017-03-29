@@ -22,7 +22,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableNeo4jRepositories(basePackages = "com.shaun.knowledgetree.repositories")
 public class MyNeo4jConfiguration extends Neo4jConfiguration {
 
-    public static final String URL = System.getenv("NEO4J_URL") != null ? System.getenv("NEO4J_URL") : "http://neo4j:knowledge-tree@localhost:7474";
+    private static final String URL = System.getenv("NEO4J_URL") != null ? System.getenv("NEO4J_URL") : "http://neo4j:knowledge-tree@localhost:7474";
 
     @Bean
     public org.neo4j.ogm.config.Configuration getConfiguration() {

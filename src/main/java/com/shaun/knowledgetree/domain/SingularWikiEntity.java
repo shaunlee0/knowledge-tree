@@ -17,7 +17,6 @@ public class SingularWikiEntity  {
 
     private SingularWikiEntity rootEntity;
 
-//    @Relationship(type = "PARENT_ENTITY")
     private SingularWikiEntity parent;
 
     private PageContent pageContent;
